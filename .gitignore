@@ -1,0 +1,12 @@
+# User profile (contains personal data)
+config/profile.md
+
+# Generated newsletter site
+output/
+
+# Embedding cache
+.cache/
+
+# Build binary
+newsletter
+
