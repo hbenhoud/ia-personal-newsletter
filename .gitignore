@@ -10,3 +10,6 @@ output/
 # Build binary
 newsletter
 
+# Environment variables (API keys)
+.env
+
