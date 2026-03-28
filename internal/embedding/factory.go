@@ -14,7 +14,7 @@ func NewEmbedder(provider, model, apiKeyEnv, cachePath string) (Embedder, *Cache
 
 	apiKey := os.Getenv(apiKeyEnv)
 	if apiKey == "" {
-		return nil, nil, fmt.Errorf("environment variable %s is not set", apiKeyEnv)
+		return nil, nil, fmt.Errorf("environment variable %s is not set — add it to your .env file and run: source .env", apiKeyEnv)
 	}
 
 	switch provider {

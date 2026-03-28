@@ -9,7 +9,7 @@ import (
 func NewProvider(providerName, model, apiKeyEnv string) (Provider, error) {
 	apiKey := os.Getenv(apiKeyEnv)
 	if apiKey == "" {
-		return nil, fmt.Errorf("environment variable %s is not set", apiKeyEnv)
+		return nil, fmt.Errorf("environment variable %s is not set — add it to your .env file and run: source .env", apiKeyEnv)
 	}
 
 	switch providerName {
