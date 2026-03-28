@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -22,8 +23,36 @@ import (
 const configDir = "./config"
 
 func main() {
+	loadDotEnv(".env")
 	if err := rootCmd().Execute(); err != nil {
 		os.Exit(1)
+	}
+}
+
+// loadDotEnv reads a .env file and sets any unset environment variables from it.
+func loadDotEnv(path string) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return // .env is optional
+	}
+	for _, line := range strings.Split(string(data), "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		key, value, ok := strings.Cut(line, "=")
+		if !ok {
+			continue
+		}
+		key = strings.TrimSpace(key)
+		value = strings.TrimSpace(value)
+		if key == "" || value == "" {
+			continue
+		}
+		// Only set if not already defined in the environment
+		if os.Getenv(key) == "" {
+			os.Setenv(key, value) //nolint:errcheck
+		}
 	}
 }
 
