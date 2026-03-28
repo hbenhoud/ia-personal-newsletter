@@ -31,6 +31,7 @@ type Summarizer struct {
 	provider     llm.Provider
 	promptTmpl   *template.Template
 	genCfg       llm.GenerationConfig
+	OnProgress   func(done, total int) // optional; called after each article
 }
 
 // NewSummarizer creates a Summarizer with the given LLM provider and prompt template string.
@@ -52,15 +53,18 @@ func NewSummarizer(provider llm.Provider, promptTemplateContent string) (*Summar
 // Summarize generates summaries for all articles sequentially.
 func (s *Summarizer) Summarize(ctx context.Context, articles []filtering.ScoredArticle, level, interests, language string) ([]Summary, error) {
 	summaries := make([]Summary, 0, len(articles))
-	for _, a := range articles {
+	for i, a := range articles {
 		sum, err := s.summarizeOne(ctx, a, level, interests, language)
 		if err != nil {
 			// On error, include the article with empty summary fields rather than failing the whole run
 			fmt.Printf("warning: summarization failed for %q: %v\n", a.Title, err)
 			summaries = append(summaries, Summary{ScoredArticle: a})
-			continue
+		} else {
+			summaries = append(summaries, sum)
 		}
-		summaries = append(summaries, sum)
+		if s.OnProgress != nil {
+			s.OnProgress(i+1, len(articles))
+		}
 	}
 	return summaries, nil
 }

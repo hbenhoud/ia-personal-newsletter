@@ -4,10 +4,12 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 
 	"github.com/hbenhoud/ia-personal-newsletter/internal/config"
@@ -189,7 +191,24 @@ func cmdGenerate(ctx context.Context) error {
 		return err
 	}
 
-	fmt.Println("Loading embedding cache...")
+	pterm.DefaultHeader.WithFullWidth().Println("AI Newsletter Generator")
+
+	// Show RSS sources
+	bulletItems := make([]pterm.BulletListItem, 0, len(cfg.Sources.RSS))
+	for _, feed := range cfg.Sources.RSS {
+		label := feed
+		if u, err := url.Parse(feed); err == nil && u.Host != "" {
+			label = u.Host
+		}
+		bulletItems = append(bulletItems, pterm.BulletListItem{Text: label})
+	}
+	pterm.DefaultSection.Println("RSS Sources")
+	if err := pterm.DefaultBulletList.WithItems(bulletItems).Render(); err != nil {
+		return err
+	}
+
+	// Step 1: Cache + providers
+	spinner, _ := pterm.DefaultSpinner.Start("Loading cache and providers...")
 	embedder, cache, err := embedding.NewEmbedder(
 		cfg.Embedding.Provider,
 		cfg.Embedding.Model,
@@ -197,27 +216,32 @@ func cmdGenerate(ctx context.Context) error {
 		cfg.Embedding.CachePath,
 	)
 	if err != nil {
+		spinner.Fail("embedding provider: " + err.Error())
 		return fmt.Errorf("embedding provider: %w", err)
 	}
 	defer func() {
 		if flushErr := cache.Flush(); flushErr != nil {
-			fmt.Fprintf(os.Stderr, "warning: failed to flush embedding cache: %v\n", flushErr)
+			pterm.Warning.Printfln("failed to flush embedding cache: %v", flushErr)
 		}
 	}()
-
 	llmProvider, err := llm.NewProvider(cfg.LLM.Provider, cfg.LLM.Model, cfg.LLM.APIKeyEnv)
 	if err != nil {
+		spinner.Fail("LLM provider: " + err.Error())
 		return fmt.Errorf("LLM provider: %w", err)
 	}
+	spinner.Success("Cache and providers ready")
 
-	fmt.Printf("Fetching %d RSS feeds...\n", len(cfg.Sources.RSS))
+	// Step 2: Fetch RSS
+	spinner, _ = pterm.DefaultSpinner.Start(fmt.Sprintf("Fetching %d RSS feeds...", len(cfg.Sources.RSS)))
 	articles, err := ingestion.FetchAll(ctx, cfg.Sources.RSS)
 	if err != nil {
+		spinner.Fail("ingestion: " + err.Error())
 		return fmt.Errorf("ingestion: %w", err)
 	}
-	fmt.Printf("Fetched %d articles\n", len(articles))
+	spinner.Success(fmt.Sprintf("Fetched %d articles", len(articles)))
 
-	fmt.Println("Filtering by semantic similarity...")
+	// Step 3: Filter
+	spinner, _ = pterm.DefaultSpinner.Start("Filtering by semantic similarity...")
 	filterCfg := filtering.Config{
 		Mode:                cfg.Filtering.Mode,
 		SimilarityThreshold: cfg.Filtering.SimilarityThreshold,
@@ -227,12 +251,13 @@ func cmdGenerate(ctx context.Context) error {
 	}
 	scored, err := filtering.Filter(ctx, articles, cfg.Profile.Text, embedder, filterCfg)
 	if err != nil {
+		spinner.Fail("filtering: " + err.Error())
 		return fmt.Errorf("filtering: %w", err)
 	}
-	fmt.Printf("Selected %d articles\n", len(scored))
+	spinner.Success(fmt.Sprintf("%d relevant · %d discarded", len(scored), len(articles)-len(scored)))
 
 	if len(scored) == 0 {
-		fmt.Println("No articles matched your profile. Try lowering similarity_threshold in newsletter.yaml.")
+		pterm.Warning.Println("No articles matched your profile. Try lowering similarity_threshold in newsletter.yaml.")
 		return nil
 	}
 
@@ -244,46 +269,61 @@ func cmdGenerate(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("reading prompt template: %w", err)
 	}
-
 	summarizer, err := generation.NewSummarizer(llmProvider, string(promptContent))
 	if err != nil {
 		return fmt.Errorf("creating summarizer: %w", err)
 	}
 
-	fmt.Println("Generating summaries...")
+	// Step 4: Summarize with progress bar
+	pterm.DefaultSection.Println("Generating Summaries")
+	bar, _ := pterm.DefaultProgressbar.WithTotal(len(scored)).WithTitle("Summarizing").Start()
+	summarizer.OnProgress = func(done, _ int) { bar.Increment() }
 	summaries, err := summarizer.Summarize(ctx, scored, cfg.Profile.Level, cfg.Profile.Interests, cfg.Profile.Language)
+	if _, stopErr := bar.Stop(); stopErr != nil {
+		pterm.Warning.Printfln("progress bar stop: %v", stopErr)
+	}
 	if err != nil {
 		return fmt.Errorf("summarization: %w", err)
 	}
 
+	// Step 5: Render
+	spinner, _ = pterm.DefaultSpinner.Start("Rendering newsletter...")
 	cssContent, err := loadThemeCSS(cfg.Profile.Theme)
 	if err != nil {
+		spinner.Fail(err.Error())
 		return err
 	}
 	newsletterTmpl, err := os.ReadFile("templates/newsletter.html")
 	if err != nil {
+		spinner.Fail(err.Error())
 		return fmt.Errorf("reading newsletter template: %w", err)
 	}
 	indexTmpl, err := os.ReadFile("templates/index.html")
 	if err != nil {
+		spinner.Fail(err.Error())
 		return fmt.Errorf("reading index template: %w", err)
 	}
-
 	gen, err := site.New(cfg.Output.SiteDir, string(newsletterTmpl), string(indexTmpl), cssContent, cfg.Profile.Theme)
 	if err != nil {
+		spinner.Fail(err.Error())
 		return fmt.Errorf("site generator: %w", err)
 	}
-
 	outPath, err := gen.WriteIssue(summaries, len(articles), cfg.Profile.Language)
 	if err != nil {
+		spinner.Fail(err.Error())
 		return fmt.Errorf("writing issue: %w", err)
 	}
-
 	if err := gen.WriteIndex(); err != nil {
-		fmt.Fprintf(os.Stderr, "warning: failed to update index: %v\n", err)
+		pterm.Warning.Printfln("failed to update index: %v", err)
 	}
+	spinner.Success(fmt.Sprintf("%d articles · theme: %s", len(summaries), cfg.Profile.Theme))
 
-	fmt.Printf("\nNewsletter generated: %s\n", outPath)
+	absPath, err := filepath.Abs(outPath)
+	if err != nil {
+		absPath = outPath
+	}
+	pterm.Println()
+	pterm.DefaultBox.Println("file://" + absPath)
 	return nil
 }
 
