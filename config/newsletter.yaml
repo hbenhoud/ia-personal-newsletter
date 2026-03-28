@@ -17,9 +17,9 @@ embedding:
   cache_path: ./.cache/embeddings.json
 
 llm:
-  provider: groq              # groq | gemini
-  model: llama-3.3-70b-versatile
-  api_key_env: GROQ_API_KEY
+  provider: gemini            # groq | gemini
+  model: gemini-1.5-flash
+  api_key_env: GEMINI_API_KEY
 
 output:
   site_dir: ./output
