@@ -12,13 +12,13 @@ filtering:
 
 embedding:
   provider: gemini            # gemini | huggingface
-  model: text-embedding-004
+  model: gemini-embedding-001
   api_key_env: GEMINI_API_KEY
   cache_path: ./.cache/embeddings.json
 
 llm:
   provider: gemini            # groq | gemini
-  model: gemini-1.5-flash
+  model: gemini-2.5-flash-lite
   api_key_env: GEMINI_API_KEY
 
 output:

@@ -17,7 +17,7 @@ type GeminiProvider struct {
 
 func NewGeminiProvider(apiKey, model string) *GeminiProvider {
 	if model == "" {
-		model = "gemini-1.5-flash"
+		model = "gemini-2.5-flash-lite"
 	}
 	return &GeminiProvider{
 		apiKey:       apiKey,

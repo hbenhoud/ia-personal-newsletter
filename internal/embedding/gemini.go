@@ -36,8 +36,8 @@ func (g *GeminiEmbedder) Embed(ctx context.Context, text string) ([]float64, err
 	)
 
 	body, _ := json.Marshal(map[string]any{
-		"model":   "models/" + g.model,
-		"content": map[string]any{"parts": []map[string]any{{"text": text}}},
+		"content":  map[string]any{"parts": []map[string]any{{"text": text}}},
+		"taskType": "SEMANTIC_SIMILARITY",
 	})
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
