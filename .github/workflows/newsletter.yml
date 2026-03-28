@@ -49,3 +49,15 @@ jobs:
           publish_dir: ./output
           publish_branch: gh-pages
           commit_message: "newsletter: week ${{ github.run_number }}"
+
+      # Toggle: set SLACK_NOTIFY variable to 'true' in Settings → Secrets and variables → Actions → Variables
+      - name: Notify Slack
+        if: success() && vars.SLACK_NOTIFY == 'true'
+        run: |
+          WEEK=$(date +%Y-W%V)
+          PAGES_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+          curl -s -X POST "$SLACK_WEBHOOK_URL" \
+            -H 'Content-Type: application/json' \
+            -d "{\"text\":\"🗞️ *AI Newsletter ${WEEK}* is ready!\n🔗 <${PAGES_URL}/${WEEK}/index.html|Read it>\"}"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
