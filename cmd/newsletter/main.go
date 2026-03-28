@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/spf13/cobra"
+
 	"github.com/hbenhoud/ia-personal-newsletter/internal/config"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/embedding"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/filtering"
@@ -20,64 +22,139 @@ import (
 const configDir = "./config"
 
 func main() {
-	if len(os.Args) < 2 {
-		printUsage()
+	if err := rootCmd().Execute(); err != nil {
 		os.Exit(1)
-	}
-
-	ctx := context.Background()
-	switch os.Args[1] {
-	case "generate":
-		if err := cmdGenerate(ctx); err != nil {
-			fatalf("generate: %v", err)
-		}
-	case "profile":
-		if len(os.Args) < 3 {
-			fatalf("usage: newsletter profile <setup|show|edit>")
-		}
-		switch os.Args[2] {
-		case "setup":
-			if err := cmdProfileSetup(); err != nil {
-				fatalf("profile setup: %v", err)
-			}
-		case "show":
-			if err := cmdProfileShow(); err != nil {
-				fatalf("profile show: %v", err)
-			}
-		case "edit":
-			if err := cmdProfileEdit(); err != nil {
-				fatalf("profile edit: %v", err)
-			}
-		default:
-			fatalf("unknown profile subcommand %q", os.Args[2])
-		}
-	case "sources":
-		if len(os.Args) < 3 || os.Args[2] != "list" {
-			fatalf("usage: newsletter sources list")
-		}
-		if err := cmdSourcesList(); err != nil {
-			fatalf("sources list: %v", err)
-		}
-	case "llm":
-		if len(os.Args) < 3 || os.Args[2] != "test" {
-			fatalf("usage: newsletter llm test")
-		}
-		if err := cmdLLMTest(ctx); err != nil {
-			fatalf("llm test: %v", err)
-		}
-	case "embedding":
-		if len(os.Args) < 3 || os.Args[2] != "test" {
-			fatalf("usage: newsletter embedding test")
-		}
-		if err := cmdEmbeddingTest(ctx); err != nil {
-			fatalf("embedding test: %v", err)
-		}
-	default:
-		fatalf("unknown command %q", os.Args[1])
 	}
 }
 
-// cmdGenerate runs the full pipeline: ingest → filter → summarize → render.
+func rootCmd() *cobra.Command {
+	root := &cobra.Command{
+		Use:   "newsletter",
+		Short: "Personal AI newsletter generator",
+		Long:  "Fetch RSS feeds, filter by semantic similarity, summarize with an LLM, and render a static HTML newsletter.",
+	}
+
+	root.AddCommand(
+		generateCmd(),
+		profileCmd(),
+		sourcesCmd(),
+		llmCmd(),
+		embeddingCmd(),
+	)
+
+	return root
+}
+
+// --- generate ---
+
+func generateCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "generate",
+		Short: "Run the full pipeline and generate this week's newsletter",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmdGenerate(cmd.Context())
+		},
+	}
+}
+
+// --- profile ---
+
+func profileCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "profile",
+		Short: "Manage your user profile",
+	}
+	cmd.AddCommand(
+		profileSetupCmd(),
+		profileShowCmd(),
+		profileEditCmd(),
+	)
+	return cmd
+}
+
+func profileSetupCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "setup",
+		Short: "Interactive wizard to create or overwrite your profile",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmdProfileSetup()
+		},
+	}
+}
+
+func profileShowCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "show",
+		Short: "Print the current profile",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmdProfileShow()
+		},
+	}
+}
+
+func profileEditCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "edit",
+		Short: "Open the profile in $EDITOR",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmdProfileEdit()
+		},
+	}
+}
+
+// --- sources ---
+
+func sourcesCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "sources",
+		Short: "Manage RSS sources",
+	}
+	cmd.AddCommand(&cobra.Command{
+		Use:   "list",
+		Short: "List configured RSS feeds",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmdSourcesList()
+		},
+	})
+	return cmd
+}
+
+// --- llm ---
+
+func llmCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "llm",
+		Short: "LLM provider utilities",
+	}
+	cmd.AddCommand(&cobra.Command{
+		Use:   "test",
+		Short: "Test LLM provider connectivity",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmdLLMTest(cmd.Context())
+		},
+	})
+	return cmd
+}
+
+// --- embedding ---
+
+func embeddingCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "embedding",
+		Short: "Embedding provider utilities",
+	}
+	cmd.AddCommand(&cobra.Command{
+		Use:   "test",
+		Short: "Test embedding provider connectivity",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmdEmbeddingTest(cmd.Context())
+		},
+	})
+	return cmd
+}
+
+// --- business logic (unchanged) ---
+
 func cmdGenerate(ctx context.Context) error {
 	cfg, err := config.Load(configDir)
 	if err != nil {
@@ -131,7 +208,6 @@ func cmdGenerate(ctx context.Context) error {
 		return nil
 	}
 
-	// Cap to items_per_issue
 	if cfg.Output.ItemsPerIssue > 0 && len(scored) > cfg.Output.ItemsPerIssue {
 		scored = scored[:cfg.Output.ItemsPerIssue]
 	}
@@ -278,7 +354,7 @@ func cmdEmbeddingTest(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	defer cache.Flush() //nolint
+	defer cache.Flush() //nolint:errcheck
 
 	fmt.Printf("Testing embedder: %s/%s\n", cfg.Embedding.Provider, cfg.Embedding.Model)
 	vec, err := embedder.Embed(ctx, "test embedding")
@@ -302,22 +378,4 @@ func loadThemeCSS(theme string) (string, error) {
 		return "", fmt.Errorf("reading theme CSS: %w", err)
 	}
 	return string(data), nil
-}
-
-func printUsage() {
-	fmt.Println(`Usage: newsletter <command>
-
-Commands:
-  generate              Run the full pipeline and generate this week's newsletter
-  profile setup         Interactive wizard to set up your profile
-  profile show          Print your current profile
-  profile edit          Open your profile in $EDITOR
-  sources list          List configured RSS feeds
-  llm test              Test LLM provider connectivity
-  embedding test        Test embedding provider connectivity`)
-}
-
-func fatalf(format string, args ...any) {
-	fmt.Fprintf(os.Stderr, "error: "+format+"\n", args...)
-	os.Exit(1)
 }
