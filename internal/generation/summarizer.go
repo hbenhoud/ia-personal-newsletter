@@ -21,6 +21,7 @@ type Summary struct {
 type promptData struct {
 	Level     string
 	Interests string
+	Language  string
 	Title     string
 	Content   string
 }
@@ -49,10 +50,10 @@ func NewSummarizer(provider llm.Provider, promptTemplateContent string) (*Summar
 }
 
 // Summarize generates summaries for all articles sequentially.
-func (s *Summarizer) Summarize(ctx context.Context, articles []filtering.ScoredArticle, level, interests string) ([]Summary, error) {
+func (s *Summarizer) Summarize(ctx context.Context, articles []filtering.ScoredArticle, level, interests, language string) ([]Summary, error) {
 	summaries := make([]Summary, 0, len(articles))
 	for _, a := range articles {
-		sum, err := s.summarizeOne(ctx, a, level, interests)
+		sum, err := s.summarizeOne(ctx, a, level, interests, language)
 		if err != nil {
 			// On error, include the article with empty summary fields rather than failing the whole run
 			fmt.Printf("warning: summarization failed for %q: %v\n", a.Title, err)
@@ -64,11 +65,12 @@ func (s *Summarizer) Summarize(ctx context.Context, articles []filtering.ScoredA
 	return summaries, nil
 }
 
-func (s *Summarizer) summarizeOne(ctx context.Context, a filtering.ScoredArticle, level, interests string) (Summary, error) {
+func (s *Summarizer) summarizeOne(ctx context.Context, a filtering.ScoredArticle, level, interests, language string) (Summary, error) {
 	var buf bytes.Buffer
 	if err := s.promptTmpl.Execute(&buf, promptData{
 		Level:     level,
 		Interests: interests,
+		Language:  language,
 		Title:     a.Title,
 		Content:   truncate(a.Content, 1500),
 	}); err != nil {

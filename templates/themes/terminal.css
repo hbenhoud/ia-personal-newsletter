@@ -30,7 +30,11 @@ header .meta::before { content: "# "; }
 .article .tldr::before { content: "[TLDR] "; color: var(--muted); font-size: 0.8rem; }
 .article .why { margin: 0.4rem 0; color: var(--muted); }
 .article .why::before { content: "[WHY]  "; font-size: 0.8rem; }
-.article .score { font-size: 0.7rem; color: var(--border); margin-top: 0.5rem; }
+.article .source { font-size: 0.75rem; color: var(--muted); margin: 0 0 0.5rem; }
+.article .source::before { content: "[SRC] "; }
+.article .read-more { display: inline-block; font-size: 0.8rem; color: var(--accent); text-decoration: none; margin-top: 0.75rem; }
+.article .read-more::before { content: "$ open "; color: var(--muted); }
+.article .read-more:hover { text-decoration: underline; }
 footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.75rem; }
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }

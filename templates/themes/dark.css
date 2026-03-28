@@ -25,6 +25,8 @@ header .meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.25rem; }
 .article h2 a:hover { text-decoration: underline; }
 .article .tldr { margin: 0.4rem 0; }
 .article .why { margin: 0.4rem 0; color: var(--muted); font-size: 0.95rem; }
-.article .score { font-size: 0.75rem; color: var(--border); margin-top: 0.5rem; }
+.article .source { font-size: 0.8rem; color: var(--muted); margin: 0 0 0.5rem; }
+.article .read-more { display: inline-block; font-size: 0.85rem; color: var(--accent); text-decoration: none; margin-top: 0.75rem; }
+.article .read-more:hover { text-decoration: underline; }
 footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; }
 a { color: var(--accent); }

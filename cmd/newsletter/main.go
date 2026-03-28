@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -252,7 +251,7 @@ func cmdGenerate(ctx context.Context) error {
 	}
 
 	fmt.Println("Generating summaries...")
-	summaries, err := summarizer.Summarize(ctx, scored, cfg.Profile.Level, cfg.Profile.Interests)
+	summaries, err := summarizer.Summarize(ctx, scored, cfg.Profile.Level, cfg.Profile.Interests, cfg.Profile.Language)
 	if err != nil {
 		return fmt.Errorf("summarization: %w", err)
 	}
@@ -327,15 +326,20 @@ func cmdProfileShow() error {
 
 func cmdProfileEdit() error {
 	profilePath := filepath.Join(configDir, "profile.md")
-	editor := os.Getenv("EDITOR")
-	if editor == "" {
-		editor = "vi"
+	cfg, err := config.Load(configDir)
+	if err != nil {
+		return fmt.Errorf("loading profile: %w (run 'newsletter profile setup' first)", err)
 	}
-	cmd := exec.Command(editor, profilePath)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+	r := bufio.NewReader(os.Stdin)
+	updated, err := config.RunProfileEditWizard(r, &cfg.Profile)
+	if err != nil {
+		return err
+	}
+	if err := config.WriteProfile(profilePath, updated); err != nil {
+		return fmt.Errorf("writing profile: %w", err)
+	}
+	fmt.Printf("\nProfile saved to %s\n", profilePath)
+	return nil
 }
 
 func cmdSourcesList() error {

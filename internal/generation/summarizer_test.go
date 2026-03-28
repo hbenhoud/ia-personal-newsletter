@@ -115,7 +115,7 @@ func TestSummarize_PopulatesBothFields(t *testing.T) {
 	}
 
 	articles := []filtering.ScoredArticle{scoredArticle("LLaMA 4 release")}
-	summaries, err := s.Summarize(context.Background(), articles, "expert", "LLMs, RAG")
+	summaries, err := s.Summarize(context.Background(), articles, "expert", "LLMs, RAG", "en")
 	if err != nil {
 		t.Fatalf("Summarize: %v", err)
 	}
@@ -137,7 +137,7 @@ func TestSummarize_LLMErrorKeepsArticle(t *testing.T) {
 	s, _ := NewSummarizer(provider, testPromptTmpl)
 
 	articles := []filtering.ScoredArticle{scoredArticle("error article")}
-	summaries, err := s.Summarize(context.Background(), articles, "expert", "LLMs")
+	summaries, err := s.Summarize(context.Background(), articles, "expert", "LLMs", "en")
 	if err != nil {
 		t.Fatalf("Summarize should not return error on LLM failure: %v", err)
 	}
@@ -158,7 +158,7 @@ func TestSummarize_MultipleArticles(t *testing.T) {
 		scoredArticle("Article 2"),
 		scoredArticle("Article 3"),
 	}
-	summaries, err := s.Summarize(context.Background(), articles, "intermediate", "agents")
+	summaries, err := s.Summarize(context.Background(), articles, "intermediate", "agents", "en")
 	if err != nil {
 		t.Fatalf("Summarize: %v", err)
 	}

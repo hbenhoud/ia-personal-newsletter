@@ -275,6 +275,107 @@ func RunProfileWizard(r *bufio.Reader) (*Profile, error) {
 	return p, nil
 }
 
+// RunProfileEditWizard re-runs the wizard with current values as defaults.
+// Pressing Enter on any question keeps the existing value.
+func RunProfileEditWizard(r *bufio.Reader, current *Profile) (*Profile, error) {
+	p := &Profile{
+		Interests:   current.Interests,
+		Level:       current.Level,
+		Avoid:       current.Avoid,
+		Language:    current.Language,
+		RecencyDays: current.RecencyDays,
+		Theme:       current.Theme,
+	}
+
+	fmt.Println("\n=== Newsletter Profile Edit ===")
+	fmt.Println("Press Enter to keep the current value.")
+	fmt.Println()
+
+	fmt.Printf("1. AI interests (current: %s)\n   New value: ", truncateDisplay(current.Interests, 60))
+	if v := readOptional(r); v != "" {
+		p.Interests = v
+	}
+
+	fmt.Printf("2. Expertise level (current: %s):\n", current.Level)
+	fmt.Println("   [1] beginner  [2] intermediate  [3] expert")
+	fmt.Print("   Choice (Enter to keep): ")
+	if v := readOptional(r); v != "" {
+		levels := map[string]string{"1": "beginner", "2": "intermediate", "3": "expert"}
+		if l, ok := levels[v]; ok {
+			p.Level = l
+		} else {
+			p.Level = strings.ToLower(v)
+		}
+	}
+
+	fmt.Printf("3. Topics to avoid (current: %q)\n   New value (Enter to keep): ", current.Avoid)
+	if v := readOptional(r); v != "" {
+		p.Avoid = v
+	}
+
+	fmt.Printf("4. Newsletter language (current: %s):\n", current.Language)
+	fmt.Println("   [1] en  [2] fr  or type any language code")
+	fmt.Print("   Choice (Enter to keep): ")
+	if v := readOptional(r); v != "" {
+		langs := map[string]string{"1": "en", "2": "fr"}
+		if l, ok := langs[v]; ok {
+			p.Language = l
+		} else {
+			p.Language = strings.ToLower(v)
+		}
+	}
+
+	fmt.Printf("5. Time window for articles (current: %d days):\n", current.RecencyDays)
+	fmt.Println("   [1] 7 days  [2] 14 days  [3] 30 days  [4] Custom")
+	fmt.Print("   Choice (Enter to keep): ")
+	if v := readOptional(r); v != "" {
+		switch v {
+		case "1":
+			p.RecencyDays = 7
+		case "2":
+			p.RecencyDays = 14
+		case "3":
+			p.RecencyDays = 30
+		case "4":
+			fmt.Print("   Enter number of days: ")
+			if custom := readOptional(r); custom != "" {
+				if n, err := strconv.Atoi(custom); err == nil && n > 0 {
+					p.RecencyDays = n
+				}
+			}
+		}
+	}
+
+	themeNames := map[string]string{"1": "minimal", "2": "dark", "3": "paper", "4": "terminal"}
+	fmt.Printf("6. Visual theme (current: %s):\n", current.Theme)
+	fmt.Println("   [1] minimal — white, clean")
+	fmt.Println("   [2] dark    — dark background, blue accents")
+	fmt.Println("   [3] paper   — cream background, serif")
+	fmt.Println("   [4] terminal — black background, monospace, green")
+	fmt.Print("   Choice (Enter to keep): ")
+	if v := readOptional(r); v != "" {
+		if t, ok := themeNames[v]; ok {
+			p.Theme = t
+		}
+	}
+
+	p.Text = buildProfileText(p)
+	return p, nil
+}
+
+func readOptional(r *bufio.Reader) string {
+	v, _ := r.ReadString('\n')
+	return strings.TrimSpace(v)
+}
+
+func truncateDisplay(s string, max int) string {
+	s = strings.ReplaceAll(s, "\n", " ")
+	if len(s) <= max {
+		return s
+	}
+	return s[:max] + "..."
+}
+
 func buildProfileText(p *Profile) string {
 	var sb strings.Builder
 	sb.WriteString("# User profile\n\n")

@@ -1,8 +1,8 @@
 sources:
   rss:
     - https://huggingface.co/blog/feed.xml
-    - https://arxiv.org/rss/cs.AI
-    - https://hnrss.org/frontpage
+    - https://blog.google/technology/ai/rss/
+    - https://www.anthropic.com/news.rss
 
 filtering:
   mode: semantic              # semantic | keyword | both
@@ -17,9 +17,9 @@ embedding:
   cache_path: ./.cache/embeddings.json
 
 llm:
-  provider: gemini            # groq | gemini
-  model: gemini-2.5-flash-lite
-  api_key_env: GEMINI_API_KEY
+  provider: groq              # groq | gemini
+  model: llama-3.3-70b-versatile
+  api_key_env: GROQ_API_KEY
 
 output:
   site_dir: ./output

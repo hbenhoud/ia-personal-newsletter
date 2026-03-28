@@ -1,6 +1,7 @@
 package site
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"os"
@@ -111,6 +112,10 @@ func (g *Generator) WriteIssue(summaries []generation.Summary, totalFetched int,
 		return "", fmt.Errorf("rendering newsletter: %w", err)
 	}
 
+	metaPath := filepath.Join(outDir, "meta.json")
+	metaData, _ := json.Marshal(map[string]int{"articleCount": len(summaries)})
+	_ = os.WriteFile(metaPath, metaData, 0644)
+
 	return outPath, nil
 }
 
@@ -134,10 +139,12 @@ func (g *Generator) WriteIndex() error {
 		if err != nil {
 			continue
 		}
+		count := readArticleCount(filepath.Join(g.siteDir, e.Name(), "meta.json"))
 		issues = append(issues, IssueInfo{
-			Label:       labelFromDir(e.Name()),
-			Path:        e.Name(),
-			GeneratedAt: info.ModTime().Format("2006-01-02"),
+			Label:        labelFromDir(e.Name()),
+			Path:         e.Name(),
+			ArticleCount: count,
+			GeneratedAt:  info.ModTime().Format("2006-01-02"),
 		})
 	}
 
@@ -156,6 +163,20 @@ func (g *Generator) WriteIndex() error {
 		CSS:    template.CSS(g.css),
 		Issues: issues,
 	})
+}
+
+func readArticleCount(metaPath string) int {
+	data, err := os.ReadFile(metaPath)
+	if err != nil {
+		return 0
+	}
+	var m struct {
+		ArticleCount int `json:"articleCount"`
+	}
+	if err := json.Unmarshal(data, &m); err != nil {
+		return 0
+	}
+	return m.ArticleCount
 }
 
 func labelFromDir(dir string) string {
