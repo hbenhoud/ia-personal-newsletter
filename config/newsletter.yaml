@@ -2,7 +2,7 @@ sources:
   rss:
     - https://simonwillison.net/atom/everything/   # best AI signal/noise ratio
     - https://huggingface.co/blog/feed.xml          # open-source models & tools
-    - https://www.anthropic.com/news.rss            # Claude / safety research
+    - https://raw.githubusercontent.com/taobojlen/anthropic-rss-feed/main/anthropic_news_rss.xml  # Anthropic news (community feed, updated every 6h)
     - https://blog.langchain.dev/rss/               # agents & RAG engineering
     - https://hnrss.org/frontpage                   # community trending topics
 
