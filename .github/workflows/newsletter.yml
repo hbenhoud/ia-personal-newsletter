@@ -1,0 +1,51 @@
+name: Newsletter
+
+on:
+  schedule:
+    - cron: '0 7 * * 1'   # Every Monday at 07:00 UTC
+  workflow_dispatch:        # Manual trigger from GitHub UI
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # needed by peaceiris/actions-gh-pages to push
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
+
+      # Persist embedding cache across runs — avoids re-embedding unchanged articles
+      - uses: actions/cache@v4
+        with:
+          path: .cache/
+          key: embeddings-${{ hashFiles('config/newsletter.yaml') }}-${{ github.run_id }}
+          restore-keys: |
+            embeddings-${{ hashFiles('config/newsletter.yaml') }}-
+
+      # Inject profile from secret (kept out of git for privacy)
+      - name: Write profile
+        run: printf '%s' "$PROFILE_MD" > config/profile.md
+        env:
+          PROFILE_MD: ${{ secrets.PROFILE_MD }}
+
+      - name: Build
+        run: go build -o newsletter ./cmd/newsletter
+
+      - name: Generate
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: ./newsletter generate
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+          publish_branch: gh-pages
+          commit_message: "newsletter: week ${{ github.run_number }}"
