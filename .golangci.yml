@@ -1,0 +1,15 @@
+linters:
+  enable:
+    - govet       # same as go vet
+    - errcheck    # unchecked errors
+    - staticcheck # correctness + simplifications
+    - ineffassign # assigned but never used values
+    - unused      # unused code
+
+linters-settings:
+  errcheck:
+    check-blank: false   # allow _ = err intentionally
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
