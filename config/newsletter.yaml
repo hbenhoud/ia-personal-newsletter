@@ -1,8 +1,10 @@
 sources:
   rss:
-    - https://huggingface.co/blog/feed.xml
-    - https://blog.google/technology/ai/rss/
-    - https://www.anthropic.com/news.rss
+    - https://simonwillison.net/atom/everything/   # best AI signal/noise ratio
+    - https://huggingface.co/blog/feed.xml          # open-source models & tools
+    - https://www.anthropic.com/news.rss            # Claude / safety research
+    - https://blog.langchain.dev/rss/               # agents & RAG engineering
+    - https://hnrss.org/frontpage                   # community trending topics
 
 filtering:
   mode: semantic              # semantic | keyword | both
