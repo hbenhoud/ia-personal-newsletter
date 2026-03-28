@@ -1,40 +1,244 @@
+/* ── Terminal — authentic retro CRT, amber palette ──────────────────── */
 :root {
-  --bg: #0a0a0a;
-  --fg: #00ff41;
-  --muted: #00883a;
-  --accent: #00ff41;
-  --border: #003b1a;
-  --card-bg: #0f0f0f;
+  --bg:      #0d0d00;
+  --surface: #111100;
+  --fg:      #e8a000;
+  --fg-dim:  #b07800;
+  --muted:   #6b5000;
+  --accent:  #ffb700;
+  --border:  rgba(232,160,0,0.18);
+  --border-strong: rgba(232,160,0,0.45);
+  --glow:    rgba(232,160,0,0.08);
 }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-  background: var(--bg);
+  background-color: var(--bg);
+  /* CRT phosphor scanlines */
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0.25) 0px,
+      rgba(0,0,0,0.25) 1px,
+      transparent 1px,
+      transparent 3px
+    );
   color: var(--fg);
-  font-family: "Fira Code", "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-  font-size: 15px;
+  font-family: "Fira Code", "Cascadia Code", "SF Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 14px;
   line-height: 1.7;
-  margin: 0;
-  padding: 2rem 1rem;
+  /* subtle vignette for CRT curve effect */
+  min-height: 100vh;
 }
-.container { max-width: 680px; margin: 0 auto; }
-header { border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem; }
-header h1 { font-size: 1rem; font-weight: 700; margin: 0; }
-header h1::before { content: "$ "; color: var(--muted); }
-header .meta { color: var(--muted); font-size: 0.8rem; margin-top: 0.25rem; }
-header .meta::before { content: "# "; }
-.article { border-left: 2px solid var(--border); padding: 0.75rem 1rem; margin-bottom: 1rem; background: var(--card-bg); }
-.article h2 { font-size: 0.9rem; font-weight: 700; margin: 0 0 0.5rem; }
-.article h2::before { content: "> "; color: var(--muted); }
-.article h2 a { color: var(--accent); text-decoration: none; }
-.article h2 a:hover { text-decoration: underline; }
-.article .tldr { margin: 0.4rem 0; }
-.article .tldr::before { content: "[TLDR] "; color: var(--muted); font-size: 0.8rem; }
-.article .why { margin: 0.4rem 0; color: var(--muted); }
-.article .why::before { content: "[WHY]  "; font-size: 0.8rem; }
-.article .source { font-size: 0.75rem; color: var(--muted); margin: 0 0 0.5rem; }
-.article .source::before { content: "[SRC] "; }
-.article .read-more { display: inline-block; font-size: 0.8rem; color: var(--accent); text-decoration: none; margin-top: 0.75rem; }
-.article .read-more::before { content: "$ open "; color: var(--muted); }
-.article .read-more:hover { text-decoration: underline; }
-footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.75rem; }
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
+
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 2.5rem 3rem 4rem;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+header {
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  padding: 1.25rem 1.75rem;
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+/* top status bar */
+header::before {
+  content: " SYSTEM READY  ■  AI-NEWSLETTER v2.0  ■  " attr(data-week);
+  display: block;
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.85rem;
+  text-transform: uppercase;
+}
+
+header h1 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  line-height: 1.2;
+  text-shadow: 0 0 12px rgba(255,183,0,0.4);
+}
+
+/* blinking cursor */
+header h1::after {
+  content: "▮";
+  margin-left: 6px;
+  font-size: 1rem;
+  animation: crt-blink 1.2s step-end infinite;
+  color: var(--accent);
+}
+
+@keyframes crt-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+header .meta {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.5rem;
+  letter-spacing: 0.04em;
+}
+
+header .meta::before { content: ">_ "; color: var(--fg-dim); }
+
+/* ── Article ─────────────────────────────────────────────────────────── */
+.article {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--fg-dim);
+  background: var(--surface);
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 1rem;
+  position: relative;
+  transition: border-left-color 0.15s ease, background 0.15s ease;
+}
+
+.article:hover {
+  border-left-color: var(--accent);
+  background: rgba(255,183,0,0.02);
+}
+
+/* article index marker */
+.article::before {
+  content: "[ RECORD ]";
+  position: absolute;
+  top: -0.6rem;
+  left: 1rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  background: var(--bg);
+  padding: 0 0.5rem;
+}
+
+.article h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.35;
+  margin-bottom: 0.65rem;
+  letter-spacing: 0.02em;
+}
+
+.article h2::before {
+  content: ">_ ";
+  color: var(--fg-dim);
+  font-weight: 400;
+}
+
+.article h2 a {
+  color: var(--accent);
+  text-decoration: none;
+  text-shadow: 0 0 8px rgba(255,183,0,0.25);
+}
+
+.article h2 a:hover {
+  text-decoration: underline;
+}
+
+.article .source {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 0.85rem;
+  letter-spacing: 0.04em;
+}
+
+.article .source::before { content: "  PATH: ./src/"; color: var(--muted); }
+
+.article .tldr {
+  font-size: 0.88rem;
+  color: var(--fg);
+  line-height: 1.6;
+  padding: 0.65rem 0.85rem;
+  border: 1px dashed var(--border);
+  background: rgba(255,183,0,0.03);
+  margin-bottom: 0.65rem;
+}
+
+.article .tldr strong {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  margin-bottom: 0.3rem;
+}
+
+.article .tldr strong::before { content: ">_ "; }
+
+.article .why {
+  font-size: 0.84rem;
+  color: var(--fg-dim);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.article .why strong {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.25rem;
+}
+
+.article .why strong::before { content: ">_ "; }
+
+.article .read-more {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--bg);
+  background: var(--fg-dim);
+  text-decoration: none;
+  padding: 0.3rem 0.9rem;
+  border: 1px solid var(--fg-dim);
+  text-transform: uppercase;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.article .read-more:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+  text-shadow: none;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────── */
+footer {
+  margin-top: 2rem;
+  padding: 1rem 1.75rem;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--muted);
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  background: var(--surface);
+}
+
+footer::before {
+  content: "# ";
+  color: var(--muted);
+}
+
+footer a { color: var(--fg-dim); text-decoration: none; }
+footer a:hover { color: var(--accent); }
+
+@media (max-width: 600px) {
+  .container { padding: 1.5rem 0.75rem 3rem; }
+  .article { padding: 1.25rem 1rem; }
+  header h1 { font-size: 1.1rem; }
+}
