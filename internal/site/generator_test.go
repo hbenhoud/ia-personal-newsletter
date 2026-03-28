@@ -128,8 +128,12 @@ func TestWriteIndex_CreatesFile(t *testing.T) {
 
 	// Create a fake issue directory
 	issueDir := filepath.Join(dir, "2026-W13")
-	os.MkdirAll(issueDir, 0755)
-	os.WriteFile(filepath.Join(issueDir, "index.html"), []byte("<html></html>"), 0644)
+	if err := os.MkdirAll(issueDir, 0755); err != nil {
+		t.Fatalf("MkdirAll: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(issueDir, "index.html"), []byte("<html></html>"), 0644); err != nil {
+		t.Fatalf("WriteFile: %v", err)
+	}
 
 	if err := g.WriteIndex(); err != nil {
 		t.Fatalf("WriteIndex: %v", err)
@@ -150,11 +154,17 @@ func TestWriteIndex_ListsIssues(t *testing.T) {
 	// Create two fake issue directories
 	for _, week := range []string{"2026-W10", "2026-W11"} {
 		d := filepath.Join(dir, week)
-		os.MkdirAll(d, 0755)
-		os.WriteFile(filepath.Join(d, "index.html"), []byte("<html></html>"), 0644)
+		if err := os.MkdirAll(d, 0755); err != nil {
+			t.Fatalf("MkdirAll: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(d, "index.html"), []byte("<html></html>"), 0644); err != nil {
+			t.Fatalf("WriteFile: %v", err)
+		}
 	}
 
-	g.WriteIndex()
+	if err := g.WriteIndex(); err != nil {
+		t.Fatalf("WriteIndex: %v", err)
+	}
 
 	content, _ := os.ReadFile(filepath.Join(dir, "index.html"))
 	html := string(content)

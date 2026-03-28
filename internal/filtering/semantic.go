@@ -66,9 +66,6 @@ func Filter(
 	scored := make([]ScoredArticle, 0, len(candidates))
 	for i, a := range candidates {
 		score := cosineSimilarity(profileVec, vecs[i])
-		if cfg.Mode == "both" {
-			// In "both" mode the article already passed keyword pre-filter; still apply threshold
-		}
 		if score >= cfg.SimilarityThreshold {
 			scored = append(scored, ScoredArticle{Article: a, Score: score})
 		}

@@ -102,11 +102,6 @@ func Load(configDir string) (*Config, error) {
 	}
 	cfg.Profile = *profile
 
-	// Override filtering recency from profile
-	if cfg.Profile.RecencyDays > 0 {
-		// stored on profile, accessible via cfg.Profile.RecencyDays
-	}
-
 	return &cfg, nil
 }
 
