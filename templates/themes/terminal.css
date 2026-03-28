@@ -1,0 +1,36 @@
+:root {
+  --bg: #0a0a0a;
+  --fg: #00ff41;
+  --muted: #00883a;
+  --accent: #00ff41;
+  --border: #003b1a;
+  --card-bg: #0f0f0f;
+}
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Fira Code", "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+.container { max-width: 680px; margin: 0 auto; }
+header { border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem; }
+header h1 { font-size: 1rem; font-weight: 700; margin: 0; }
+header h1::before { content: "$ "; color: var(--muted); }
+header .meta { color: var(--muted); font-size: 0.8rem; margin-top: 0.25rem; }
+header .meta::before { content: "# "; }
+.article { border-left: 2px solid var(--border); padding: 0.75rem 1rem; margin-bottom: 1rem; background: var(--card-bg); }
+.article h2 { font-size: 0.9rem; font-weight: 700; margin: 0 0 0.5rem; }
+.article h2::before { content: "> "; color: var(--muted); }
+.article h2 a { color: var(--accent); text-decoration: none; }
+.article h2 a:hover { text-decoration: underline; }
+.article .tldr { margin: 0.4rem 0; }
+.article .tldr::before { content: "[TLDR] "; color: var(--muted); font-size: 0.8rem; }
+.article .why { margin: 0.4rem 0; color: var(--muted); }
+.article .why::before { content: "[WHY]  "; font-size: 0.8rem; }
+.article .score { font-size: 0.7rem; color: var(--border); margin-top: 0.5rem; }
+footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.75rem; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }

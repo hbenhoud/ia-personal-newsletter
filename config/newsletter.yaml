@@ -1,0 +1,26 @@
+sources:
+  rss:
+    - https://huggingface.co/blog/feed.xml
+    - https://arxiv.org/rss/cs.AI
+    - https://hnrss.org/frontpage
+
+filtering:
+  mode: semantic              # semantic | keyword | both
+  similarity_threshold: 0.72
+  max_articles: 20
+  exclude_keywords: []        # hard exclusions (pre-embedding)
+
+embedding:
+  provider: gemini            # gemini | huggingface
+  model: text-embedding-004
+  api_key_env: GEMINI_API_KEY
+  cache_path: ./.cache/embeddings.json
+
+llm:
+  provider: groq              # groq | gemini
+  model: llama-3.3-70b-versatile
+  api_key_env: GROQ_API_KEY
+
+output:
+  site_dir: ./output
+  items_per_issue: 10

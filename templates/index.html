@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Newsletter — All Issues</title>
+  <style>{{.CSS}}</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>AI Newsletter</h1>
+      <div class="meta">All issues</div>
+    </header>
+
+    {{range .Issues}}
+    <div class="article">
+      <h2><a href="{{.Path}}/index.html">{{.Label}}</a></h2>
+      <p class="tldr">{{.ArticleCount}} articles &nbsp;·&nbsp; generated {{.GeneratedAt}}</p>
+    </div>
+    {{end}}
+
+    {{if not .Issues}}
+    <p>No issues yet. Run <code>newsletter generate</code> to create your first issue.</p>
+    {{end}}
+
+    <footer>AI Newsletter</footer>
+  </div>
+</body>
+</html>

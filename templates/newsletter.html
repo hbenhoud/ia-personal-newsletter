@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="{{.Language}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Newsletter — {{.WeekLabel}}</title>
+  <style>{{.CSS}}</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>AI Newsletter</h1>
+      <div class="meta">{{.WeekLabel}} &nbsp;·&nbsp; {{.ArticleCount}} articles selected from {{.TotalFetched}} analyzed</div>
+    </header>
+
+    {{range .Summaries}}
+    <div class="article">
+      <h2><a href="{{.URL}}" target="_blank" rel="noopener">{{.Title}}</a></h2>
+      {{if .TLDR}}<p class="tldr"><strong>TL;DR:</strong> {{.TLDR}}</p>{{end}}
+      {{if .WhyItMatters}}<p class="why"><strong>Why it matters:</strong> {{.WhyItMatters}}</p>{{end}}
+      <div class="score">relevance: {{printf "%.2f" .Score}} &nbsp;·&nbsp; {{.Source}}</div>
+    </div>
+    {{end}}
+
+    <footer>
+      Generated on {{.GeneratedAt}} &nbsp;·&nbsp; <a href="../index.html">All issues</a>
+    </footer>
+  </div>
+</body>
+</html>

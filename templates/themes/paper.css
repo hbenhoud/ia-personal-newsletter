@@ -1,0 +1,31 @@
+:root {
+  --bg: #fdf6e3;
+  --fg: #2c2416;
+  --muted: #7c6e52;
+  --accent: #b5580a;
+  --border: #d9c9a3;
+  --card-bg: #fef9ed;
+}
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 18px;
+  line-height: 1.8;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+.container { max-width: 680px; margin: 0 auto; }
+header { border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem; text-align: center; }
+header h1 { font-size: 1.4rem; font-weight: 700; margin: 0; letter-spacing: 0.05em; text-transform: uppercase; }
+header .meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.4rem; font-style: italic; }
+.article { border-bottom: 1px solid var(--border); padding: 1.5rem 0; }
+.article:last-child { border-bottom: none; }
+.article h2 { font-size: 1.1rem; font-weight: 700; margin: 0 0 0.5rem; }
+.article h2 a { color: var(--accent); text-decoration: none; }
+.article h2 a:hover { text-decoration: underline; }
+.article .tldr { margin: 0.4rem 0; font-style: italic; }
+.article .why { margin: 0.4rem 0; color: var(--muted); font-size: 0.95rem; }
+.article .score { font-size: 0.75rem; color: var(--border); margin-top: 0.5rem; }
+footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; text-align: center; }
+a { color: var(--accent); }
