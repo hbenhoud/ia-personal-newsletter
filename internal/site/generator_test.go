@@ -66,9 +66,9 @@ func TestWriteIssue_CreatesFile(t *testing.T) {
 		t.Errorf("output file not created: %v", err)
 	}
 
-	// Must be in a YYYY-WW subdirectory
-	if !strings.Contains(outPath, "-W") {
-		t.Errorf("output path should contain week dir (YYYY-WW), got %q", outPath)
+	// Must be in a YYYY-MM-DD subdirectory
+	if !strings.Contains(outPath, time.Now().Format("2006-01-02")) {
+		t.Errorf("output path should contain date dir (YYYY-MM-DD), got %q", outPath)
 	}
 	if !strings.HasSuffix(outPath, "index.html") {
 		t.Errorf("output path should end with index.html, got %q", outPath)
@@ -127,7 +127,7 @@ func TestWriteIndex_CreatesFile(t *testing.T) {
 	g := newTestGenerator(t, dir, "")
 
 	// Create a fake issue directory
-	issueDir := filepath.Join(dir, "2026-W13")
+	issueDir := filepath.Join(dir, "2026-03-29")
 	if err := os.MkdirAll(issueDir, 0755); err != nil {
 		t.Fatalf("MkdirAll: %v", err)
 	}
@@ -152,8 +152,8 @@ func TestWriteIndex_ListsIssues(t *testing.T) {
 	g := newTestGenerator(t, dir, "")
 
 	// Create two fake issue directories
-	for _, week := range []string{"2026-W10", "2026-W11"} {
-		d := filepath.Join(dir, week)
+	for _, date := range []string{"2026-03-10", "2026-03-13"} {
+		d := filepath.Join(dir, date)
 		if err := os.MkdirAll(d, 0755); err != nil {
 			t.Fatalf("MkdirAll: %v", err)
 		}
@@ -169,11 +169,11 @@ func TestWriteIndex_ListsIssues(t *testing.T) {
 	content, _ := os.ReadFile(filepath.Join(dir, "index.html"))
 	html := string(content)
 
-	if !strings.Contains(html, "2026-W10") && !strings.Contains(html, "Week 10") {
-		t.Error("index should reference week 10")
+	if !strings.Contains(html, "2026-03-10") && !strings.Contains(html, "10 Mar 2026") {
+		t.Error("index should reference 10 Mar 2026")
 	}
-	if !strings.Contains(html, "2026-W11") && !strings.Contains(html, "Week 11") {
-		t.Error("index should reference week 11")
+	if !strings.Contains(html, "2026-03-13") && !strings.Contains(html, "13 Mar 2026") {
+		t.Error("index should reference 13 Mar 2026")
 	}
 }
 
@@ -227,8 +227,9 @@ func TestLabelFromDir(t *testing.T) {
 		dir  string
 		want string
 	}{
-		{"2026-W13", "Week 13, 2026"},
-		{"2025-W01", "Week 01, 2025"},
+		{"2026-03-29", "29 Mar 2026"},
+		{"2025-01-05", "5 Jan 2025"},
+		{"invalid", "invalid"},
 	}
 	for _, tt := range tests {
 		got := labelFromDir(tt.dir)
