@@ -5,6 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Newsletter — {{.WeekLabel}}</title>
   <style>{{.CSS}}</style>
+  <style>
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.sort-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-right: 0.25rem;
+}
+.sort-btn {
+  font-size: 0.75rem;
+  font-family: inherit;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--border, #e5e7eb);
+  background: transparent;
+  color: var(--muted);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.sort-btn:hover, .sort-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+  </style>
 </head>
 <body>
   <div class="container">
@@ -13,8 +43,15 @@
       <div class="meta">{{.WeekLabel}} &nbsp;·&nbsp; {{.ArticleCount}} articles selected from {{.TotalFetched}} analyzed{{if eq .Language "fr"}} · {{.RecencyDays}} derniers jours{{else}} · last {{.RecencyDays}} days{{end}}</div>
     </header>
 
+    <div class="sort-bar">
+      <span class="sort-label">{{if eq .Language "fr"}}Trier par :{{else}}Sort by:{{end}}</span>
+      <button class="sort-btn active" data-sort="relevance">{{if eq .Language "fr"}}Pertinence{{else}}Relevance{{end}}</button>
+      <button class="sort-btn" data-sort="date-desc">{{if eq .Language "fr"}}Date (récent){{else}}Date (newest){{end}}</button>
+      <button class="sort-btn" data-sort="date-asc">{{if eq .Language "fr"}}Date (ancien){{else}}Date (oldest){{end}}</button>
+    </div>
+
     {{range .Summaries}}
-    <div class="article">
+    <div class="article" data-date="{{.Published.Format "2006-01-02"}}">
       <h2><a href="{{.URL}}" target="_blank" rel="noopener">{{.Title}}</a></h2>
       <div class="source">{{.Source}}</div>
       <div class="pub-date">{{.Published.Format "2 Jan 2006"}}</div>
@@ -28,5 +65,31 @@
       Generated on {{.GeneratedAt}} &nbsp;·&nbsp; <a href="../index.html">All issues</a>
     </footer>
   </div>
+
+  <script>
+(function() {
+  var container = document.querySelector('.container');
+  var articles = Array.from(document.querySelectorAll('.article'));
+  articles.forEach(function(el, i) { el.dataset.index = i; });
+
+  document.querySelectorAll('.sort-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.sort-btn').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+
+      var mode = this.dataset.sort;
+      var sorted = articles.slice().sort(function(a, b) {
+        if (mode === 'relevance')  return +a.dataset.index - +b.dataset.index;
+        if (mode === 'date-desc')  return b.dataset.date.localeCompare(a.dataset.date);
+        if (mode === 'date-asc')   return a.dataset.date.localeCompare(b.dataset.date);
+        return 0;
+      });
+
+      var footer = container.querySelector('footer');
+      sorted.forEach(function(el) { container.insertBefore(el, footer); });
+    });
+  });
+})();
+  </script>
 </body>
 </html>
