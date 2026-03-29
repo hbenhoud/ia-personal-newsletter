@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
-	"strings"
 	"time"
 
 	"github.com/hbenhoud/ia-personal-newsletter/internal/generation"
@@ -29,6 +28,7 @@ type newsletterData struct {
 	ArticleCount int
 	TotalFetched int
 	GeneratedAt  string
+	RecencyDays  int
 }
 
 type indexData struct {
@@ -79,12 +79,11 @@ func New(siteDir, newsletterTmplContent, indexTmplContent, cssContent, themeName
 	}, nil
 }
 
-// WriteIssue generates output/YYYY-WW/index.html for the given summaries.
-func (g *Generator) WriteIssue(summaries []generation.Summary, totalFetched int, language string) (string, error) {
+// WriteIssue generates output/YYYY-MM-DD/index.html for the given summaries.
+func (g *Generator) WriteIssue(summaries []generation.Summary, totalFetched int, language string, recencyDays int) (string, error) {
 	now := time.Now()
-	year, week := now.ISOWeek()
-	weekLabel := fmt.Sprintf("Week %d, %d", week, year)
-	issueDir := fmt.Sprintf("%04d-W%02d", year, week)
+	issueDir := now.Format("2006-01-02")
+	weekLabel := now.Format("2 Jan 2006")
 	outDir := filepath.Join(g.siteDir, issueDir)
 
 	if err := os.MkdirAll(outDir, 0755); err != nil {
@@ -99,6 +98,7 @@ func (g *Generator) WriteIssue(summaries []generation.Summary, totalFetched int,
 		ArticleCount: len(summaries),
 		TotalFetched: totalFetched,
 		GeneratedAt:  now.Format("2006-01-02 15:04"),
+		RecencyDays:  recencyDays,
 	}
 
 	outPath := filepath.Join(outDir, "index.html")
@@ -131,7 +131,7 @@ func (g *Generator) WriteIndex() error {
 
 	var issues []IssueInfo
 	for _, e := range entries {
-		if !e.IsDir() || !strings.Contains(e.Name(), "-W") {
+		if !e.IsDir() || !isDateDir(e.Name()) {
 			continue
 		}
 		issueIndex := filepath.Join(g.siteDir, e.Name(), "index.html")
@@ -179,11 +179,16 @@ func readArticleCount(metaPath string) int {
 	return m.ArticleCount
 }
 
+func isDateDir(name string) bool {
+	_, err := time.Parse("2006-01-02", name)
+	return err == nil
+}
+
 func labelFromDir(dir string) string {
-	// "2026-W13" → "Week 13, 2026"
-	parts := strings.SplitN(dir, "-W", 2)
-	if len(parts) == 2 {
-		return fmt.Sprintf("Week %s, %s", parts[1], parts[0])
+	// "2026-03-29" → "29 Mar 2026"
+	t, err := time.Parse("2006-01-02", dir)
+	if err != nil {
+		return dir
 	}
-	return dir
+	return t.Format("2 Jan 2006")
 }

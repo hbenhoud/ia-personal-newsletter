@@ -57,7 +57,7 @@ func TestWriteIssue_CreatesFile(t *testing.T) {
 		testSummary("LLaMA 4", "https://example.com/llama4", "New model.", "Relevant."),
 	}
 
-	outPath, err := g.WriteIssue(summaries, 10, "en")
+	outPath, err := g.WriteIssue(summaries, 10, "en", 7)
 	if err != nil {
 		t.Fatalf("WriteIssue: %v", err)
 	}
@@ -82,7 +82,7 @@ func TestWriteIssue_CSSEmbeddedInline(t *testing.T) {
 	uniqueCSS := "body { background: #unique-test-color; }"
 	g := newTestGenerator(t, dir, uniqueCSS)
 
-	outPath, err := g.WriteIssue([]generation.Summary{testSummary("T", "https://x.com", "S", "W")}, 1, "en")
+	outPath, err := g.WriteIssue([]generation.Summary{testSummary("T", "https://x.com", "S", "W")}, 1, "en", 7)
 	if err != nil {
 		t.Fatalf("WriteIssue: %v", err)
 	}
@@ -102,7 +102,7 @@ func TestWriteIssue_ArticleContentPresent(t *testing.T) {
 	summaries := []generation.Summary{
 		testSummary("My Article Title", "https://example.com/article", "My TLDR.", "My Why."),
 	}
-	outPath, _ := g.WriteIssue(summaries, 5, "en")
+	outPath, _ := g.WriteIssue(summaries, 5, "en", 7)
 	content, _ := os.ReadFile(outPath)
 	html := string(content)
 
@@ -209,8 +209,8 @@ func TestWriteIssue_DifferentThemesProduceDifferentOutput(t *testing.T) {
 
 	summaries := []generation.Summary{testSummary("T", "https://x.com", "S", "W")}
 
-	p1, _ := g1.WriteIssue(summaries, 1, "en")
-	p2, _ := g2.WriteIssue(summaries, 1, "en")
+	p1, _ := g1.WriteIssue(summaries, 1, "en", 7)
+	p2, _ := g2.WriteIssue(summaries, 1, "en", 7)
 
 	c1, _ := os.ReadFile(p1)
 	c2, _ := os.ReadFile(p2)

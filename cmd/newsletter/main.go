@@ -308,7 +308,7 @@ func cmdGenerate(ctx context.Context) error {
 		spinner.Fail(err.Error())
 		return fmt.Errorf("site generator: %w", err)
 	}
-	outPath, err := gen.WriteIssue(summaries, len(articles), cfg.Profile.Language)
+	outPath, err := gen.WriteIssue(summaries, len(articles), cfg.Profile.Language, cfg.Profile.RecencyDays)
 	if err != nil {
 		spinner.Fail(err.Error())
 		return fmt.Errorf("writing issue: %w", err)
