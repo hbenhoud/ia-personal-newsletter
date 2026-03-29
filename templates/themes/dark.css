@@ -117,6 +117,12 @@ header .meta {
   margin-bottom: 1.25rem;
 }
 
+.article .pub-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
 .article .tldr {
   background: var(--surface-2);
   border-radius: 8px;

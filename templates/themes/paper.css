@@ -132,6 +132,14 @@ header .meta {
   margin-bottom: 1.25rem;
 }
 
+.article .pub-date {
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
 .article .tldr {
   font-size: 1.02rem;
   color: var(--fg-2);

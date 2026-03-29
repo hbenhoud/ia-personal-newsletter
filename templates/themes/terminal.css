@@ -155,6 +155,14 @@ header .meta::before { content: ">_ "; color: var(--fg-dim); }
 
 .article .source::before { content: "  PATH: ./src/"; color: var(--muted); }
 
+.article .pub-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+
+.article .pub-date::before { content: "[date] "; }
+
 .article .tldr {
   font-size: 0.88rem;
   color: var(--fg);

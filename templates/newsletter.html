@@ -17,6 +17,7 @@
     <div class="article">
       <h2><a href="{{.URL}}" target="_blank" rel="noopener">{{.Title}}</a></h2>
       <div class="source">{{.Source}}</div>
+      <div class="pub-date">{{.Published.Format "2 Jan 2006"}}</div>
       {{if .TLDR}}<p class="tldr"><strong>TL;DR:</strong> {{.TLDR}}</p>{{end}}
       {{if .WhyItMatters}}<p class="why"><strong>Why it matters:</strong> {{.WhyItMatters}}</p>{{end}}
       <a class="read-more" href="{{.URL}}" target="_blank" rel="noopener">→ Read article</a>
