@@ -213,26 +213,57 @@ footer a:hover { text-decoration: underline; }
 .sort-bar {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  margin-bottom: 1.5rem;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
 }
 .sort-label {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   color: var(--muted);
+  white-space: nowrap;
+}
+.sort-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.sort-select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
 }
 .sort-select {
-  font-size: 0.78rem;
+  appearance: none;
+  -webkit-appearance: none;
+  font-size: 0.82rem;
   font-family: inherit;
+  font-weight: 500;
   color: var(--fg, #111);
-  background: transparent;
+  background: var(--surface, var(--card-bg, #fff));
   border: 1px solid var(--border, #e5e7eb);
-  border-radius: 6px;
-  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  padding: 0.4rem 2.2rem 0.4rem 0.85rem;
   cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 160px;
+}
+.sort-select:hover {
+  border-color: var(--accent);
 }
 .sort-select:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
 }
   </style>
 </head>
@@ -245,11 +276,13 @@ footer a:hover { text-decoration: underline; }
 
     <div class="sort-bar">
       <label class="sort-label" for="sort-select">Trier par :</label>
-      <select id="sort-select" class="sort-select">
-        <option value="relevance">Pertinence</option>
-        <option value="date-desc">Date (récent)</option>
-        <option value="date-asc">Date (ancien)</option>
-      </select>
+      <div class="sort-select-wrap">
+        <select id="sort-select" class="sort-select">
+          <option value="relevance">Pertinence</option>
+          <option value="date-desc">Date (récent)</option>
+          <option value="date-asc">Date (ancien)</option>
+        </select>
+      </div>
     </div>
 
     
@@ -257,8 +290,8 @@ footer a:hover { text-decoration: underline; }
       <h2><a href="https://blog.langchain.com/agent-evaluation-readiness-checklist/" target="_blank" rel="noopener">Agent Evaluation Readiness Checklist</a></h2>
       <div class="source">https://blog.langchain.dev/rss/</div>
       <div class="pub-date">27 Mar 2026</div>
-      <p class="tldr"><strong>TL;DR:</strong> Cette liste de vérification pratique permet d&#39;évaluer les agents en considérant les analyses d&#39;erreurs, la construction de jeux de données, la conception de gradateurs et les évaluations en ligne et hors ligne.</p>
-      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les praticiens de l&#39;IA qui se concentrent sur les systèmes agents et les flux de travail autonomes, car cela leur permet d&#39;évaluer et d&#39;améliorer les capacités de raisonnement et de planification de leurs modèles, et de garantir leur prêt à la production.</p>
+      <p class="tldr"><strong>TL;DR:</strong> Cette liste de contrôle pratique permet d&#39;évaluer les agents en vérifiant les analyses d&#39;erreurs, la construction de jeux de données, la conception de gradateurs et les évaluations en ligne et hors ligne.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les praticiens de l&#39;IA intéressés par les systèmes agents et les flux de travail autonomes, car cela leur permet d&#39;évaluer et d&#39;améliorer les capacités de raisonnement et de planification de leurs modèles, et ainsi de mieux comprendre les tendances en matière de sécurité et d&#39;alignement de l&#39;IA.</p>
       <a class="read-more" href="https://blog.langchain.com/agent-evaluation-readiness-checklist/" target="_blank" rel="noopener">→ Read article</a>
     </div>
     
@@ -266,8 +299,8 @@ footer a:hover { text-decoration: underline; }
       <h2><a href="https://simonwillison.net/2026/Mar/28/matt-webb/#atom-everything" target="_blank" rel="noopener">Quoting Matt Webb</a></h2>
       <div class="source">https://simonwillison.net/atom/everything/</div>
       <div class="pub-date">28 Mar 2026</div>
-      <p class="tldr"><strong>TL;DR:</strong> Les agents intelligents doivent être capables de résoudre des problèmes de codage de manière rapide, maintenable, adaptable et composable pour être vraiment efficaces.</p>
-      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les systèmes agents et les flux de travail autonomes en intelligence artificielle, car cela implique la planification, la mémoire et les mécanismes de raisonnement multi-étapes dans les agents basés sur les modèles de langage, et a des implications pour les développements pratiques et les tendances de recherche en intelligence artificielle.</p>
+      <p class="tldr"><strong>TL;DR:</strong> Les agents codants ont besoin d&#39;une architecture solide pour résoudre les problèmes de manière efficace et maintenable, plutôt que de simplement les résoudre par la force brute.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les systèmes agents et les flux de travail autonomes en IA, car une bonne architecture peut améliorer les capacités de raisonnement, d&#39;utilisation d&#39;outils et de planification des agents basés sur les modèles de langage, et éclairer les tendances de recherche en matière de sécurité et d&#39;alignement de l&#39;IA.</p>
       <a class="read-more" href="https://simonwillison.net/2026/Mar/28/matt-webb/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
     </div>
     
@@ -275,8 +308,8 @@ footer a:hover { text-decoration: underline; }
       <h2><a href="https://simonwillison.net/2026/Mar/27/vibe-coding-swiftui/#atom-everything" target="_blank" rel="noopener">Vibe coding SwiftUI apps is a lot of fun</a></h2>
       <div class="source">https://simonwillison.net/atom/everything/</div>
       <div class="pub-date">27 Mar 2026</div>
-      <p class="tldr"><strong>TL;DR:</strong> Les modèles de langage Claude Opus 4.6 et GPT-5.4 sont capables de générer des applications SwiftUI compétentes, permettant ainsi la création d&#39;outils de monitoring de performance sans ouvrir Xcode.</p>
-      <p class="why"><strong>Why it matters:</strong> Cela démontre les capacités croissantes des modèles de langage à générer du code fonctionnel, ce qui pourrait avoir un impact sur le développement de systèmes autonomes et la création d&#39;outils de production pour les systèmes d&#39;intelligence artificielle.</p>
+      <p class="tldr"><strong>TL;DR:</strong> Les modèles de langage Claude Opus 4.6 et GPT-5.4 sont capables de générer des applications SwiftUI compétentes, permettant ainsi de créer des outils de monitoring de performance sans ouvrir Xcode.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela démontre les capacités croissantes des modèles de langage à générer du code de qualité, ce qui pourrait avoir un impact sur le développement de systèmes autonomes et la création d&#39;outils de production AI, et ouvre des perspectives sur l&#39;utilisation de ces modèles pour améliorer les workflows de développement de logiciels.</p>
       <a class="read-more" href="https://simonwillison.net/2026/Mar/27/vibe-coding-swiftui/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
     </div>
     
@@ -284,7 +317,7 @@ footer a:hover { text-decoration: underline; }
       <h2><a href="https://blog.langchain.com/customers-kensho/" target="_blank" rel="noopener">How Kensho built a multi-agent framework with LangGraph to solve trusted financial data retrieval</a></h2>
       <div class="source">https://blog.langchain.dev/rss/</div>
       <div class="pub-date">26 Mar 2026</div>
-      <p class="tldr"><strong>TL;DR:</strong> Kensho a créé un cadre multi-agents avec LangGraph pour résoudre le problème de récupération de données financières fiables à grande échelle.</p>
+      <p class="tldr"><strong>TL;DR:</strong> Kensho a développé un cadre multi-agents avec LangGraph pour résoudre le problème de récupération de données financières fiables à grande échelle.</p>
       <p class="why"><strong>Why it matters:</strong> Cela est pertinent car il s’agit d’une application concrète d’un système agentic pour résoudre un problème complexe, ce qui peut éclairer les développements futurs dans le domaine des systèmes autonomes et des mécanismes de mémoire dans les agents basés sur les modèles de langage.</p>
       <a class="read-more" href="https://blog.langchain.com/customers-kensho/" target="_blank" rel="noopener">→ Read article</a>
     </div>
@@ -294,7 +327,7 @@ footer a:hover { text-decoration: underline; }
       <div class="source">https://simonwillison.net/atom/everything/</div>
       <div class="pub-date">26 Mar 2026</div>
       <p class="tldr"><strong>TL;DR:</strong> L&#39;attaque de malware LiteLLM a été détectée et signalée à PyPI grâce à l&#39;utilisation de Claude, un modèle de langage qui a aidé à confirmer la vulnérabilité et à décider des mesures à prendre.</p>
-      <p class="why"><strong>Why it matters:</strong> Cela met en évidence l&#39;importance de la sécurité et de la fiabilité des systèmes d&#39;intelligence artificielle, en particulier ceux basés sur les modèles de langage, et souligne le besoin de mécanismes de détection et de prévention des attaques de malware dans les workflows autonomes d&#39;AI.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela met en évidence l&#39;importance de la sécurité et de la fiabilité des modèles de langage et de leurs déploiements, ainsi que le rôle potentiel des agents autonomes dans la détection et la réponse aux menaces de sécurité, ce qui est particulièrement pertinent pour les systèmes de workflow AI autonomes et les mécanismes de mémoire dans les agents basés sur les modèles de langage.</p>
       <a class="read-more" href="https://simonwillison.net/2026/Mar/26/response-to-the-litellm-malware-attack/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
     </div>
     
@@ -302,8 +335,8 @@ footer a:hover { text-decoration: underline; }
       <h2><a href="https://simonwillison.net/2026/Mar/27/vine-porting-jsonata/#atom-everything" target="_blank" rel="noopener">We Rewrote JSONata with AI in a Day, Saved $500K/Year</a></h2>
       <div class="source">https://simonwillison.net/atom/everything/</div>
       <div class="pub-date">27 Mar 2026</div>
-      <p class="tldr"><strong>TL;DR:</strong> L&#39;équipe Reco a réussi à réécrire JSONata en utilisant l&#39;IA en une journée, ce qui leur a permis de réduire les coûts de 500 000 $ par an.</p>
-      <p class="why"><strong>Why it matters:</strong> Cela démontre le potentiel de l&#39;IA pour accélérer le développement de logiciels et réduire les coûts, ce qui est particulièrement pertinent pour les systèmes agents et les flux de travail autonomes qui nécessitent des capacités de raisonnement et de planification avancées.</p>
+      <p class="tldr"><strong>TL;DR:</strong> L&#39;équipe Reco a réussi à réécrire JSONata en utilisant l&#39;IA en une journée, ce qui leur a permis de sauver 500 000 $ par an.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela démontre le potentiel de l&#39;ingénierie agente et de la génération de code assistée par l&#39;IA pour accélérer le développement de systèmes autonomes et améliorer l&#39;efficacité des workflows, ce qui est particulièrement pertinent pour les systèmes basés sur les modèles de langage et les agents autonomes.</p>
       <a class="read-more" href="https://simonwillison.net/2026/Mar/27/vine-porting-jsonata/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
     </div>
     
@@ -312,7 +345,7 @@ footer a:hover { text-decoration: underline; }
       <div class="source">https://simonwillison.net/atom/everything/</div>
       <div class="pub-date">27 Mar 2026</div>
       <p class="tldr"><strong>TL;DR:</strong> Richard Fontana, co-auteur de la LGPLv3, estime qu&#39;il n&#39;y a pas de base pour conclure que chardet 7.0.0 doit être publié sous licence LGPL.</p>
-      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les développeurs d&#39;AI qui s&#39;intéressent aux modèles open-source et aux questions de licence, car cela peut avoir un impact sur la façon dont les modèles d&#39;AI sont développés et déployés, notamment en ce qui concerne les modèles LLM.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les développeurs d&#39;AI qui s&#39;intéressent aux modèles open-source et aux questions de licence, car cela peut avoir un impact sur la façon dont les modèles d&#39;AI sont développés et déployés, notamment en ce qui concerne les modèles LLM et les systèmes d&#39;IA autonomes.</p>
       <a class="read-more" href="https://simonwillison.net/2026/Mar/27/richard-fontana/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
     </div>
     
@@ -320,8 +353,8 @@ footer a:hover { text-decoration: underline; }
       <h2><a href="https://lzon.ca/posts/series/grateful/typing-and-keyboards/" target="_blank" rel="noopener">Typing and Keyboards</a></h2>
       <div class="source">https://hnrss.org/frontpage</div>
       <div class="pub-date">29 Mar 2026</div>
-      <p class="tldr"><strong>TL;DR:</strong> Cet article sur la dactylographie et les claviers n&#39;a pas de lien direct avec les avancées de l&#39;IA, mais pourrait avoir un impact sur la façon dont les utilisateurs interagissent avec les systèmes d&#39;IA.</p>
-      <p class="why"><strong>Why it matters:</strong> Cela pourrait être pertinent pour les systèmes d&#39;IA qui nécessitent une interaction humaine, car les claviers et la dactylographie peuvent influencer la façon dont les utilisateurs fournissent des entrées et interagissent avec les agents d&#39;IA, notamment ceux basés sur les modèles de langage.</p>
+      <p class="tldr"><strong>TL;DR:</strong> L&#39;article aborde les habitudes de frappe et les claviers, mais ne présente pas de lien direct avec les avancées de l&#39;IA.</p>
+      <p class="why"><strong>Why it matters:</strong> Cet article n&#39;est pas pertinent pour les spécialistes de l&#39;IA car il ne traite pas des systèmes agents, des flux de travail autonomes ou des modèles de pointe, et ne fournit donc aucune information utile sur l&#39;évolution des capacités de l&#39;IA.</p>
       <a class="read-more" href="https://lzon.ca/posts/series/grateful/typing-and-keyboards/" target="_blank" rel="noopener">→ Read article</a>
     </div>
     
@@ -330,7 +363,7 @@ footer a:hover { text-decoration: underline; }
       <div class="source">https://hnrss.org/frontpage</div>
       <div class="pub-date">28 Mar 2026</div>
       <p class="tldr"><strong>TL;DR:</strong> Le fondateur de GitLab partage son expérience de lutte contre le cancer en créant des entreprises, mais cet article n&#39;a pas de lien direct avec les avancées de l&#39;IA.</p>
-      <p class="why"><strong>Why it matters:</strong> Cet article n&#39;a pas d&#39;impact direct sur les avancées de l&#39;IA, mais il peut inspirer les professionnels de l&#39;IA à réfléchir à l&#39;impact de leur travail sur la société et la santé, et à explorer les applications de l&#39;IA dans le domaine de la santé.</p>
+      <p class="why"><strong>Why it matters:</strong> Cet article n&#39;a pas d&#39;impact direct sur les avancées de l&#39;IA, mais il peut inspirer les professionnels de l&#39;IA à réfléchir à l&#39;application de leurs compétences dans d&#39;autres domaines, tels que la santé ou la création d&#39;entreprises.</p>
       <a class="read-more" href="https://sytse.com/cancer/" target="_blank" rel="noopener">→ Read article</a>
     </div>
     
@@ -338,14 +371,14 @@ footer a:hover { text-decoration: underline; }
       <h2><a href="https://github.com/DavidHavoc/ayaFlow" target="_blank" rel="noopener">AyaFlow: A high-performance, eBPF-based network traffic analyzer written in Rust</a></h2>
       <div class="source">https://hnrss.org/frontpage</div>
       <div class="pub-date">29 Mar 2026</div>
-      <p class="tldr"><strong>TL;DR:</strong> AyaFlow est un outil d&#39;analyse de trafic réseau haute performance basé sur eBPF et écrit en Rust, qui pourrait être utile pour optimiser les performances des systèmes de production AI.</p>
-      <p class="why"><strong>Why it matters:</strong> Cela pourrait avoir un impact sur les déploiements de systèmes AI en production, en particulier pour les systèmes qui nécessitent une analyse de trafic réseau efficace, et pourrait être pertinent pour les recherches sur les modèles de trafic et les optimisations d&#39;inférence.</p>
+      <p class="tldr"><strong>TL;DR:</strong> AyaFlow est un outil d&#39;analyse de trafic réseau haute performance basé sur eBPF et écrit en Rust, qui pourrait être utilisé pour optimiser les performances des systèmes d&#39;intelligence artificielle.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les systèmes d&#39;intelligence artificielle car l&#39;optimisation des performances réseau est cruciale pour le déploiement efficace de modèles d&#39;apprentissage automatique, en particulier ceux qui nécessitent des échanges de données importants, et pourrait avoir un impact sur la mise en œuvre de workflows autonomes et la planification dans les systèmes d&#39;IA.</p>
       <a class="read-more" href="https://github.com/DavidHavoc/ayaFlow" target="_blank" rel="noopener">→ Read article</a>
     </div>
     
 
     <footer>
-      Generated on 2026-03-29 19:21 &nbsp;·&nbsp; <a href="../index.html">All issues</a>
+      Generated on 2026-03-29 19:32 &nbsp;·&nbsp; <a href="../index.html">All issues</a>
     </footer>
   </div>
 
