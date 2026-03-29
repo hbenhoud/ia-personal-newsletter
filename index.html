@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Newsletter — All Issues</title>
+  <style>/* ── Dark — premium dark mode, Linear/Vercel aesthetic ───────────── */
+:root {
+  --bg:         #0a0a0a;
+  --surface:    #111111;
+  --surface-2:  #161616;
+  --fg:         #f0f0f0;
+  --fg-2:       #a8a8a8;
+  --muted:      #555555;
+  --accent:     #818cf8;
+  --accent-dim: rgba(129,140,248,0.10);
+  --border:     rgba(255,255,255,0.06);
+  --glow:       rgba(129,140,248,0.18);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 3.5rem 3rem 5rem;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+header {
+  padding-bottom: 2.5rem;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--border);
+}
+
+header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #e0e7ff 0%, var(--accent) 60%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+header .meta {
+  font-size: 0.82rem;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+
+/* ── Article ─────────────────────────────────────────────────────────── */
+.article {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem 2.25rem;
+  margin-bottom: 1.25rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  position: relative;
+}
+
+.article::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent) 0%, transparent 60%);
+  border-radius: 12px 12px 0 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.article:hover {
+  border-color: rgba(129,140,248,0.35);
+  box-shadow: 0 0 0 1px rgba(129,140,248,0.15), 0 8px 40px var(--glow);
+  transform: translateY(-2px);
+}
+
+.article:hover::before {
+  opacity: 1;
+}
+
+.article h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  margin-bottom: 0.6rem;
+}
+
+.article h2 a {
+  color: var(--fg);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.article h2 a:hover {
+  color: var(--accent);
+}
+
+.article .source {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid rgba(129,140,248,0.2);
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  margin-bottom: 1.25rem;
+}
+
+.article .pub-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.article .tldr {
+  background: var(--surface-2);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.97rem;
+  color: var(--fg);
+  line-height: 1.65;
+}
+
+.article .tldr strong {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+
+.article .why {
+  font-size: 0.92rem;
+  color: var(--fg-2);
+  line-height: 1.65;
+  padding: 0 0 0 0.1rem;
+  margin-bottom: 1.25rem;
+}
+
+.article .why strong {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.article .read-more {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--fg);
+  text-decoration: none;
+  padding: 0.4rem 1.1rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.article .read-more:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────── */
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 2;
+}
+
+footer a { color: var(--accent); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .container { padding: 2rem 1rem 3rem; }
+  .article { padding: 1.5rem; }
+  header h1 { font-size: 1.6rem; }
+  .article h2 { font-size: 1.1rem; }
+}
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>AI Newsletter</h1>
+      <div class="meta">All issues</div>
+    </header>
+
+    
+    <div class="article">
+      <h2><a href="2026-03-29/index.html">29 Mar 2026</a></h2>
+      <p class="tldr">10 articles &nbsp;·&nbsp; generated 2026-03-29</p>
+    </div>
+    
+
+    
+
+    <footer>AI Newsletter</footer>
+  </div>
+</body>
+</html>
