@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Newsletter — 25 Apr 2026</title>
+  <style>/* ── Dark — premium dark mode, Linear/Vercel aesthetic ───────────── */
+:root {
+  --bg:         #0a0a0a;
+  --surface:    #111111;
+  --surface-2:  #161616;
+  --fg:         #f0f0f0;
+  --fg-2:       #a8a8a8;
+  --muted:      #555555;
+  --accent:     #818cf8;
+  --accent-dim: rgba(129,140,248,0.10);
+  --border:     rgba(255,255,255,0.06);
+  --glow:       rgba(129,140,248,0.18);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 3.5rem 3rem 5rem;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+header {
+  padding-bottom: 2.5rem;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--border);
+}
+
+header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #e0e7ff 0%, var(--accent) 60%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+header .meta {
+  font-size: 0.82rem;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+
+/* ── Article ─────────────────────────────────────────────────────────── */
+.article {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem 2.25rem;
+  margin-bottom: 1.25rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  position: relative;
+}
+
+.article::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent) 0%, transparent 60%);
+  border-radius: 12px 12px 0 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.article:hover {
+  border-color: rgba(129,140,248,0.35);
+  box-shadow: 0 0 0 1px rgba(129,140,248,0.15), 0 8px 40px var(--glow);
+  transform: translateY(-2px);
+}
+
+.article:hover::before {
+  opacity: 1;
+}
+
+.article h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  margin-bottom: 0.6rem;
+}
+
+.article h2 a {
+  color: var(--fg);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.article h2 a:hover {
+  color: var(--accent);
+}
+
+.article .source {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid rgba(129,140,248,0.2);
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  margin-bottom: 1.25rem;
+}
+
+.article .pub-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.article .tldr {
+  background: var(--surface-2);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.97rem;
+  color: var(--fg);
+  line-height: 1.65;
+}
+
+.article .tldr strong {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+
+.article .why {
+  font-size: 0.92rem;
+  color: var(--fg-2);
+  line-height: 1.65;
+  padding: 0 0 0 0.1rem;
+  margin-bottom: 1.25rem;
+}
+
+.article .why strong {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.article .read-more {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--fg);
+  text-decoration: none;
+  padding: 0.4rem 1.1rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.article .read-more:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────── */
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 2;
+}
+
+footer a { color: var(--accent); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .container { padding: 2rem 1rem 3rem; }
+  .article { padding: 1.5rem; }
+  header h1 { font-size: 1.6rem; }
+  .article h2 { font-size: 1.1rem; }
+}
+</style>
+  <style>
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+.sort-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.sort-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.sort-select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
+}
+.sort-select {
+  appearance: none;
+  -webkit-appearance: none;
+  font-size: 0.82rem;
+  font-family: inherit;
+  font-weight: 500;
+  color: var(--fg, #111);
+  background: var(--surface, var(--card-bg, #fff));
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+  padding: 0.4rem 2.2rem 0.4rem 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 160px;
+}
+.sort-select:hover {
+  border-color: var(--accent);
+}
+.sort-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>AI Newsletter</h1>
+      <div class="meta">25 Apr 2026 &nbsp;·&nbsp; 10 articles selected from 833 analyzed · 3 derniers jours</div>
+    </header>
+
+    <div class="sort-bar">
+      <label class="sort-label" for="sort-select">Trier par :</label>
+      <div class="sort-select-wrap">
+        <select id="sort-select" class="sort-select">
+          <option value="relevance">Pertinence</option>
+          <option value="date-desc">Date (récent)</option>
+          <option value="date-asc">Date (ancien)</option>
+        </select>
+      </div>
+    </div>
+
+    
+    <div class="article" data-date="2026-04-23">
+      <h2><a href="https://simonwillison.net/2026/Apr/23/gpt-5-5/#atom-everything" target="_blank" rel="noopener">A pelican for GPT-5.5 via the semi-official Codex backdoor API</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">23 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> La sortie de GPT-5.5 via l&#39;API semi-officielle Codex est une étape importante dans l&#39;évolution des capacités des modèles de langage.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela révèle les progrès réalisés dans le développement de modèles de langage avancés et leur intégration dans des systèmes autonomes, ce qui est crucial pour les systèmes agents et les workflows autonomes basés sur les mécanismes de mémoire et de raisonnement multi-étapes.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Apr/23/gpt-5-5/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-24">
+      <h2><a href="https://simonwillison.net/2026/Apr/24/deepseek-v4/#atom-everything" target="_blank" rel="noopener">DeepSeek V4 - almost on the frontier, a fraction of the price</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">24 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Le laboratoire chinois DeepSeek vient de publier deux modèles préliminaires de sa série V4, DeepSeek-V4-Pro et DeepSeek-V4-Flash, qui offrent des performances avancées à un coût réduit.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est important car ces modèles ouvrent de nouvelles possibilités pour les systèmes de production AI et permettent aux chercheurs de suivre les progrès des capacités de l&#39;IA, notamment en termes de mécanismes de mémoire et de raisonnement multi-étapes dans les agents basés sur les LLM.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Apr/24/deepseek-v4/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-24">
+      <h2><a href="https://simonwillison.net/2026/Apr/24/llm/#atom-everything" target="_blank" rel="noopener">llm 0.31</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">24 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> La version 0.31 de llm introduit le modèle GPT-5.5 OpenAI et de nouvelles options pour personnaliser la verbosité du texte et le niveau de détail des images pour les modèles OpenAI.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les professionnels de l&#39;IA intéressés par les dernières avancées en matière de modèles de langage et de systèmes autonomes, car cela reflète la trajectoire des capacités de l&#39;IA et offre de nouvelles possibilités de personnalisation pour les workflows d&#39;IA.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Apr/24/llm/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-24">
+      <h2><a href="https://simonwillison.net/2026/Apr/24/serving-the-for-you-feed/#atom-everything" target="_blank" rel="noopener">Serving the For You feed</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">24 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Le système de recommandation &#34;For You Feed&#34; de Bluesky est construit sur une architecture personnalisée qui utilise un processus Go et une base de données SQLite pour servir des recommandations à environ 72 000 utilisateurs.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela montre que des systèmes de recommandation personnalisés peuvent être développés et déployés de manière efficace à petite échelle, ce qui pourrait inspirer de nouvelles approches pour les systèmes de recommandation basés sur l&#39;apprentissage automatique et les agents autonomes.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Apr/24/serving-the-for-you-feed/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-25">
+      <h2><a href="https://alash3al.github.io/stash?_v01" target="_blank" rel="noopener">Open source memory layer so any AI agent can do what Claude.ai and ChatGPT do</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">25 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Un couche de mémoire open source permet à tout agent IA de reproduire les capacités de Claude.ai et ChatGPT.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est pertinent car il s&#39;agit d&#39;une avancée significative dans le domaine des systèmes agents et des flux de travail autonomes, permettant aux agents IA de disposer de mécanismes de mémoire avancés, ce qui est crucial pour le développement de capacités de raisonnement multi-étapes et d&#39;utilisation d&#39;outils.</p>
+      <a class="read-more" href="https://alash3al.github.io/stash?_v01" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-24">
+      <h2><a href="https://huggingface.co/blog/deepseekv4" target="_blank" rel="noopener">DeepSeek-V4: a million-token context that agents can actually use</a></h2>
+      <div class="source">https://huggingface.co/blog/feed.xml</div>
+      <div class="pub-date">24 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Le modèle DeepSeek-V4 offre un contexte d&#39;un million de jetons que les agents peuvent réellement utiliser, ce qui constitue une avancée significative pour les systèmes agents et les flux de travail autonomes.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les systèmes agents et les flux de travail autonomes car cela permet une meilleure planification, une utilisation d&#39;outils et des mécanismes de mémoire plus efficaces, et révèle la trajectoire des capacités de l&#39;IA, notamment pour les modèles de pointe tels que GPT, Claude, Gemini, Llama et Mistral.</p>
+      <a class="read-more" href="https://huggingface.co/blog/deepseekv4" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-25">
+      <h2><a href="https://simonwillison.net/2026/Apr/25/gpt-5-5-prompting-guide/#atom-everything" target="_blank" rel="noopener">GPT-5.5 prompting guide</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">25 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Le guide de promptage de GPT-5.5 fournit des conseils pratiques pour améliorer les interactions avec le modèle, notamment pour les tâches à plusieurs étapes.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les praticiens de l&#39;IA intéressés par les systèmes agents et les flux de travail autonomes, car cela peut améliorer les capacités de raisonnement et de planification des modèles de langage, et éclairer les tendances futures des capacités de l&#39;IA.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Apr/25/gpt-5-5-prompting-guide/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-24">
+      <h2><a href="https://simonwillison.net/2026/Apr/24/recent-claude-code-quality-reports/#atom-everything" target="_blank" rel="noopener">An update on recent Claude Code quality reports</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">24 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Les problèmes de qualité de Claude Code étaient causés par trois problèmes distincts dans son harnais, notamment un bogue qui faisait oublier à Claude ses anciennes réflexions après une heure d&#39;inactivité.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les systèmes agents car cela met en évidence l&#39;importance de la stabilité et de la fiabilité des mécanismes de mémoire dans les agents LLM, et souligne les défis complexes liés à la conception de systèmes autonomes fiables.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Apr/24/recent-claude-code-quality-reports/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-23">
+      <h2><a href="https://simonwillison.net/2026/Apr/23/llm-openai-via-codex/#atom-everything" target="_blank" rel="noopener">llm-openai-via-codex 0.1a0</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">23 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> La version 0.1a0 de llm-openai-via-codex permet d&#39;utiliser les informations d&#39;identification de Codex CLI pour effectuer des appels d&#39;API avec LLM.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela présente un intérêt pour les praticiens de l&#39;IA qui suivent les développements pratiques, notamment les nouveaux modèles open-source et les optimisations d&#39;inférence, car il s&#39;agit d&#39;une avancée dans l&#39;intégration de LLM dans les workflows autonomes, et cela pourrait avoir un impact sur la trajectoire des capacités de l&#39;IA.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Apr/23/llm-openai-via-codex/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-22">
+      <h2><a href="https://simonwillison.net/2026/Apr/22/qwen36-27b/#atom-everything" target="_blank" rel="noopener">Qwen3.6-27B: Flagship-Level Coding in a 27B Dense Model</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">22 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Le modèle Qwen3.6-27B offre des performances de codage agentic de niveau flagship avec une taille de modèle nettement réduite par rapport à son prédécesseur.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela révèle les progrès réalisés dans la conception de modèles de langage plus efficaces et plus légers, ce qui est crucial pour le développement de systèmes AI autonomes et la mise en production de modèles de pointe, notamment pour les applications nécessitant des capacités de raisonnement et de planification avancées.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Apr/22/qwen36-27b/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+
+    <footer>
+      Generated on 2026-04-25 07:27 &nbsp;·&nbsp; <a href="../index.html">All issues</a>
+    </footer>
+  </div>
+
+  <script>
+(function() {
+  var container = document.querySelector('.container');
+  var articles = Array.from(document.querySelectorAll('.article'));
+  articles.forEach(function(el, i) { el.dataset.index = i; });
+
+  document.getElementById('sort-select').addEventListener('change', function() {
+    var mode = this.value;
+    var sorted = articles.slice().sort(function(a, b) {
+      if (mode === 'relevance') return +a.dataset.index - +b.dataset.index;
+      if (mode === 'date-desc') return b.dataset.date.localeCompare(a.dataset.date);
+      if (mode === 'date-asc')  return a.dataset.date.localeCompare(b.dataset.date);
+      return 0;
+    });
+    var footer = container.querySelector('footer');
+    sorted.forEach(function(el) { container.insertBefore(el, footer); });
+  });
+})();
+  </script>
+</body>
+</html>
