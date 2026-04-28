@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Newsletter — 28 Apr 2026</title>
+  <style>/* ── Dark — premium dark mode, Linear/Vercel aesthetic ───────────── */
+:root {
+  --bg:         #0a0a0a;
+  --surface:    #111111;
+  --surface-2:  #161616;
+  --fg:         #f0f0f0;
+  --fg-2:       #a8a8a8;
+  --muted:      #555555;
+  --accent:     #818cf8;
+  --accent-dim: rgba(129,140,248,0.10);
+  --border:     rgba(255,255,255,0.06);
+  --glow:       rgba(129,140,248,0.18);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 3.5rem 3rem 5rem;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+header {
+  padding-bottom: 2.5rem;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--border);
+}
+
+header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #e0e7ff 0%, var(--accent) 60%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+header .meta {
+  font-size: 0.82rem;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+
+/* ── Article ─────────────────────────────────────────────────────────── */
+.article {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem 2.25rem;
+  margin-bottom: 1.25rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  position: relative;
+}
+
+.article::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent) 0%, transparent 60%);
+  border-radius: 12px 12px 0 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.article:hover {
+  border-color: rgba(129,140,248,0.35);
+  box-shadow: 0 0 0 1px rgba(129,140,248,0.15), 0 8px 40px var(--glow);
+  transform: translateY(-2px);
+}
+
+.article:hover::before {
+  opacity: 1;
+}
+
+.article h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  margin-bottom: 0.6rem;
+}
+
+.article h2 a {
+  color: var(--fg);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.article h2 a:hover {
+  color: var(--accent);
+}
+
+.article .source {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid rgba(129,140,248,0.2);
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  margin-bottom: 1.25rem;
+}
+
+.article .pub-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.article .tldr {
+  background: var(--surface-2);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.97rem;
+  color: var(--fg);
+  line-height: 1.65;
+}
+
+.article .tldr strong {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+
+.article .why {
+  font-size: 0.92rem;
+  color: var(--fg-2);
+  line-height: 1.65;
+  padding: 0 0 0 0.1rem;
+  margin-bottom: 1.25rem;
+}
+
+.article .why strong {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.article .read-more {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--fg);
+  text-decoration: none;
+  padding: 0.4rem 1.1rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.article .read-more:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────── */
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 2;
+}
+
+footer a { color: var(--accent); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .container { padding: 2rem 1rem 3rem; }
+  .article { padding: 1.5rem; }
+  header h1 { font-size: 1.6rem; }
+  .article h2 { font-size: 1.1rem; }
+}
+</style>
+  <style>
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+.sort-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.sort-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.sort-select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
+}
+.sort-select {
+  appearance: none;
+  -webkit-appearance: none;
+  font-size: 0.82rem;
+  font-family: inherit;
+  font-weight: 500;
+  color: var(--fg, #111);
+  background: var(--surface, var(--card-bg, #fff));
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+  padding: 0.4rem 2.2rem 0.4rem 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 160px;
+}
+.sort-select:hover {
+  border-color: var(--accent);
+}
+.sort-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>AI Newsletter</h1>
+      <div class="meta">28 Apr 2026 &nbsp;·&nbsp; 10 articles selected from 834 analyzed · 3 derniers jours</div>
+    </header>
+
+    <div class="sort-bar">
+      <label class="sort-label" for="sort-select">Trier par :</label>
+      <div class="sort-select-wrap">
+        <select id="sort-select" class="sort-select">
+          <option value="relevance">Pertinence</option>
+          <option value="date-desc">Date (récent)</option>
+          <option value="date-asc">Date (ancien)</option>
+        </select>
+      </div>
+    </div>
+
+    
+    <div class="article" data-date="2026-04-27">
+      <h2><a href="https://simonwillison.net/2026/Apr/27/now-deceased-agi-clause/#atom-everything" target="_blank" rel="noopener">Tracking the history of the now-deceased OpenAI Microsoft AGI clause</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">27 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> La clause de l&#39;accord entre OpenAI et Microsoft concernant les droits de propriété intellectuelle en cas de réalisation de l&#39;AGI a pris fin.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est important car cela reflète l&#39;évolution des relations entre les acteurs clés de l&#39;industrie de l&#39;IA et les implications potentielles pour le développement de l&#39;AGI, ainsi que les considérations de sécurité et d&#39;alignement qui l&#39;accompagnent.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Apr/27/now-deceased-agi-clause/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-25">
+      <h2><a href="https://simonwillison.net/2026/Apr/25/romain-huet/#atom-everything" target="_blank" rel="noopener">Quoting Romain Huet</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">25 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> La version GPT-5.5 intègre désormais les capacités de Codex, permettant ainsi des gains importants dans la programmation et l&#39;utilisation d&#39;outils informatiques.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les systèmes agents et les flux de travail autonomes, car cela améliore les capacités de raisonnement multi-étapes et d&#39;utilisation d&#39;outils, et révèle la trajectoire des capacités de l&#39;IA, notamment dans le domaine de la programmation et de l&#39;utilisation d&#39;outils informatiques.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Apr/25/romain-huet/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-28">
+      <h2><a href="https://simonwillison.net/2026/Apr/28/talkie/#atom-everything" target="_blank" rel="noopener">Introducing talkie: a 13B vintage language model from 1930</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">28 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Les chercheurs ont présenté talkie, un modèle de langage vintage de 13 milliards de paramètres entraîné sur des textes historiques antérieurs à 1931.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela permet d&#39;étudier les capacités de prédiction et d&#39;invention de modèles de langage en dehors de leur connaissance acquise, ce qui est pertinent pour les systèmes d&#39;IA autonomes et les mécanismes de mémoire dans les agents basés sur les modèles de langage.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Apr/28/talkie/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-28">
+      <h2><a href="https://technology.robbyant.com/lingbot-map" target="_blank" rel="noopener">LingBot-Map: Streaming 3D reconstruction with geometric context transformer</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">28 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Le système LingBot-Map permet une reconstruction 3D en continu en intégrant un transformateur de contexte géométrique pour améliorer la compréhension de l&#39;environnement.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les systèmes agents et les flux de travail autonomes car il peut être utilisé pour améliorer les capacités de raisonnement et de planification dans les environnements réels, et ouvre des perspectives pour les applications de réalité augmentée et de robotique.</p>
+      <a class="read-more" href="https://technology.robbyant.com/lingbot-map" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-28">
+      <h2><a href="https://huggingface.co/blog/nvidia/raw2insights-adaptive-ultrasound-imaging" target="_blank" rel="noopener">Adaptive Ultrasound Imaging with Physics-Informed NV-Raw2Insights-US AI</a></h2>
+      <div class="source">https://huggingface.co/blog/feed.xml</div>
+      <div class="pub-date">28 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> L&#39;intégration de l&#39;intelligence artificielle et de la physique dans l&#39;imagerie par ultrasons ouvre de nouvelles perspectives pour les systèmes autonomes et les agents basés sur des modèles de langage.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les chercheurs en intelligence artificielle car cela démontre le potentiel de l&#39;application de l&#39;apprentissage automatique à des domaines spécifiques, tels que l&#39;imagerie médicale, et révèle les capacités croissantes des systèmes autonomes à intégrer des connaissances multidisciplinaires.</p>
+      <a class="read-more" href="https://huggingface.co/blog/nvidia/raw2insights-adaptive-ultrasound-imaging" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-27">
+      <h2><a href="https://simonwillison.net/2026/Apr/27/vibevoice/#atom-everything" target="_blank" rel="noopener">microsoft/VibeVoice</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">27 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Microsoft a publié VibeVoice, un modèle audio de type Whisper pour la reconnaissance vocale, sous licence MIT et avec une diarisation des locuteurs intégrée.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela présente un intérêt pour les praticiens de l&#39;IA qui suivent les développements pratiques, notamment les nouveaux modèles open-source et les optimisations d&#39;inférence, car VibeVoice offre une alternative aux modèles existants pour les tâches de reconnaissance vocale et de diarisation des locuteurs.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Apr/27/vibevoice/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-27">
+      <h2><a href="https://vivianvoss.net/blog/integrated-by-design-launch" target="_blank" rel="noopener">Integrated by Design</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">27 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> L&#39;article présente un nouveau concept d&#39;intégration de systèmes autonomes, qui pourrait avoir un impact significatif sur les capacités des agents basés sur les modèles de langage.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les praticiens de l&#39;IA intéressés par les systèmes agents et les flux de travail autonomes, car cela pourrait améliorer les mécanismes de raisonnement multi-étapes, d&#39;utilisation d&#39;outils et de planification, et éclairer la trajectoire des capacités de l&#39;IA.</p>
+      <a class="read-more" href="https://vivianvoss.net/blog/integrated-by-design-launch" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-27">
+      <h2><a href="https://eclecticlight.co/2026/04/23/networking-changes-coming-in-macos-27/" target="_blank" rel="noopener">Networking changes coming in macOS 27</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">27 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Les changements dans les réseaux de macOS 27 n&#39;ont pas d&#39;impact direct sur les systèmes d&#39;intelligence artificielle, mais pourraient influencer les performances des applications qui utilisent des modèles d&#39;apprentissage automatique.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela pourrait avoir des implications pour les systèmes d&#39;intelligence artificielle déployés sur des appareils macOS, en particulier ceux qui utilisent des modèles de langage pour des tâches de traitement de données et d&#39;analyse, et pourrait nécessiter des ajustements pour garantir des performances optimales.</p>
+      <a class="read-more" href="https://eclecticlight.co/2026/04/23/networking-changes-coming-in-macos-27/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-28">
+      <h2><a href="https://simonwillison.net/2026/Apr/28/pip-261/#atom-everything" target="_blank" rel="noopener">What&#39;s new in pip 26.1 - lockfiles and dependency cooldowns!</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">28 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> La version 26.1 de pip apporte des améliorations telles que les lockfiles et les cooldowns de dépendances pour améliorer la gestion des dépendances Python.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les praticiens de l&#39;IA car cela peut améliorer la gestion des dépendances pour les systèmes de production AI, notamment ceux qui utilisent des modèles LLM, et ainsi accélérer le développement et le déploiement de ces systèmes.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Apr/28/pip-261/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-04-27">
+      <h2><a href="https://github.blog/news-insights/company-news/github-copilot-is-moving-to-usage-based-billing/" target="_blank" rel="noopener">GitHub Copilot is moving to usage-based billing</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">27 Apr 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> GitHub Copilot passe à une facturation basée sur l&#39;utilisation, ce qui pourrait avoir un impact sur la façon dont les développeurs utilisent et intègrent l&#39;IA dans leur travail.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela est pertinent pour les praticiens de l&#39;IA car cela reflète les tendances en matière de déploiement et de tarification des systèmes d&#39;IA, et pourrait influencer la manière dont les modèles d&#39;IA sont utilisés et optimisés dans les workflows autonomes.</p>
+      <a class="read-more" href="https://github.blog/news-insights/company-news/github-copilot-is-moving-to-usage-based-billing/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+
+    <footer>
+      Generated on 2026-04-28 07:44 &nbsp;·&nbsp; <a href="../index.html">All issues</a>
+    </footer>
+  </div>
+
+  <script>
+(function() {
+  var container = document.querySelector('.container');
+  var articles = Array.from(document.querySelectorAll('.article'));
+  articles.forEach(function(el, i) { el.dataset.index = i; });
+
+  document.getElementById('sort-select').addEventListener('change', function() {
+    var mode = this.value;
+    var sorted = articles.slice().sort(function(a, b) {
+      if (mode === 'relevance') return +a.dataset.index - +b.dataset.index;
+      if (mode === 'date-desc') return b.dataset.date.localeCompare(a.dataset.date);
+      if (mode === 'date-asc')  return a.dataset.date.localeCompare(b.dataset.date);
+      return 0;
+    });
+    var footer = container.querySelector('footer');
+    sorted.forEach(function(el) { container.insertBefore(el, footer); });
+  });
+})();
+  </script>
+</body>
+</html>
