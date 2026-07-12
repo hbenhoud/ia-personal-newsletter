@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Newsletter — 12 Jul 2026</title>
+  <style>/* ── Dark — premium dark mode, Linear/Vercel aesthetic ───────────── */
+:root {
+  --bg:         #0a0a0a;
+  --surface:    #111111;
+  --surface-2:  #161616;
+  --fg:         #f0f0f0;
+  --fg-2:       #a8a8a8;
+  --muted:      #555555;
+  --accent:     #818cf8;
+  --accent-dim: rgba(129,140,248,0.10);
+  --border:     rgba(255,255,255,0.06);
+  --glow:       rgba(129,140,248,0.18);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 3.5rem 3rem 5rem;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+header {
+  padding-bottom: 2.5rem;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--border);
+}
+
+header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #e0e7ff 0%, var(--accent) 60%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+header .meta {
+  font-size: 0.82rem;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+
+/* ── Article ─────────────────────────────────────────────────────────── */
+.article {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem 2.25rem;
+  margin-bottom: 1.25rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  position: relative;
+}
+
+.article::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent) 0%, transparent 60%);
+  border-radius: 12px 12px 0 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.article:hover {
+  border-color: rgba(129,140,248,0.35);
+  box-shadow: 0 0 0 1px rgba(129,140,248,0.15), 0 8px 40px var(--glow);
+  transform: translateY(-2px);
+}
+
+.article:hover::before {
+  opacity: 1;
+}
+
+.article h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  margin-bottom: 0.6rem;
+}
+
+.article h2 a {
+  color: var(--fg);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.article h2 a:hover {
+  color: var(--accent);
+}
+
+.article .source {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid rgba(129,140,248,0.2);
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  margin-bottom: 1.25rem;
+}
+
+.article .pub-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.article .tldr {
+  background: var(--surface-2);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.97rem;
+  color: var(--fg);
+  line-height: 1.65;
+}
+
+.article .tldr strong {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+
+.article .why {
+  font-size: 0.92rem;
+  color: var(--fg-2);
+  line-height: 1.65;
+  padding: 0 0 0 0.1rem;
+  margin-bottom: 1.25rem;
+}
+
+.article .why strong {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.article .read-more {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--fg);
+  text-decoration: none;
+  padding: 0.4rem 1.1rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.article .read-more:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────── */
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 2;
+}
+
+footer a { color: var(--accent); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .container { padding: 2rem 1rem 3rem; }
+  .article { padding: 1.5rem; }
+  header h1 { font-size: 1.6rem; }
+  .article h2 { font-size: 1.1rem; }
+}
+</style>
+  <style>
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+.sort-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.sort-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.sort-select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
+}
+.sort-select {
+  appearance: none;
+  -webkit-appearance: none;
+  font-size: 0.82rem;
+  font-family: inherit;
+  font-weight: 500;
+  color: var(--fg, #111);
+  background: var(--surface, var(--card-bg, #fff));
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+  padding: 0.4rem 2.2rem 0.4rem 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 160px;
+}
+.sort-select:hover {
+  border-color: var(--accent);
+}
+.sort-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>AI Newsletter</h1>
+      <div class="meta">12 Jul 2026 &nbsp;·&nbsp; 20 articles selected from 1021 analyzed · 3 derniers jours</div>
+    </header>
+
+    <div class="sort-bar">
+      <label class="sort-label" for="sort-select">Trier par :</label>
+      <div class="sort-select-wrap">
+        <select id="sort-select" class="sort-select">
+          <option value="relevance">Pertinence</option>
+          <option value="date-desc">Date (récent)</option>
+          <option value="date-asc">Date (ancien)</option>
+        </select>
+      </div>
+    </div>
+
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://www.elliotcsmith.com/autoresearch-claude-and-constrained-optimization/" target="_blank" rel="noopener">Autoresearch, Claude and Constrained Optimization</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> L&#39;article explore l&#39;optimisation sous contraintes appliquée à Claude pour automatiser la recherche, démontrant comment baliser les LLM permet de générer des résultats fiables et exploitables.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, cela illustre des techniques avancées de contrainte des LLM pour réduire les hallucinations, et sur le plan commercial, cela offre un cadre concret pour fiabiliser l&#39;automatisation des flux de recherche et d&#39;analyse.</p>
+      <a class="read-more" href="https://www.elliotcsmith.com/autoresearch-claude-and-constrained-optimization/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-10">
+      <h2><a href="https://huggingface.co/blog/torch-attention-profile" target="_blank" rel="noopener">Profiling in PyTorch (Part 3): Attention is all you profile</a></h2>
+      <div class="source">https://huggingface.co/blog/feed.xml</div>
+      <div class="pub-date">10 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Cette série détaille les techniques de profilage avancées pour identifier et résoudre les goulots d&#39;étranglement liés aux mécanismes d&#39;attention dans les architectures Transformer sous PyTorch.</p>
+      <p class="why"><strong>Why it matters:</strong> Maîtriser l&#39;optimisation des couches d&#39;attention est crucial pour repousser les limites techniques des LLM tout en réduisant drastiquement les coûts de calcul et d&#39;infrastructure, un équilibre indispensable pour rentabiliser le déploiement de l&#39;IA en production.</p>
+      <a class="read-more" href="https://huggingface.co/blog/torch-attention-profile" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://spectrum.ieee.org/ai-science-research-flattens-discovery" target="_blank" rel="noopener">AI boosts research careers but narrow the span of ideas explored: study</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Une étude révèle que l&#39;IA accélère les carrières scientifiques mais réduit la diversité des idées explorées, créant une convergence intellectuelle.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, cela alerte sur le risque de modes collapse dans la recherche algorithmique ; stratégiquement, les entreprises finançant l&#39;innovation par IA doivent diversifier leurs portefeuilles pour éviter de stagner sur des approches uniformisées.</p>
+      <a class="read-more" href="https://spectrum.ieee.org/ai-science-research-flattens-discovery" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-10">
+      <h2><a href="https://techcrunch.com/podcast/open-source-ai-matters-more-than-ever-according-to-hugging-faces-clem-delangue/" target="_blank" rel="noopener">Open source AI matters more than ever, according to Hugging Face’s Clem Delangue</a></h2>
+      <div class="source">https://techcrunch.com/category/artificial-intelligence/feed/</div>
+      <div class="pub-date">10 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> L&#39;IA open source connaît un essor massif, avec Hugging Face devenant la plateforme de référence désormais adoptée par environ la moitié des entreprises du Fortune 500.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, cela démocratise l&#39;accès aux modèles et datasets de pointe, accélérant l&#39;innovation globale. Côté business, cette adoption massive par les grandes entreprises prouve que l&#39;open source est désormais un levier stratégique incontournable pour intégrer l&#39;IA de manière rentable.</p>
+      <a class="read-more" href="https://techcrunch.com/podcast/open-source-ai-matters-more-than-ever-according-to-hugging-faces-clem-delangue/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://geohot.github.io//blog/jekyll/update/2026/07/12/i-love-llms.html" target="_blank" rel="noopener">I love LLMs, I hate hype</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> George Hotz livre une critique franche de la hype autour des LLMs, plaidant pour un développement ancré dans l&#39;ingénierie matérielle et logicielle plutôt que dans le marketing.</p>
+      <p class="why"><strong>Why it matters:</strong> Pour les praticiens, ce rappel à l&#39;ordre souligne l&#39;importance de se concentrer sur les fondations techniques et l&#39;optimisation des coûts de calcul, des éléments cruciaux pour bâtir des entreprises IA viables face aux promesses surévaluées du marché.</p>
+      <a class="read-more" href="https://geohot.github.io//blog/jekyll/update/2026/07/12/i-love-llms.html" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://ploy.ai/blog/migrating-a-production-ai-agent-to-gpt-5-6" target="_blank" rel="noopener">Migrating a production AI agent to GPT-5.6: 2.2x faster, 27% cheaper</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Une étude de cas détaille la migration d&#39;un agent IA en production vers GPT-5.6, aboutissant à une latence réduite de 2,2x et une baisse des coûts de 27%.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, le retour d&#39;expérience éclaire les défis concrets d&#39;optimisation lors d&#39;une mise à jour de modèle en production. Côté business, ces gains d&#39;efficacité démontrent un impact financier direct et une amélioration de la marge opérationnelle pour les produits basés sur les LLM.</p>
+      <a class="read-more" href="https://ploy.ai/blog/migrating-a-production-ai-agent-to-gpt-5-6" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-09">
+      <h2><a href="https://www.technologyreview.com/2026/07/09/1140293/anthropic-found-a-hidden-space-where-claude-puzzles-over-concepts/" target="_blank" rel="noopener">Anthropic found a hidden space where Claude puzzles over concepts</a></h2>
+      <div class="source">https://www.technologyreview.com/topic/artificial-intelligence/feed</div>
+      <div class="pub-date">9 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Anthropic a développé la « Jacobian lens », une technique offrant une visualisation sans précédent des représentations internes et du raisonnement de Claude.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, cet outil de mécanistique permet de mieux comprendre et contrôler l&#39;émergence des concepts dans les LLM, ouvrant la voie à des modèles plus fiables. Côté business, cette transparence accrue est un atout stratégique majeur pour rassurer les entreprises et accélérer l&#39;adoption de l&#39;IA dans des secteurs réglementés.</p>
+      <a class="read-more" href="https://www.technologyreview.com/2026/07/09/1140293/anthropic-found-a-hidden-space-where-claude-puzzles-over-concepts/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-10">
+      <h2><a href="https://techcrunch.com/2026/07/10/hugging-faces-ceo-on-why-companies-are-done-renting-their-ai/" target="_blank" rel="noopener">Hugging Face’s CEO on why companies are done renting their AI</a></h2>
+      <div class="source">https://techcrunch.com/category/artificial-intelligence/feed/</div>
+      <div class="pub-date">10 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Les entreprises du Fortune 500 abandonnent les API propriétaires au profit de modèles open source hébergés en interne pour reprendre le contrôle de leur infrastructure d&#39;IA.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, la maturité des modèles ouverts permet désormais une personnalisation fine et un déploiement sécurisé sans dépendance externe. Stratégiquement, cette transition marque un tournant où la propriété des actifs d&#39;IA devient un avantage concurrentiel décisif face à la location de capacités.</p>
+      <a class="read-more" href="https://techcrunch.com/2026/07/10/hugging-faces-ceo-on-why-companies-are-done-renting-their-ai/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://www.larp.website/" target="_blank" rel="noopener">LARP – Revenue infrastructure for serious founders</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> LARP propose une infrastructure de revenus conçue pour les fondateurs sérieux cherchant à monétiser efficacement leurs produits.</p>
+      <p class="why"><strong>Why it matters:</strong> Pour les praticiens de l&#39;IA, comprendre comment transformer une innovation technique en flux de revenus durable est crucial pour évaluer la viabilité commerciale des nouveaux modèles et infrastructures.</p>
+      <a class="read-more" href="https://www.larp.website/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="http://incompleteideas.net/IncIdeas/OneStepTrap.html" target="_blank" rel="noopener">The One-Step Trap (In AI Research)</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Rich Sutton souligne que les systèmes d&#39;IA axés sur la prédiction d&#39;une seule étape négligent la puissance de l&#39;apprentissage continu basé sur l&#39;interaction à long terme.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, cela rappelle l&#39;importance de l&#39;apprentissage par renforcement pour modéliser des séquences complexes ; sur le plan commercial, les entreprises doivent privilégier des stratégies d&#39;IA itératives plutôt que de chercher des solutions ponctuelles isolées.</p>
+      <a class="read-more" href="http://incompleteideas.net/IncIdeas/OneStepTrap.html" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-10">
+      <h2><a href="https://simonwillison.net/2026/Jul/10/openai/#atom-everything" target="_blank" rel="noopener">Quoting OpenAI</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">10 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> OpenAI tente de clarifier l&#39;architecture de ChatGPT Work, mais la distinction entre l&#39;exécution cloud et l&#39;accès local aux fichiers sur l&#39;application de bureau reste confuse.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, cette séparation stricte entre les threads cloud et locaux pose des défis d&#39;ingénierie pour la synchronisation des données et la gestion des permissions. Pour les entreprises, cette opacité accrue sur l&#39;isolation des données complique l&#39;évaluation des risques de sécurité et l&#39;adoption du produit en environnement professionnel.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Jul/10/openai/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-09">
+      <h2><a href="https://techcrunch.com/2026/07/09/openai-launches-its-new-family-of-models-with-gpt-5-6/" target="_blank" rel="noopener">OpenAI launches its new family of models with GPT-5.6</a></h2>
+      <div class="source">https://techcrunch.com/category/artificial-intelligence/feed/</div>
+      <div class="pub-date">9 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> OpenAI déploie sa nouvelle famille de modèles GPT-5.6, apportant des améliorations notables dans plusieurs domaines clés, notamment la cybersécurité.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, cette avancée renforce les capacités défensives de l&#39;IA, tandis que sur le plan commercial, elle offre aux entreprises des outils plus robustes pour sécuriser leurs infrastructures numériques face à des menaces croissantes.</p>
+      <a class="read-more" href="https://techcrunch.com/2026/07/09/openai-launches-its-new-family-of-models-with-gpt-5-6/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://systima.ai/blog/claude-code-vs-opencode-token-overhead" target="_blank" rel="noopener">Claude Code sends 33k tokens before reading the prompt; OpenCode sends 7k</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Une analyse empirique démontre que Claude Code consomme massivement plus de tokens (33k) qu&#39;OpenCode (7k) avant même de lire le prompt, révélant une inefficacité profonde dans sa stratégie de cache et son harness.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, cela met en lumière l&#39;impact critique de l&#39;optimisation du contexte dans l&#39;ingénierie des agents IA ; sur le plan commercial, cette surconsommation latente gonfle considérablement les coûts d&#39;infrastructure et d&#39;API, affectant directement les marges opérationnelles.</p>
+      <a class="read-more" href="https://systima.ai/blog/claude-code-vs-opencode-token-overhead" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-11">
+      <h2><a href="https://techcrunch.com/2026/07/11/openai-bets-on-families-as-chatgpt-goes-deeper-into-households/" target="_blank" rel="noopener">OpenAI bets on families as ChatGPT goes deeper into households</a></h2>
+      <div class="source">https://techcrunch.com/category/artificial-intelligence/feed/</div>
+      <div class="pub-date">11 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> OpenAI recrute un chef de produit dédié aux familles, aux aidants et aux seniors pour étendre l&#39;usage de ChatGPT au marché domestique.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, cela implique d&#39;adapter les LLM à des contextes d&#39;usage multi-utilisateurs et multi-générationnels complexes. Stratégiquement, c&#39;est une manœuvre clé pour fidéliser une base d&#39;utilisateurs massive et conquérir de nouvelles parts de marché au quotidien.</p>
+      <a class="read-more" href="https://techcrunch.com/2026/07/11/openai-bets-on-families-as-chatgpt-goes-deeper-into-households/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-09">
+      <h2><a href="https://techcrunch.com/2026/07/09/openai-is-shutting-down-atlas-but-its-ai-browser-ambitions-are-still-growing/" target="_blank" rel="noopener">OpenAI is shutting down Atlas, but its AI browser ambitions are still growing</a></h2>
+      <div class="source">https://techcrunch.com/category/artificial-intelligence/feed/</div>
+      <div class="pub-date">9 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> OpenAI abandonne son navigateur dédié pour réintégrer ses fonctionnalités d&#39;agent de navigation autonome directement dans son application de bureau et via une extension Chrome.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, cela illustre la difficulté d&#39;orchestrer des agents complexes au sein d&#39;un environnement navigateur complet, justifiant un repli vers des intégrations plus légères et contrôlables. Stratégiquement, l&#39;entreprise renonce à la guerre des navigateurs pour se concentrer sur l&#39;extension de son écosystème, visant une distribution des capacités agentic à moindre friction et à fort impact commercial.</p>
+      <a class="read-more" href="https://techcrunch.com/2026/07/09/openai-is-shutting-down-atlas-but-its-ai-browser-ambitions-are-still-growing/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://odinbook.com/" target="_blank" rel="noopener">Understanding the Odin Programming Language</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Odin est un langage de programmation système conçu pour la performance, la simplicité et la lisibilité, se positionnant comme une alternative moderne au C.</p>
+      <p class="why"><strong>Why it matters:</strong> Pour les praticiens de l&#39;IA, Odin offre un contrôle bas niveau crucial pour optimiser l&#39;infrastructure et réduire les coûts de calcul, un avantage compétitif majeur à mesure que les modèles grandissent.</p>
+      <a class="read-more" href="https://odinbook.com/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-09">
+      <h2><a href="https://techcrunch.com/2026/07/09/fidji-simo-steps-down-from-openais-no-2-role/" target="_blank" rel="noopener">Fidji Simo steps down from OpenAI’s No. 2 role</a></h2>
+      <div class="source">https://techcrunch.com/category/artificial-intelligence/feed/</div>
+      <div class="pub-date">9 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Fidji Simo quitte son poste de numéro deux chez OpenAI en raison d&#39;un congé médical prolongé, créant un vide stratégique alors que l&#39;entreprise prépare son IPO et intensifie sa course contre Anthropic sur le marché de l&#39;entreprise.</p>
+      <p class="why"><strong>Why it matters:</strong> Cette transition de leadership survient à un moment critique où OpenAI doit simultanément sécuriser sa valorisation financière et maintenir son avance technologique face à une concurrence de plus en plus féroce dans le déploiement des modèles d&#39;IA en entreprise.</p>
+      <a class="read-more" href="https://techcrunch.com/2026/07/09/fidji-simo-steps-down-from-openais-no-2-role/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://github.com/hasenj/go-shirei/" target="_blank" rel="noopener">Show HN: Shirei, cross-platform GUI framework in native Go</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Shirei est un nouveau framework d&#39;interface graphique multiplateforme écrit en Go natif, conçu pour simplifier le déploiement d&#39;applications locales performantes.</p>
+      <p class="why"><strong>Why it matters:</strong> Pour les praticiens de l&#39;IA, disposer d&#39;un outil léger en Go facilite la création rapide d&#39;interfaces pour déployer des modèles localement, réduisant ainsi les coûts d&#39;infrastructure et la dépendance au cloud, un avantage compétitif majeur pour les entreprises.</p>
+      <a class="read-more" href="https://github.com/hasenj/go-shirei/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://cacm.acm.org/news/can-we-understand-how-large-language-models-reason/" target="_blank" rel="noopener">Can We Understand How Large Language Models Reason?</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Une analyse des mécanismes internes de raisonnement des LLMs souligne la difficulté de distinguer la véritable inférence de la simple mémorisation de motifs statistiques.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, cela oriente la recherche vers l&#39;interprétabilité et la fiabilité des modèles ; sur le plan commercial, la capacité à garantir un raisonnement vérifiable devient un argument de vente majeur pour déployer l&#39;IA dans des secteurs critiques.</p>
+      <a class="read-more" href="https://cacm.acm.org/news/can-we-understand-how-large-language-models-reason/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-10">
+      <h2><a href="https://www.langchain.com/blog/introducing-openwiki-brains-general-purpose-wiki-memory-for-agents" target="_blank" rel="noopener">OpenWiki Brains: Proactive Memory for AI Agents</a></h2>
+      <div class="source">https://blog.langchain.dev/rss.xml</div>
+      <div class="pub-date">10 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> OpenWiki Brains agrège vos sources de données locales en une mémoire proactive et constamment mise à jour pour vos agents IA.</p>
+      <p class="why"><strong>Why it matters:</strong> Techniquement, cela offre une architecture de mémoire contextuelle dynamique qui surmonte l&#39;amnésie des LLM ; stratégiquement, cela permet d&#39;automatiser des workflows d&#39;entreprise complexes en exploitant instantanément la connaissance interne fragmentée.</p>
+      <a class="read-more" href="https://www.langchain.com/blog/introducing-openwiki-brains-general-purpose-wiki-memory-for-agents" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+
+    <footer>
+      Generated on 2026-07-12 20:07 &nbsp;·&nbsp; <a href="../index.html">All issues</a>
+    </footer>
+  </div>
+
+  <script>
+(function() {
+  var container = document.querySelector('.container');
+  var articles = Array.from(document.querySelectorAll('.article'));
+  articles.forEach(function(el, i) { el.dataset.index = i; });
+
+  document.getElementById('sort-select').addEventListener('change', function() {
+    var mode = this.value;
+    var sorted = articles.slice().sort(function(a, b) {
+      if (mode === 'relevance') return +a.dataset.index - +b.dataset.index;
+      if (mode === 'date-desc') return b.dataset.date.localeCompare(a.dataset.date);
+      if (mode === 'date-asc')  return a.dataset.date.localeCompare(b.dataset.date);
+      return 0;
+    });
+    var footer = container.querySelector('footer');
+    sorted.forEach(function(el) { container.insertBefore(el, footer); });
+  });
+})();
+  </script>
+</body>
+</html>
