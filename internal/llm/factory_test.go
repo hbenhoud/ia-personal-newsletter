@@ -54,6 +54,22 @@ func TestNewProvider_Groq(t *testing.T) {
 	}
 }
 
+func TestNewProvider_Ollama(t *testing.T) {
+	os.Setenv("TEST_OLLAMA_KEY", "test-key")
+	defer os.Unsetenv("TEST_OLLAMA_KEY")
+
+	p, err := NewProvider("ollama", "", "TEST_OLLAMA_KEY")
+	if err != nil {
+		t.Fatalf("NewProvider ollama: %v", err)
+	}
+	if p == nil {
+		t.Fatal("expected non-nil provider")
+	}
+	if !strings.Contains(p.Name(), "ollama") {
+		t.Errorf("provider name should contain 'ollama', got %q", p.Name())
+	}
+}
+
 func TestNewProvider_Gemini(t *testing.T) {
 	os.Setenv("TEST_GEMINI_KEY", "test-key")
 	defer os.Unsetenv("TEST_GEMINI_KEY")

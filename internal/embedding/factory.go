@@ -28,7 +28,12 @@ func NewEmbedder(provider, model, apiKeyEnv, cachePath string) (Embedder, *Cache
 			model = "sentence-transformers/all-MiniLM-L6-v2"
 		}
 		return NewHuggingFaceEmbedder(apiKey, model, cache), cache, nil
+	case "ollama":
+		if model == "" {
+			model = "nomic-embed-text"
+		}
+		return NewOllamaEmbedder(apiKey, model, cache), cache, nil
 	default:
-		return nil, nil, fmt.Errorf("unknown embedding provider %q (supported: gemini, huggingface)", provider)
+		return nil, nil, fmt.Errorf("unknown embedding provider %q (supported: gemini, huggingface, ollama)", provider)
 	}
 }

@@ -29,8 +29,8 @@ cmd/newsletter/main.go          CLI dispatcher — no business logic, just wires
 internal/config/                YAML config + profile.md loader; RunProfileWizard writes profile.md
 internal/ingestion/             Concurrent RSS fetch via gofeed → []Article
 internal/filtering/             3-pass filter: recency, keyword exclusion, cosine similarity ranking
-internal/embedding/             Embedder interface + Gemini/HuggingFace impls + SHA256 JSON cache
-internal/llm/                   Provider interface + Groq/Gemini impls
+internal/embedding/             Embedder interface + Gemini/HuggingFace/Ollama impls + SHA256 JSON cache
+internal/llm/                   Provider interface + Groq/Gemini/Ollama impls
 internal/generation/            Renders summarize.tmpl, calls LLM, parses "TL;DR:" / "Why it matters:" lines
 internal/site/                  Writes output/YYYY-WW/index.html and output/index.html from html/template
 templates/prompts/summarize.tmpl  LLM prompt — edit this to change summary style

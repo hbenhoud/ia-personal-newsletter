@@ -68,6 +68,19 @@ func TestNewEmbedder_HuggingFace(t *testing.T) {
 	}
 }
 
+func TestNewEmbedder_Ollama(t *testing.T) {
+	os.Setenv("TEST_OLLAMA_EMBED_KEY", "test-key")
+	defer os.Unsetenv("TEST_OLLAMA_EMBED_KEY")
+
+	embedder, cache, err := NewEmbedder("ollama", "", "TEST_OLLAMA_EMBED_KEY", filepath.Join(t.TempDir(), "cache.json"))
+	if err != nil {
+		t.Fatalf("NewEmbedder ollama: %v", err)
+	}
+	if embedder == nil || cache == nil {
+		t.Fatal("expected non-nil embedder and cache")
+	}
+}
+
 // AC-7: Default models are applied when model is empty
 
 func TestNewEmbedder_DefaultModels(t *testing.T) {
@@ -84,5 +97,10 @@ func TestNewEmbedder_DefaultModels(t *testing.T) {
 	_, _, err = NewEmbedder("huggingface", "", "TEST_KEY_DEFAULT", cachePath)
 	if err != nil {
 		t.Fatalf("huggingface with empty model: %v", err)
+	}
+
+	_, _, err = NewEmbedder("ollama", "", "TEST_KEY_DEFAULT", cachePath)
+	if err != nil {
+		t.Fatalf("ollama with empty model: %v", err)
 	}
 }

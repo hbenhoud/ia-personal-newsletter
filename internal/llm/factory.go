@@ -17,7 +17,9 @@ func NewProvider(providerName, model, apiKeyEnv string) (Provider, error) {
 		return NewGroqProvider(apiKey, model), nil
 	case "gemini":
 		return NewGeminiProvider(apiKey, model), nil
+	case "ollama":
+		return NewOllamaProvider(apiKey, model), nil
 	default:
-		return nil, fmt.Errorf("unknown LLM provider %q (supported: groq, gemini)", providerName)
+		return nil, fmt.Errorf("unknown LLM provider %q (supported: groq, gemini, ollama)", providerName)
 	}
 }
