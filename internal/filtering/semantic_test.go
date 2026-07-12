@@ -2,7 +2,9 @@ package filtering
 
 import (
 	"context"
+	"errors"
 	"math"
+	"strings"
 	"testing"
 	"time"
 
@@ -278,6 +280,41 @@ func TestFilter_KeywordModeSkipsEmbedding(t *testing.T) {
 	}
 	if scored[0].Score != 1.0 {
 		t.Errorf("keyword mode should assign score 1.0, got %f", scored[0].Score)
+	}
+}
+
+// strictEmbedder mimics a real API (e.g. Gemini) that rejects empty text.
+type strictEmbedder struct{}
+
+func (strictEmbedder) Embed(_ context.Context, _ string) ([]float64, error) {
+	return []float64{1, 0, 0}, nil
+}
+
+func (strictEmbedder) EmbedBatch(_ context.Context, texts []string) ([][]float64, error) {
+	out := make([][]float64, len(texts))
+	for i, t := range texts {
+		if strings.TrimSpace(t) == "" {
+			return nil, errors.New("embed HTTP 400: empty Part")
+		}
+		out[i] = []float64{1, 0, 0}
+	}
+	return out, nil
+}
+
+// An article with no title and no content must be dropped before embedding,
+// otherwise the empty string fails the whole batch.
+func TestFilter_SkipsEmptyText(t *testing.T) {
+	articles := []ingestion.Article{
+		article("", "", 1),                 // empty → must be skipped
+		article("Good article", "body", 1), // valid
+	}
+	cfg := Config{Mode: "semantic", SimilarityThreshold: 0.5, RecencyDays: 30, MaxArticles: 10}
+	scored, err := Filter(context.Background(), articles, "profile", strictEmbedder{}, cfg)
+	if err != nil {
+		t.Fatalf("Filter should skip empty article, got error: %v", err)
+	}
+	if len(scored) != 1 || scored[0].Title != "Good article" {
+		t.Fatalf("expected only the valid article, got %+v", scored)
 	}
 }
 

@@ -53,9 +53,17 @@ func Filter(
 		return nil, err
 	}
 
-	texts := make([]string, len(candidates))
-	for i, a := range candidates {
-		texts[i] = articleText(a)
+	// Drop candidates with no embeddable text — an empty string makes the
+	// embedding API reject the whole batch (e.g. Gemini "empty Part" 400).
+	embedCandidates := make([]ingestion.Article, 0, len(candidates))
+	texts := make([]string, 0, len(candidates))
+	for _, a := range candidates {
+		t := articleText(a)
+		if strings.TrimSpace(t) == "" {
+			continue
+		}
+		embedCandidates = append(embedCandidates, a)
+		texts = append(texts, t)
 	}
 
 	vecs, err := embedder.EmbedBatch(ctx, texts)
@@ -63,8 +71,8 @@ func Filter(
 		return nil, err
 	}
 
-	scored := make([]ScoredArticle, 0, len(candidates))
-	for i, a := range candidates {
+	scored := make([]ScoredArticle, 0, len(embedCandidates))
+	for i, a := range embedCandidates {
 		score := cosineSimilarity(profileVec, vecs[i])
 		if score >= cfg.SimilarityThreshold {
 			scored = append(scored, ScoredArticle{Article: a, Score: score})
