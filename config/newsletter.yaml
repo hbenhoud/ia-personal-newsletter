@@ -1,10 +1,15 @@
 sources:
   rss:
+    # --- Tech / research axis ---
     - https://simonwillison.net/atom/everything/   # best AI signal/noise ratio
     - https://huggingface.co/blog/feed.xml          # open-source models & tools
     - https://raw.githubusercontent.com/taobojlen/anthropic-rss-feed/main/anthropic_news_rss.xml  # Anthropic news (community feed, updated every 6h)
-    - https://blog.langchain.dev/rss/               # agents & RAG engineering
+    - https://blog.langchain.dev/rss.xml            # agents & RAG engineering
     - https://hnrss.org/frontpage                   # community trending topics
+    # --- Business axis ---
+    - https://venturebeat.com/category/ai/feed/                      # enterprise AI adoption & market
+    - https://techcrunch.com/category/artificial-intelligence/feed/  # funding, launches, startups
+    - https://www.technologyreview.com/topic/artificial-intelligence/feed  # AI analysis & industry impact
 
 filtering:
   mode: semantic              # semantic | keyword | both
@@ -13,16 +18,31 @@ filtering:
   exclude_keywords: []        # hard exclusions (pre-embedding)
 
 embedding:
-  provider: gemini            # gemini | huggingface
-  model: gemini-embedding-001
-  api_key_env: GEMINI_API_KEY
+  provider: gemini            # gemini | huggingface | ollama
+  model: gemini-embedding-001 # ollama e.g. nomic-embed-text
+  api_key_env: GEMINI_API_KEY # ollama -> OLLAMA_API_KEY
   cache_path: ./.cache/embeddings.json
+  # NOTE: switching the embedding model changes the vector dimension —
+  # delete .cache/embeddings.json so the profile vector is recomputed.
+
+# embedding:
+#   provider: ollama
+#   model: qwen3-embedding:8b
+#   api_key_env: OLLAMA_API_KEY
+#   cache_path: ./.cache/embeddings.json
+  # NOTE: switching the embedding model changes the vector dimension —
+  # delete .cache/embeddings.json so the profile vector is recomputed.
+
+# llm:
+#   provider: groq              # groq | gemini | ollama
+#   model: llama-3.3-70b-versatile  # ollama e.g. gpt-oss:120b
+#   api_key_env: GROQ_API_KEY   # ollama -> OLLAMA_API_KEY
 
 llm:
-  provider: groq              # groq | gemini
-  model: llama-3.3-70b-versatile
-  api_key_env: GROQ_API_KEY
+  provider: ollama
+  model: glm-5.2:cloud        # ou qwen3-coder:480b, deepseek-v3.1:671b…
+  api_key_env: OLLAMA_API_KEY
 
 output:
   site_dir: ./output
-  items_per_issue: 10
+  items_per_issue: 20
