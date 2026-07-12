@@ -2,6 +2,7 @@ package filtering
 
 import (
 	"context"
+	"fmt"
 	"math"
 	"sort"
 	"strings"
@@ -47,7 +48,12 @@ func Filter(
 		return out, nil
 	}
 
-	// Pass 2: embed profile + articles, compute cosine similarity
+	// Pass 2: embed profile + articles, compute cosine similarity.
+	// An empty profile would make the embedding API reject the request with an
+	// opaque "empty Part" error — fail fast with an actionable message instead.
+	if strings.TrimSpace(profileText) == "" {
+		return nil, fmt.Errorf("profile text is empty — check config/profile.md (in CI, the PROFILE_MD secret)")
+	}
 	profileVec, err := embedder.Embed(ctx, profileText)
 	if err != nil {
 		return nil, err

@@ -318,6 +318,19 @@ func TestFilter_SkipsEmptyText(t *testing.T) {
 	}
 }
 
+// An empty profile must fail fast with a clear error, not an opaque API 400.
+func TestFilter_EmptyProfileErrors(t *testing.T) {
+	articles := []ingestion.Article{article("Good article", "body", 1)}
+	cfg := Config{Mode: "semantic", SimilarityThreshold: 0.5, RecencyDays: 30, MaxArticles: 10}
+	_, err := Filter(context.Background(), articles, "   \n  ", strictEmbedder{}, cfg)
+	if err == nil {
+		t.Fatal("expected error for empty profile text, got nil")
+	}
+	if !strings.Contains(err.Error(), "profile text is empty") {
+		t.Errorf("error should mention empty profile, got: %v", err)
+	}
+}
+
 // --- articleText truncation ---
 
 func TestArticleText_Truncation(t *testing.T) {
