@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Newsletter — 13 Jul 2026</title>
+  <style>/* ── Dark — premium dark mode, Linear/Vercel aesthetic ───────────── */
+:root {
+  --bg:         #0a0a0a;
+  --surface:    #111111;
+  --surface-2:  #161616;
+  --fg:         #f0f0f0;
+  --fg-2:       #a8a8a8;
+  --muted:      #555555;
+  --accent:     #818cf8;
+  --accent-dim: rgba(129,140,248,0.10);
+  --border:     rgba(255,255,255,0.06);
+  --glow:       rgba(129,140,248,0.18);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 3.5rem 3rem 5rem;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+header {
+  padding-bottom: 2.5rem;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--border);
+}
+
+header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #e0e7ff 0%, var(--accent) 60%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+header .meta {
+  font-size: 0.82rem;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+
+/* ── Article ─────────────────────────────────────────────────────────── */
+.article {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem 2.25rem;
+  margin-bottom: 1.25rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  position: relative;
+}
+
+.article::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent) 0%, transparent 60%);
+  border-radius: 12px 12px 0 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.article:hover {
+  border-color: rgba(129,140,248,0.35);
+  box-shadow: 0 0 0 1px rgba(129,140,248,0.15), 0 8px 40px var(--glow);
+  transform: translateY(-2px);
+}
+
+.article:hover::before {
+  opacity: 1;
+}
+
+.article h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  margin-bottom: 0.6rem;
+}
+
+.article h2 a {
+  color: var(--fg);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.article h2 a:hover {
+  color: var(--accent);
+}
+
+.article .source {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid rgba(129,140,248,0.2);
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  margin-bottom: 1.25rem;
+}
+
+.article .pub-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.article .tldr {
+  background: var(--surface-2);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.97rem;
+  color: var(--fg);
+  line-height: 1.65;
+}
+
+.article .tldr strong {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+
+.article .why {
+  font-size: 0.92rem;
+  color: var(--fg-2);
+  line-height: 1.65;
+  padding: 0 0 0 0.1rem;
+  margin-bottom: 1.25rem;
+}
+
+.article .why strong {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.article .read-more {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--fg);
+  text-decoration: none;
+  padding: 0.4rem 1.1rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.article .read-more:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────── */
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 2;
+}
+
+footer a { color: var(--accent); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .container { padding: 2rem 1rem 3rem; }
+  .article { padding: 1.5rem; }
+  header h1 { font-size: 1.6rem; }
+  .article h2 { font-size: 1.1rem; }
+}
+</style>
+  <style>
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+.sort-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.sort-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.sort-select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
+}
+.sort-select {
+  appearance: none;
+  -webkit-appearance: none;
+  font-size: 0.82rem;
+  font-family: inherit;
+  font-weight: 500;
+  color: var(--fg, #111);
+  background: var(--surface, var(--card-bg, #fff));
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+  padding: 0.4rem 2.2rem 0.4rem 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 160px;
+}
+.sort-select:hover {
+  border-color: var(--accent);
+}
+.sort-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>AI Newsletter</h1>
+      <div class="meta">13 Jul 2026 &nbsp;·&nbsp; 20 articles selected from 1021 analyzed · 3 derniers jours</div>
+    </header>
+
+    <div class="sort-bar">
+      <label class="sort-label" for="sort-select">Trier par :</label>
+      <div class="sort-select-wrap">
+        <select id="sort-select" class="sort-select">
+          <option value="relevance">Pertinence</option>
+          <option value="date-desc">Date (récent)</option>
+          <option value="date-asc">Date (ancien)</option>
+        </select>
+      </div>
+    </div>
+
+    
+    <div class="article" data-date="2026-07-13">
+      <h2><a href="https://news.ycombinator.com/item?id=48886741" target="_blank" rel="noopener">Ask HN: Add flag for AI-generated articles</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">13 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Un débat populaire sur Hacker News propose d&#39;ajouter un indicateur visuel pour identifier les articles générés par IA sans pénaliser leur classement.</p>
+      <p class="why"><strong>Why it matters:</strong> La demande de transparence des utilisateurs redéfinit les métriques de qualité et d&#39;engagement, forçant les plateformes d&#39;agrégation à adapter leur UX pour maintenir la confiance face à la prolifération du contenu généré.</p>
+      <a class="read-more" href="https://news.ycombinator.com/item?id=48886741" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-10">
+      <h2><a href="https://techcrunch.com/podcast/open-source-ai-matters-more-than-ever-according-to-hugging-faces-clem-delangue/" target="_blank" rel="noopener">Open source AI matters more than ever, according to Hugging Face’s Clem Delangue</a></h2>
+      <div class="source">https://techcrunch.com/category/artificial-intelligence/feed/</div>
+      <div class="pub-date">10 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> L&#39;IA open source connaît une croissance fulgurante, avec une adoption massive par les entreprises du Fortune 500 via des plateformes comme Hugging Face.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;accessibilité des modèles open source accélère l&#39;innovation technique tout en réduisant les barrières à l&#39;entrée, permettant aux entreprises de déployer des solutions d&#39;IA rentables et personnalisées sans dépendre exclusivement des fournisseurs propriétaires.</p>
+      <a class="read-more" href="https://techcrunch.com/podcast/open-source-ai-matters-more-than-ever-according-to-hugging-faces-clem-delangue/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-10">
+      <h2><a href="https://techcrunch.com/2026/07/10/hugging-faces-ceo-on-why-companies-are-done-renting-their-ai/" target="_blank" rel="noopener">Hugging Face’s CEO on why companies are done renting their AI</a></h2>
+      <div class="source">https://techcrunch.com/category/artificial-intelligence/feed/</div>
+      <div class="pub-date">10 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Les entreprises du Fortune 500 abandonnent les API propriétaires au profit de modèles open source hébergés en interne pour reprendre le contrôle de leur infrastructure IA.</p>
+      <p class="why"><strong>Why it matters:</strong> La démocratisation des poids ouverts modifie radicalement l&#39;architecture d&#39;inférence privilégiée par les praticiens, tout en redéfinissant l&#39;économie de la valeur : le ROI bascule de la location de modèles vers la propriété des actifs et la souveraineté des données.</p>
+      <a class="read-more" href="https://techcrunch.com/2026/07/10/hugging-faces-ceo-on-why-companies-are-done-renting-their-ai/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://ploy.ai/blog/migrating-a-production-ai-agent-to-gpt-5-6" target="_blank" rel="noopener">Migrating a production AI agent to GPT-5.6: 2.2x faster, 27% cheaper</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Une étude de cas détaille la migration d&#39;un agent IA en production vers GPT-5.6, résultant en une accélération de 2,2x et une réduction des coûts de 27%.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, cela démontre l&#39;optimisation concrète des latences et de l&#39;architecture d&#39;inférence des nouveaux modèles. Sur le plan commercial, une telle baisse des coûts opérationnels améliore directement les marges et accélère le seuil de rentabilité des déploiements d&#39;agents.</p>
+      <a class="read-more" href="https://ploy.ai/blog/migrating-a-production-ai-agent-to-gpt-5-6" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://simonwillison.net/2026/Jul/12/bump/#atom-everything" target="_blank" rel="noopener">Fable gets another bump</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Anthropic prolonge l&#39;accès à Claude Fable 5 sur ses plans payants face aux contraintes de calcul, tandis qu&#39;OpenAI optimise l&#39;efficacité de GPT-5.6 Sol et lève temporairement ses limites d&#39;utilisation.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;écart entre les stratégies des deux fournisseurs illustre un défi technique crucial : la rentabilité de l&#39;infrastructure face à la demande explosive des modèles de pointe, impactant directement les coûts opérationnels et la capacité de mise à l&#39;échelle pour les entreprises.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Jul/12/bump/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://www.larp.website/" target="_blank" rel="noopener">LARP – Revenue infrastructure for serious founders</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> LARP propose une infrastructure de revenus conçue pour accélérer la monétisation des produits IA par les fondateurs sérieux.</p>
+      <p class="why"><strong>Why it matters:</strong> Au-delà des avancées techniques, la viabilité commerciale des startups IA dépend d&#39;outils de monétisation robustes ; cette plateforme comble le fossé entre le déploiement de modèles et la génération de revenus récurrents.</p>
+      <a class="read-more" href="https://www.larp.website/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://systima.ai/blog/claude-code-vs-opencode-token-overhead" target="_blank" rel="noopener">Claude Code sends 33k tokens before reading the prompt; OpenCode sends 7k</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Une analyse empirique révèle que Claude Code consomme massivement plus de tokens (33k) qu&#39;OpenCode (7k) avant même de lire le prompt, en raison d&#39;une gestion du cache et du harness nettement moins efficace.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, cela met en lumière des écarts majeurs d&#39;optimisation contextuelle entre les agents de codage, impactant directement l&#39;architecture des requêtes ; sur le plan financier, cette inefficacité exponentielle gonfle drastiquement les coûts d&#39;infrastructure à l&#39;échelle.</p>
+      <a class="read-more" href="https://systima.ai/blog/claude-code-vs-opencode-token-overhead" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://simonwillison.net/2026/Jul/12/directly-responsible-individuals/#atom-everything" target="_blank" rel="noopener">Directly Responsible Individuals (DRI)</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Un agent basé sur les LLM ne doit jamais être désigné comme &#34;Directly Responsible Individual&#34; (DRI) au sein d&#39;une organisation, car l&#39;obligation de rendre des comptes reste une prérogative strictement humaine.</p>
+      <p class="why"><strong>Why it matters:</strong> Alors que l&#39;intégration technique des agents autonomes s&#39;accélère, ce principe délimite clairement la frontière de la gouvernance d&#39;entreprise : l&#39;automatisation des processus ne doit jamais empiéter sur la responsabilité juridique et managériale finale.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Jul/12/directly-responsible-individuals/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-11">
+      <h2><a href="https://techcrunch.com/2026/07/11/openai-bets-on-families-as-chatgpt-goes-deeper-into-households/" target="_blank" rel="noopener">OpenAI bets on families as ChatGPT goes deeper into households</a></h2>
+      <div class="source">https://techcrunch.com/category/artificial-intelligence/feed/</div>
+      <div class="pub-date">11 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> OpenAI recrute un chef de produit dédié pour concevoir des expériences ChatGPT destinées aux familles, aux aidants et aux personnes âgées.</p>
+      <p class="why"><strong>Why it matters:</strong> Cette initiative signale une évolution stratégique vers la personnalisation de l&#39;UX pour les usages domestiques, exigeant des avancées techniques en alignement et en sécurité, tout en ouvrant un nouveau segment de marché à forte rétention pour les modèles grand public.</p>
+      <a class="read-more" href="https://techcrunch.com/2026/07/11/openai-bets-on-families-as-chatgpt-goes-deeper-into-households/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://vilkeliskis.com/b/2026/0711.html" target="_blank" rel="noopener">Designing and assembling my first PCB</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Un ingénieur documente son parcours complet de conception et d&#39;assemblage de son premier circuit imprimé, de la schématique au routage et à la soudure des composants.</p>
+      <p class="why"><strong>Why it matters:</strong> Bien que non lié à l&#39;IA, ce retour d&#39;expérience illustre parfaitement les défis de la transition du logiciel vers le matériel, une compétence de plus en plus critique pour déployer des modèles d&#39;IA à la périphérie (Edge AI) et maîtriser les coûts d&#39;infrastructure matérielle.</p>
+      <a class="read-more" href="https://vilkeliskis.com/b/2026/0711.html" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://kode.diy" target="_blank" rel="noopener">Kode Dot Programmable pocket device for makers, pentesters and geeks</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Un nouveau dispositif programmable compact est lancé pour répondre aux besoins des créateurs, des pentesteurs et des passionnés de technologie.</p>
+      <p class="why"><strong>Why it matters:</strong> Cet outil offre un support matériel flexible pour déployer et tester des modèles d&#39;IA en périphérie, tout en ouvrant des opportunités commerciales émergentes dans le secteur de la sécurité offensive et de l&#39;IoT.</p>
+      <a class="read-more" href="https://kode.diy" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://news.ycombinator.com/item?id=48884984" target="_blank" rel="noopener">Ask HN: What Are You Working On? (July 2026)</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> La communauté Hacker News partage ses projets et idées les plus récents dans un fil de discussion massif datant de juillet 2026.</p>
+      <p class="why"><strong>Why it matters:</strong> C&#39;est un excellent baromètre pour identifier les tendances techniques émergentes et les nouvelles opportunités de marché avant qu&#39;elles ne deviennent mainstream, offrant une vue d&#39;ensemble sur l&#39;orientation de l&#39;industrie.</p>
+      <a class="read-more" href="https://news.ycombinator.com/item?id=48884984" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-10">
+      <h2><a href="https://www.langchain.com/blog/introducing-openwiki-brains-general-purpose-wiki-memory-for-agents" target="_blank" rel="noopener">OpenWiki Brains: Proactive Memory for AI Agents</a></h2>
+      <div class="source">https://blog.langchain.dev/rss.xml</div>
+      <div class="pub-date">10 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> OpenWiki Brains agrège vos sources de données locales en une mémoire proactive et interrogeable en temps réel pour vos agents IA.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, cela résout le problème de la persistance du contexte en offrant un RAG dynamique et local ; stratégiquement, cela permet aux entreprises de déployer des assistants hautement personnalisés sans compromettre la confidentialité de leurs données.</p>
+      <a class="read-more" href="https://www.langchain.com/blog/introducing-openwiki-brains-general-purpose-wiki-memory-for-agents" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-13">
+      <h2><a href="https://mmapped.blog/posts/52-backtrack-free-cursive" target="_blank" rel="noopener">Backtrack-Free Cursive</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">13 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Une nouvelle approche permet de générer de l&#39;écriture cursive de manière continue sans retours en arrière, éliminant le besoin de mécanismes de correction complexes.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, cela simplifie l&#39;architecture des modèles génératifs séquentiels en supprimant la dépendance au backtracking. Pour l&#39;entreprise, cette efficacité algorithmique réduit les coûts de calcul et accélère le déploiement de solutions d&#39;IA générative en production.</p>
+      <a class="read-more" href="https://mmapped.blog/posts/52-backtrack-free-cursive" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://shellzine.net/cyberpunk-comics/" target="_blank" rel="noopener">Cyberpunk Comics, Manga and Graphic Novels</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Une rétrospective culturelle explore l&#39;évolution de l&#39;esthétique et des récits cyberpunk à travers les bandes dessinées, mangas et romans graphiques.</p>
+      <p class="why"><strong>Why it matters:</strong> Ces œuvres ont façonné notre vision speculative de l&#39;intégration sociétale des technologies, offrant un cadre conceptuel pour anticiper l&#39;adoption et l&#39;impact commercial de l&#39;IA.</p>
+      <a class="read-more" href="https://shellzine.net/cyberpunk-comics/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://floooh.github.io/tiny8bit-preview/index.html" target="_blank" rel="noopener">Tiny Emulators</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Une collection d&#39;émulateurs 8-bit ultra-légers, écrits en C et compilés en WebAssembly, s&#39;exécute directement dans le navigateur avec une empreinte mémoire minimale.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;optimisation extrême et l&#39;efficacité computationnelle démontrées ici inspirent le déploiement de modèles IA sur des appareils en périphérie (edge AI), réduisant ainsi les coûts d&#39;infrastructure cloud et ouvrant de nouvelles opportunités commerciales pour des applications embarquées à faible latence.</p>
+      <a class="read-more" href="https://floooh.github.io/tiny8bit-preview/index.html" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-13">
+      <h2><a href="https://raymyers.org/post/zed-creator-calls-spade-a-spade/" target="_blank" rel="noopener">Zig Creator Calls Spade a Spade, Anthropic Blows Smoke</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">13 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Le créateur de Zig dénonce les promesses exagérées d&#39;Anthropic concernant l&#39;autonomie de leurs modèles, rappelant que les LLMs actuels restent fondamentalement des moteurs de complétion statistique sans véritable compréhension.</p>
+      <p class="why"><strong>Why it matters:</strong> Sur le plan technique, cela souligne les limites structurelles des architectures actuelles que tout praticien doit maîtriser pour éviter les échecs de déploiement. Sur le plan commercial, cette clarification protège les entreprises contre des investissements prématurés basés sur un marketing trompeur autour d&#39;une prétendue agenticité.</p>
+      <a class="read-more" href="https://raymyers.org/post/zed-creator-calls-spade-a-spade/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://scotto.me/blog/2026-07-12-how-to-read-more-books/" target="_blank" rel="noopener">How to read more books</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> L&#39;article détaille des stratégies pratiques pour augmenter significativement le volume de lecture de livres.</p>
+      <p class="why"><strong>Why it matters:</strong> Pour les experts en IA, maintenir une consommation élevée de livres est essentiel pour suivre les avancées techniques complexes et les dynamiques du marché, tout en évitant l&#39;épuisement professionnel.</p>
+      <a class="read-more" href="https://scotto.me/blog/2026-07-12-how-to-read-more-books/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-13">
+      <h2><a href="https://www.disruptionbanking.com/2026/07/13/inside-berkshires-397-billion-bet-against-an-overheated-market/" target="_blank" rel="noopener">Berkshire&#39;s $397B Bet Against an Overheated Market</a></h2>
+      <div class="source">https://hnrss.org/frontpage</div>
+      <div class="pub-date">13 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Berkshire Hathaway amasse une réserve de liquidités record de 397 milliards de dollars, anticipant une correction majeure des marchés financiers potentiellement surévalués.</p>
+      <p class="why"><strong>Why it matters:</strong> Une correction de marché affecterait directement le financement des infrastructures d&#39;IA et la valorisation des startups, obligeant les praticiens à justifier un ROI immédiat plutôt qu&#39;à se concentrer uniquement sur l&#39;innovation technique.</p>
+      <a class="read-more" href="https://www.disruptionbanking.com/2026/07/13/inside-berkshires-397-billion-bet-against-an-overheated-market/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-12">
+      <h2><a href="https://simonwillison.net/2026/Jul/12/sqlite-utils/#atom-everything" target="_blank" rel="noopener">sqlite-utils 4.1.1</a></h2>
+      <div class="source">https://simonwillison.net/atom/everything/</div>
+      <div class="pub-date">12 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> La version 4.1.1 de sqlite-utils corrige une faille critique où `table.transform()` pouvait silencieusement supprimer des lignes liées lors d&#39;une transaction avec des clés étrangères destructives.</p>
+      <p class="why"><strong>Why it matters:</strong> Cette correction, identifiée par Claude, illustre comment les assistants IA accélèrent le débogage technique tout en sécurisant l&#39;intégrité des données, un enjeu crucial pour les pipelines ML en production et la fiabilité opérationnelle des entreprises.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Jul/12/sqlite-utils/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+
+    <footer>
+      Generated on 2026-07-13 10:14 &nbsp;·&nbsp; <a href="../index.html">All issues</a>
+    </footer>
+  </div>
+
+  <script>
+(function() {
+  var container = document.querySelector('.container');
+  var articles = Array.from(document.querySelectorAll('.article'));
+  articles.forEach(function(el, i) { el.dataset.index = i; });
+
+  document.getElementById('sort-select').addEventListener('change', function() {
+    var mode = this.value;
+    var sorted = articles.slice().sort(function(a, b) {
+      if (mode === 'relevance') return +a.dataset.index - +b.dataset.index;
+      if (mode === 'date-desc') return b.dataset.date.localeCompare(a.dataset.date);
+      if (mode === 'date-asc')  return a.dataset.date.localeCompare(b.dataset.date);
+      return 0;
+    });
+    var footer = container.querySelector('footer');
+    sorted.forEach(function(el) { container.insertBefore(el, footer); });
+  });
+})();
+  </script>
+</body>
+</html>
