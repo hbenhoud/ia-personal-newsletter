@@ -13,13 +13,54 @@ import (
 )
 
 // Config holds the full application configuration loaded from newsletter.yaml and profile.md.
+//
+// Global blocks (filtering, embedding, llm, output) are shared across every
+// profile. Each profile owns its RSS sources and a profile.md file that drives
+// its interests, level, language, theme, and recency window.
 type Config struct {
+	// Sources is only used for the backward-compat fallback: a top-level
+	// sources block with no profiles list is treated as a single "default"
+	// profile pointing at config/profile.md.
 	Sources   SourcesConfig   `yaml:"sources"`
 	Filtering FilteringConfig `yaml:"filtering"`
 	Embedding EmbeddingConfig `yaml:"embedding"`
 	LLM       LLMConfig       `yaml:"llm"`
 	Output    OutputConfig    `yaml:"output"`
-	Profile   Profile
+	Profiles  []ProfileConfig `yaml:"profiles"`
+}
+
+// ProfileConfig is one newsletter edition: a named profile with its own RSS
+// sources and its own profile.md (loaded into Profile at startup).
+type ProfileConfig struct {
+	Name        string        `yaml:"name"`
+	ProfilePath string        `yaml:"profile"` // path to profile.md, relative to the config dir
+	Sources     SourcesConfig `yaml:"sources"`
+	Profile     Profile       `yaml:"-"` // populated from ProfilePath by Load
+}
+
+// Slug returns a filesystem-safe identifier for the profile, used as the
+// output subdirectory (output/<slug>/...).
+func (pc *ProfileConfig) Slug() string {
+	return Slugify(pc.Name)
+}
+
+// Slugify converts an arbitrary name into a lowercase, hyphen-separated slug.
+func Slugify(s string) string {
+	var sb strings.Builder
+	lastHyphen := false
+	for _, r := range strings.ToLower(strings.TrimSpace(s)) {
+		switch {
+		case r >= 'a' && r <= 'z', r >= '0' && r <= '9':
+			sb.WriteRune(r)
+			lastHyphen = false
+		default:
+			if !lastHyphen && sb.Len() > 0 {
+				sb.WriteByte('-')
+				lastHyphen = true
+			}
+		}
+	}
+	return strings.Trim(sb.String(), "-")
 }
 
 type SourcesConfig struct {
@@ -95,14 +136,47 @@ func Load(configDir string) (*Config, error) {
 		cfg.Embedding.CachePath = "./.cache/embeddings.json"
 	}
 
-	profilePath := filepath.Join(configDir, "profile.md")
-	profile, err := LoadProfile(profilePath)
-	if err != nil {
-		return nil, fmt.Errorf("reading profile.md: %w (run 'newsletter profile setup' first)", err)
+	// Backward-compat: a top-level sources block with no profiles list is
+	// treated as a single "default" profile pointing at config/profile.md.
+	if len(cfg.Profiles) == 0 && len(cfg.Sources.RSS) > 0 {
+		cfg.Profiles = []ProfileConfig{{
+			Name:        "default",
+			ProfilePath: "profile.md",
+			Sources:     cfg.Sources,
+		}}
 	}
-	cfg.Profile = *profile
+	if len(cfg.Profiles) == 0 {
+		return nil, fmt.Errorf("no profiles configured in newsletter.yaml (add a 'profiles:' list)")
+	}
+
+	// Load each profile's profile.md.
+	for i := range cfg.Profiles {
+		pc := &cfg.Profiles[i]
+		if pc.Name == "" {
+			return nil, fmt.Errorf("profile #%d is missing a name in newsletter.yaml", i+1)
+		}
+		path := ProfileFilePath(configDir, pc)
+		profile, err := LoadProfile(path)
+		if err != nil {
+			return nil, fmt.Errorf("reading profile %q (%s): %w (run 'newsletter profile setup --profile %s' first)", pc.Name, path, err, pc.Name)
+		}
+		pc.Profile = *profile
+	}
 
 	return &cfg, nil
+}
+
+// ProfileFilePath resolves the on-disk path of a profile's markdown file.
+// Defaults to <configDir>/profiles/<slug>.md when the profile has no explicit path.
+func ProfileFilePath(configDir string, pc *ProfileConfig) string {
+	path := pc.ProfilePath
+	if path == "" {
+		path = filepath.Join("profiles", pc.Slug()+".md")
+	}
+	if !filepath.IsAbs(path) {
+		path = filepath.Join(configDir, path)
+	}
+	return path
 }
 
 // LoadProfile parses config/profile.md.
@@ -262,9 +336,10 @@ func RunProfileWizard(r *bufio.Reader) (*Profile, error) {
 	fmt.Println("   [2] dark    — dark background, blue/purple accents")
 	fmt.Println("   [3] paper   — cream background, serif, print style")
 	fmt.Println("   [4] terminal — black background, monospace, green accents")
+	fmt.Println("   [5] modern  — Stripe-inspired, gradient hero, light SaaS UX")
 	fmt.Print("   Choice: ")
 	themeChoice, _ := r.ReadString('\n')
-	themes := map[string]string{"1": "minimal", "2": "dark", "3": "paper", "4": "terminal"}
+	themes := map[string]string{"1": "minimal", "2": "dark", "3": "paper", "4": "terminal", "5": "modern"}
 	if t, ok := themes[strings.TrimSpace(themeChoice)]; ok {
 		p.Theme = t
 	} else {
@@ -346,12 +421,13 @@ func RunProfileEditWizard(r *bufio.Reader, current *Profile) (*Profile, error) {
 		}
 	}
 
-	themeNames := map[string]string{"1": "minimal", "2": "dark", "3": "paper", "4": "terminal"}
+	themeNames := map[string]string{"1": "minimal", "2": "dark", "3": "paper", "4": "terminal", "5": "modern"}
 	fmt.Printf("6. Visual theme (current: %s):\n", current.Theme)
 	fmt.Println("   [1] minimal — white, clean")
 	fmt.Println("   [2] dark    — dark background, blue accents")
 	fmt.Println("   [3] paper   — cream background, serif")
 	fmt.Println("   [4] terminal — black background, monospace, green")
+	fmt.Println("   [5] modern  — Stripe-inspired, gradient hero, light SaaS UX")
 	fmt.Print("   Choice (Enter to keep): ")
 	if v := readOptional(r); v != "" {
 		if t, ok := themeNames[v]; ok {

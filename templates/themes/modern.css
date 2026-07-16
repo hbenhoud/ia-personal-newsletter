@@ -1,0 +1,233 @@
+/* ── Modern — clean product-SaaS UX, Stripe-inspired ──────────────────
+   Signature: an angled teal→blurple→violet gradient hero panel.
+   Everything around it stays quiet: soft blue-gray canvas, white cards,
+   navy ink, generous spacing.                                          */
+:root {
+  --bg:         #f6f9fc;   /* Stripe's signature blue-gray canvas */
+  --surface:    #ffffff;   /* cards */
+  --surface-2:  #f5f7ff;   /* tinted callouts */
+  --fg:         #0a2540;   /* deep navy ink */
+  --fg-2:       #425466;   /* slate secondary */
+  --muted:      #8792a2;   /* captions / meta */
+  --accent:     #635bff;   /* blurple */
+  --accent-ink: #4b45d4;   /* darker blurple for hover */
+  --accent-dim: #eef0ff;   /* blurple tint */
+  --border:     #e6ebf1;
+  --card-bg:    #ffffff;
+  --grad:       linear-gradient(102deg, #21d4fd 0%, #635bff 52%, #b224ef 100%);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  font-size: 16.5px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 3rem 2.5rem 5rem;
+}
+
+/* ── Header: the gradient hero panel (signature) ────────────────────── */
+header {
+  position: relative;
+  background: var(--grad);
+  border-radius: 22px;
+  padding: 2.75rem 2.75rem 2.5rem;
+  margin-bottom: 2.5rem;
+  overflow: hidden;
+  box-shadow: 0 18px 40px -12px rgba(99,91,255,0.45);
+}
+
+/* soft light bloom in the corner for depth */
+header::after {
+  content: '';
+  position: absolute;
+  top: -40%; right: -10%;
+  width: 60%; height: 180%;
+  background: radial-gradient(closest-side, rgba(255,255,255,0.35), transparent 70%);
+  pointer-events: none;
+}
+
+header h1 {
+  position: relative;
+  font-size: 2.15rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  color: #ffffff;
+  margin-bottom: 0.6rem;
+}
+
+header .meta {
+  position: relative;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.88);
+  letter-spacing: 0.01em;
+}
+
+header .meta a {
+  color: #ffffff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.5);
+  padding-bottom: 1px;
+  transition: border-color 0.15s ease;
+}
+header .meta a:hover { border-color: #ffffff; }
+
+/* ── Sort bar (shared markup) ──────────────────────────────────────── */
+.sort-bar { margin-bottom: 1.75rem; }
+
+/* ── Article cards ─────────────────────────────────────────────────── */
+.article {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem 2rem;
+  margin-bottom: 1.1rem;
+  box-shadow: 0 1px 2px rgba(10,37,64,0.04);
+  transition: box-shadow 0.22s ease, transform 0.22s ease, border-color 0.22s ease;
+}
+
+.article:hover {
+  border-color: #d5d0ff;
+  box-shadow: 0 16px 40px -12px rgba(99,91,255,0.22), 0 2px 4px rgba(10,37,64,0.05);
+  transform: translateY(-3px);
+}
+
+.article h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.32;
+  margin-bottom: 0.55rem;
+}
+
+.article h2 a {
+  color: var(--fg);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.article h2 a:hover { color: var(--accent); }
+
+.article .source {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+  padding: 0.22rem 0.7rem;
+  border-radius: 999px;
+  margin-bottom: 1.15rem;
+}
+
+.article .pub-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 1rem;
+}
+
+.article .tldr {
+  position: relative;
+  background: var(--surface-2);
+  border-radius: 10px;
+  padding: 1rem 1.2rem 1rem 1.35rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.97rem;
+  color: var(--fg);
+  line-height: 1.6;
+}
+/* accent rail on the callout */
+.article .tldr::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0.9rem; bottom: 0.9rem;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--grad);
+}
+.article .tldr strong {
+  display: block;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+
+.article .why {
+  font-size: 0.93rem;
+  color: var(--fg-2);
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+.article .why strong {
+  display: block;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.article .read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: none;
+  padding: 0.5rem 1.15rem;
+  background: var(--accent);
+  border-radius: 999px;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 12px -3px rgba(99,91,255,0.5);
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.article .read-more:hover {
+  background: var(--accent-ink);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px -4px rgba(99,91,255,0.55);
+}
+
+/* ── Landing page cards reuse .article; keep the CTA readable ───────── */
+
+/* ── Footer ────────────────────────────────────────────────────────── */
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 2;
+}
+footer a { color: var(--accent); text-decoration: none; font-weight: 500; }
+footer a:hover { color: var(--accent-ink); text-decoration: underline; }
+
+/* ── Responsive ────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .container { padding: 1.75rem 1.1rem 3rem; }
+  header { padding: 2rem 1.5rem 1.75rem; border-radius: 18px; }
+  header h1 { font-size: 1.65rem; }
+  .article { padding: 1.4rem 1.4rem; }
+  .article h2 { font-size: 1.12rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article, .article .read-more, .article h2 a { transition: none; }
+  .article:hover { transform: none; }
+}

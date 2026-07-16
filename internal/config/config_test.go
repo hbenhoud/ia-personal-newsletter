@@ -202,6 +202,108 @@ func TestRunProfileWizard_CustomDays(t *testing.T) {
 	}
 }
 
+// Multi-profile: Slugify
+
+func TestSlugify(t *testing.T) {
+	cases := map[string]string{
+		"technical":     "technical",
+		"AI & Business": "ai-business",
+		"  Tech News  ": "tech-news",
+		"a/b\\c":        "a-b-c",
+		"":              "",
+	}
+	for in, want := range cases {
+		if got := Slugify(in); got != want {
+			t.Errorf("Slugify(%q) = %q, want %q", in, got, want)
+		}
+	}
+}
+
+// Multi-profile: Load with an explicit profiles list
+
+func TestLoad_MultipleProfiles(t *testing.T) {
+	dir := t.TempDir()
+	writeProfileFile(t, filepath.Join(dir, "profiles", "technical.md"), "dark")
+	writeProfileFile(t, filepath.Join(dir, "profiles", "business.md"), "paper")
+
+	yaml := `
+profiles:
+  - name: technical
+    profile: profiles/technical.md
+    sources:
+      rss:
+        - https://example.com/tech.xml
+  - name: business
+    profile: profiles/business.md
+    sources:
+      rss:
+        - https://example.com/biz1.xml
+        - https://example.com/biz2.xml
+`
+	if err := os.WriteFile(filepath.Join(dir, "newsletter.yaml"), []byte(yaml), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	cfg, err := Load(dir)
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if len(cfg.Profiles) != 2 {
+		t.Fatalf("expected 2 profiles, got %d", len(cfg.Profiles))
+	}
+	tech := cfg.Profiles[0]
+	if tech.Name != "technical" || tech.Slug() != "technical" {
+		t.Errorf("unexpected technical profile: %+v", tech)
+	}
+	if tech.Profile.Theme != "dark" {
+		t.Errorf("technical theme: got %q, want dark", tech.Profile.Theme)
+	}
+	if len(tech.Sources.RSS) != 1 {
+		t.Errorf("technical feeds: got %d, want 1", len(tech.Sources.RSS))
+	}
+	if len(cfg.Profiles[1].Sources.RSS) != 2 {
+		t.Errorf("business feeds: got %d, want 2", len(cfg.Profiles[1].Sources.RSS))
+	}
+}
+
+// Multi-profile: backward-compat fallback (top-level sources → "default" profile)
+
+func TestLoad_BackwardCompatFallback(t *testing.T) {
+	dir := t.TempDir()
+	writeProfileFile(t, filepath.Join(dir, "profile.md"), "minimal")
+
+	yaml := `
+sources:
+  rss:
+    - https://example.com/feed.xml
+`
+	if err := os.WriteFile(filepath.Join(dir, "newsletter.yaml"), []byte(yaml), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	cfg, err := Load(dir)
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if len(cfg.Profiles) != 1 {
+		t.Fatalf("expected 1 fallback profile, got %d", len(cfg.Profiles))
+	}
+	if cfg.Profiles[0].Name != "default" {
+		t.Errorf("fallback profile name: got %q, want default", cfg.Profiles[0].Name)
+	}
+	if len(cfg.Profiles[0].Sources.RSS) != 1 {
+		t.Errorf("fallback feeds: got %d, want 1", len(cfg.Profiles[0].Sources.RSS))
+	}
+}
+
+func writeProfileFile(t *testing.T, path, theme string) {
+	t.Helper()
+	p := &Profile{Interests: "test interests", Level: "expert", Language: "fr", RecencyDays: 3, Theme: theme}
+	if err := WriteProfile(path, p); err != nil {
+		t.Fatalf("WriteProfile(%s): %v", path, err)
+	}
+}
+
 // AC-1: WriteProfile creates parent directories
 
 func TestWriteProfile_CreatesDir(t *testing.T) {

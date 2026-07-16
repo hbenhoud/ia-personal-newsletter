@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Newsletters</title>
+  <style>{{.CSS}}</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>AI Newsletters</h1>
+      <div class="meta">Choose an edition</div>
+    </header>
+
+    {{range .Profiles}}
+    <div class="article">
+      <h2><a href="{{.IndexPath}}">{{.Title}}</a></h2>
+      {{if .LatestPath}}
+      <p class="tldr">
+        Latest: <a href="{{.LatestPath}}">{{.LatestLabel}}</a>
+        &nbsp;·&nbsp; {{.ArticleCount}} articles
+        &nbsp;·&nbsp; {{.IssueCount}} issue{{if ne .IssueCount 1}}s{{end}}
+      </p>
+      {{else}}
+      <p class="tldr">No issues yet.</p>
+      {{end}}
+      <a class="read-more" href="{{.IndexPath}}">→ All issues</a>
+    </div>
+    {{end}}
+
+    {{if not .Profiles}}
+    <p>No newsletters configured. Add a <code>profiles:</code> list to <code>config/newsletter.yaml</code>.</p>
+    {{end}}
+
+    <footer>Generated on {{.GeneratedAt}}</footer>
+  </div>
+</body>
+</html>

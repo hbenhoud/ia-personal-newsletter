@@ -1,15 +1,31 @@
-sources:
-  rss:
-    # --- Tech / research axis ---
-    - https://simonwillison.net/atom/everything/   # best AI signal/noise ratio
-    - https://huggingface.co/blog/feed.xml          # open-source models & tools
-    - https://raw.githubusercontent.com/taobojlen/anthropic-rss-feed/main/anthropic_news_rss.xml  # Anthropic news (community feed, updated every 6h)
-    - https://blog.langchain.dev/rss.xml            # agents & RAG engineering
-    - https://hnrss.org/frontpage                   # community trending topics
-    # --- Business axis ---
-    - https://venturebeat.com/category/ai/feed/                      # enterprise AI adoption & market
-    - https://techcrunch.com/category/artificial-intelligence/feed/  # funding, launches, startups
-    - https://www.technologyreview.com/topic/artificial-intelligence/feed  # AI analysis & industry impact
+# Each profile is one newsletter edition with its own RSS sources and its own
+# profile.md (interests, level, language, theme, recency window). The embedding,
+# llm, filtering, and output blocks below are shared across every profile.
+profiles:
+  - name: technical
+    profile: profiles/technical.md
+    sources:
+      rss:
+        - https://simonwillison.net/atom/everything/   # best AI signal/noise ratio
+        - https://huggingface.co/blog/feed.xml          # open-source models & tools
+        - https://raw.githubusercontent.com/taobojlen/anthropic-rss-feed/main/anthropic_news_rss.xml  # Anthropic news (community feed, updated every 6h)
+        - https://blog.langchain.dev/rss.xml            # agents & RAG engineering
+        - https://hnrss.org/frontpage                   # community trending topics
+
+  - name: business
+    profile: profiles/business.md
+    sources:
+      rss:
+        - https://venturebeat.com/category/ai/feed/                      # enterprise AI adoption & market
+        - https://venturebeat.com/category/enterprise/feed/              # enterprise buying & deployment signals
+        - https://techcrunch.com/category/artificial-intelligence/feed/  # AI launches & startups
+        - https://techcrunch.com/category/venture/feed/                  # funding rounds — where capital flows
+        - https://www.technologyreview.com/topic/artificial-intelligence/feed  # AI analysis & industry impact
+        - https://www.cbinsights.com/research/feed/                      # market intelligence & emerging categories
+        - https://aibusiness.com/rss.xml                                 # enterprise AI business & use cases
+        - https://sifted.eu/feed                                         # European startups & emerging markets
+        - https://www.saastr.com/feed/                                   # SaaS monetization, pricing & GTM
+        - https://www.ben-evans.com/benedictevans?format=rss             # strategic market analysis & platform shifts
 
 filtering:
   mode: semantic              # semantic | keyword | both

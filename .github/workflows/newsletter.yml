@@ -27,11 +27,16 @@ jobs:
           restore-keys: |
             embeddings-${{ hashFiles('config/newsletter.yaml') }}-
 
-      # Inject profile from secret (kept out of git for privacy)
-      - name: Write profile
-        run: printf '%s' "$PROFILE_MD" > config/profile.md
+      # Inject per-profile files from secrets (kept out of git for privacy).
+      # Add one secret per profile referenced in config/newsletter.yaml.
+      - name: Write profiles
+        run: |
+          mkdir -p config/profiles
+          printf '%s' "$PROFILE_TECHNICAL_MD" > config/profiles/technical.md
+          printf '%s' "$PROFILE_BUSINESS_MD"  > config/profiles/business.md
         env:
-          PROFILE_MD: ${{ secrets.PROFILE_MD }}
+          PROFILE_TECHNICAL_MD: ${{ secrets.PROFILE_TECHNICAL_MD }}
+          PROFILE_BUSINESS_MD: ${{ secrets.PROFILE_BUSINESS_MD }}
 
       - name: Build
         run: go build -o newsletter ./cmd/newsletter
@@ -59,6 +64,6 @@ jobs:
           PAGES_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
           curl -s -X POST "$SLACK_WEBHOOK_URL" \
             -H 'Content-Type: application/json' \
-            -d "{\"text\":\"🗞️ *AI Newsletter ${DATE}* is ready!\n🔗 <${PAGES_URL}/${DATE}/index.html|Read it>\"}"
+            -d "{\"text\":\"🗞️ *AI Newsletters ${DATE}* are ready!\n🔗 <${PAGES_URL}/index.html|Read them>\"}"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

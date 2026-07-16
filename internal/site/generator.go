@@ -165,6 +165,97 @@ func (g *Generator) WriteIndex() error {
 	})
 }
 
+// HomeProfileInput identifies one newsletter edition for the root landing page.
+// The latest issue date and article count are read from the filesystem.
+type HomeProfileInput struct {
+	Name     string
+	Slug     string
+	Title    string
+	Language string
+}
+
+// homeProfile is the rendered view of a profile on the landing page.
+type homeProfile struct {
+	Name         string
+	Slug         string
+	Title        string
+	Language     string
+	LatestLabel  string
+	LatestPath   string // relative link to the latest issue, e.g. "technical/2026-07-16/index.html"
+	IndexPath    string // relative link to the profile index, e.g. "technical/index.html"
+	ArticleCount int
+	IssueCount   int
+}
+
+type homeData struct {
+	CSS         template.CSS
+	Profiles    []homeProfile
+	GeneratedAt string
+}
+
+// WriteHome renders the root landing page (rootDir/index.html) listing every
+// newsletter edition. For each profile it scans rootDir/<slug> for the latest
+// issue directory and its article count.
+func WriteHome(rootDir string, profiles []HomeProfileInput, homeTmplContent, cssContent string) error {
+	tmpl, err := template.New("home").Funcs(template.FuncMap{
+		"not": func(v any) bool {
+			if s, ok := v.([]homeProfile); ok {
+				return len(s) == 0
+			}
+			return v == nil
+		},
+	}).Parse(homeTmplContent)
+	if err != nil {
+		return fmt.Errorf("parsing home template: %w", err)
+	}
+
+	var rendered []homeProfile
+	for _, p := range profiles {
+		hp := homeProfile{
+			Name:      p.Name,
+			Slug:      p.Slug,
+			Title:     p.Title,
+			Language:  p.Language,
+			IndexPath: p.Slug + "/index.html",
+		}
+		profileDir := filepath.Join(rootDir, p.Slug)
+		entries, err := os.ReadDir(profileDir)
+		if err == nil {
+			var dates []string
+			for _, e := range entries {
+				if e.IsDir() && isDateDir(e.Name()) {
+					dates = append(dates, e.Name())
+				}
+			}
+			sort.Sort(sort.Reverse(sort.StringSlice(dates)))
+			hp.IssueCount = len(dates)
+			if len(dates) > 0 {
+				latest := dates[0]
+				hp.LatestLabel = labelFromDir(latest)
+				hp.LatestPath = p.Slug + "/" + latest + "/index.html"
+				hp.ArticleCount = readArticleCount(filepath.Join(profileDir, latest, "meta.json"))
+			}
+		}
+		rendered = append(rendered, hp)
+	}
+
+	if err := os.MkdirAll(rootDir, 0755); err != nil {
+		return fmt.Errorf("creating output root: %w", err)
+	}
+	outPath := filepath.Join(rootDir, "index.html")
+	f, err := os.Create(outPath)
+	if err != nil {
+		return fmt.Errorf("creating home file: %w", err)
+	}
+	defer f.Close()
+
+	return tmpl.Execute(f, homeData{
+		CSS:         template.CSS(cssContent),
+		Profiles:    rendered,
+		GeneratedAt: time.Now().Format("2006-01-02 15:04"),
+	})
+}
+
 func readArticleCount(metaPath string) int {
 	data, err := os.ReadFile(metaPath)
 	if err != nil {

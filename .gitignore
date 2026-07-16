@@ -1,5 +1,6 @@
-# User profile (contains personal data)
+# User profiles (contain personal data — injected from secrets in CI)
 config/profile.md
+config/profiles/
 
 # Generated newsletter site
 output/

@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/url"
+	"strings"
 	"time"
 
 	"github.com/mmcdole/gofeed"
@@ -14,7 +16,7 @@ type Article struct {
 	Title     string
 	URL       string
 	Content   string // description or full content
-	Source    string // feed URL
+	Source    string // human-readable feed name (falls back to the feed host)
 	FetchedAt time.Time
 	Published time.Time
 }
@@ -63,6 +65,11 @@ func fetchFeed(ctx context.Context, url string) ([]Article, error) {
 		return nil, fmt.Errorf("parsing feed: %w", err)
 	}
 
+	source := strings.TrimSpace(feed.Title)
+	if source == "" {
+		source = sourceHost(url)
+	}
+
 	articles := make([]Article, 0, len(feed.Items))
 	for _, item := range feed.Items {
 		if item.Link == "" {
@@ -85,11 +92,20 @@ func fetchFeed(ctx context.Context, url string) ([]Article, error) {
 			Title:     item.Title,
 			URL:       item.Link,
 			Content:   content,
-			Source:    url,
+			Source:    source,
 			FetchedAt: time.Now(),
 			Published: published,
 		})
 	}
 
 	return articles, nil
+}
+
+// sourceHost returns the feed's host without a leading "www.", used as a
+// fallback source label when the feed has no title.
+func sourceHost(feedURL string) string {
+	if u, err := url.Parse(feedURL); err == nil && u.Host != "" {
+		return strings.TrimPrefix(u.Host, "www.")
+	}
+	return feedURL
 }

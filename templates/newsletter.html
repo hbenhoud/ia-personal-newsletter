@@ -93,7 +93,7 @@
     {{end}}
 
     <footer>
-      Generated on {{.GeneratedAt}} &nbsp;·&nbsp; <a href="../index.html">All issues</a>
+      Generated on {{.GeneratedAt}} &nbsp;·&nbsp; <a href="../index.html">{{if eq .Language "fr"}}Toutes les éditions{{else}}All issues{{end}}</a> &nbsp;·&nbsp; <a href="../../index.html">{{if eq .Language "fr"}}← Accueil{{else}}← All newsletters{{end}}</a>
     </footer>
   </div>
 
