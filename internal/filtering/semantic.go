@@ -52,7 +52,7 @@ func Filter(
 	// An empty profile would make the embedding API reject the request with an
 	// opaque "empty Part" error — fail fast with an actionable message instead.
 	if strings.TrimSpace(profileText) == "" {
-		return nil, fmt.Errorf("profile text is empty — check config/profile.md (in CI, the PROFILE_MD secret)")
+		return nil, fmt.Errorf("profile text is empty — the profile's markdown file is empty (in CI, set the profile's PROFILE_<NAME>_MD secret)")
 	}
 	profileVec, err := embedder.Embed(ctx, profileText)
 	if err != nil {

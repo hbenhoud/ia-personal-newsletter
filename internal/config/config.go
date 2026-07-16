@@ -160,10 +160,22 @@ func Load(configDir string) (*Config, error) {
 		if err != nil {
 			return nil, fmt.Errorf("reading profile %q (%s): %w (run 'newsletter profile setup --profile %s' first)", pc.Name, path, err, pc.Name)
 		}
+		if strings.TrimSpace(profile.Text) == "" {
+			return nil, fmt.Errorf("profile %q is empty (%s) — in CI, set the %s secret to the file's contents", pc.Name, path, ProfileSecretName(pc))
+		}
 		pc.Profile = *profile
 	}
 
 	return &cfg, nil
+}
+
+// ProfileSecretName returns the GitHub Actions secret name the CI workflow uses
+// to inject a profile's markdown (e.g. "technical" -> "PROFILE_TECHNICAL_MD").
+func ProfileSecretName(pc *ProfileConfig) string {
+	if pc.Name == "default" {
+		return "PROFILE_MD"
+	}
+	return "PROFILE_" + strings.ToUpper(strings.ReplaceAll(pc.Slug(), "-", "_")) + "_MD"
 }
 
 // ProfileFilePath resolves the on-disk path of a profile's markdown file.
