@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Newsletter — 17 Jul 2026</title>
+  <style>/* ── Modern — clean product-SaaS UX, Stripe-inspired ──────────────────
+   Signature: an angled teal→blurple→violet gradient hero panel.
+   Everything around it stays quiet: soft blue-gray canvas, white cards,
+   navy ink, generous spacing.                                          */
+:root {
+  --bg:         #f6f9fc;   /* Stripe's signature blue-gray canvas */
+  --surface:    #ffffff;   /* cards */
+  --surface-2:  #f5f7ff;   /* tinted callouts */
+  --fg:         #0a2540;   /* deep navy ink */
+  --fg-2:       #425466;   /* slate secondary */
+  --muted:      #8792a2;   /* captions / meta */
+  --accent:     #635bff;   /* blurple */
+  --accent-ink: #4b45d4;   /* darker blurple for hover */
+  --accent-dim: #eef0ff;   /* blurple tint */
+  --border:     #e6ebf1;
+  --card-bg:    #ffffff;
+  --grad:       linear-gradient(102deg, #21d4fd 0%, #635bff 52%, #b224ef 100%);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  font-size: 16.5px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 3rem 2.5rem 5rem;
+}
+
+/* ── Header: the gradient hero panel (signature) ────────────────────── */
+header {
+  position: relative;
+  background: var(--grad);
+  border-radius: 22px;
+  padding: 2.75rem 2.75rem 2.5rem;
+  margin-bottom: 2.5rem;
+  overflow: hidden;
+  box-shadow: 0 18px 40px -12px rgba(99,91,255,0.45);
+}
+
+/* soft light bloom in the corner for depth */
+header::after {
+  content: '';
+  position: absolute;
+  top: -40%; right: -10%;
+  width: 60%; height: 180%;
+  background: radial-gradient(closest-side, rgba(255,255,255,0.35), transparent 70%);
+  pointer-events: none;
+}
+
+header h1 {
+  position: relative;
+  font-size: 2.15rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  color: #ffffff;
+  margin-bottom: 0.6rem;
+}
+
+header .meta {
+  position: relative;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.88);
+  letter-spacing: 0.01em;
+}
+
+header .meta a {
+  color: #ffffff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.5);
+  padding-bottom: 1px;
+  transition: border-color 0.15s ease;
+}
+header .meta a:hover { border-color: #ffffff; }
+
+/* ── Sort bar (shared markup) ──────────────────────────────────────── */
+.sort-bar { margin-bottom: 1.75rem; }
+
+/* ── Article cards ─────────────────────────────────────────────────── */
+.article {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem 2rem;
+  margin-bottom: 1.1rem;
+  box-shadow: 0 1px 2px rgba(10,37,64,0.04);
+  transition: box-shadow 0.22s ease, transform 0.22s ease, border-color 0.22s ease;
+}
+
+.article:hover {
+  border-color: #d5d0ff;
+  box-shadow: 0 16px 40px -12px rgba(99,91,255,0.22), 0 2px 4px rgba(10,37,64,0.05);
+  transform: translateY(-3px);
+}
+
+.article h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.32;
+  margin-bottom: 0.55rem;
+}
+
+.article h2 a {
+  color: var(--fg);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.article h2 a:hover { color: var(--accent); }
+
+.article .source {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+  padding: 0.22rem 0.7rem;
+  border-radius: 999px;
+  margin-bottom: 1.15rem;
+}
+
+.article .pub-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 1rem;
+}
+
+.article .tldr {
+  position: relative;
+  background: var(--surface-2);
+  border-radius: 10px;
+  padding: 1rem 1.2rem 1rem 1.35rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.97rem;
+  color: var(--fg);
+  line-height: 1.6;
+}
+/* accent rail on the callout */
+.article .tldr::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0.9rem; bottom: 0.9rem;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--grad);
+}
+.article .tldr strong {
+  display: block;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+
+.article .why {
+  font-size: 0.93rem;
+  color: var(--fg-2);
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+.article .why strong {
+  display: block;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.article .read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: none;
+  padding: 0.5rem 1.15rem;
+  background: var(--accent);
+  border-radius: 999px;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 12px -3px rgba(99,91,255,0.5);
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.article .read-more:hover {
+  background: var(--accent-ink);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px -4px rgba(99,91,255,0.55);
+}
+
+/* ── Landing page cards reuse .article; keep the CTA readable ───────── */
+
+/* ── Footer ────────────────────────────────────────────────────────── */
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 2;
+}
+footer a { color: var(--accent); text-decoration: none; font-weight: 500; }
+footer a:hover { color: var(--accent-ink); text-decoration: underline; }
+
+/* ── Responsive ────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .container { padding: 1.75rem 1.1rem 3rem; }
+  header { padding: 2rem 1.5rem 1.75rem; border-radius: 18px; }
+  header h1 { font-size: 1.65rem; }
+  .article { padding: 1.4rem 1.4rem; }
+  .article h2 { font-size: 1.12rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article, .article .read-more, .article h2 a { transition: none; }
+  .article:hover { transform: none; }
+}
+</style>
+  <style>
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+.sort-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.sort-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.sort-select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
+}
+.sort-select {
+  appearance: none;
+  -webkit-appearance: none;
+  font-size: 0.82rem;
+  font-family: inherit;
+  font-weight: 500;
+  color: var(--fg, #111);
+  background: var(--surface, var(--card-bg, #fff));
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+  padding: 0.4rem 2.2rem 0.4rem 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 160px;
+}
+.sort-select:hover {
+  border-color: var(--accent);
+}
+.sort-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>AI Newsletter</h1>
+      <div class="meta">17 Jul 2026 &nbsp;·&nbsp; 20 articles selected from 171 analyzed · 5 derniers jours</div>
+    </header>
+
+    <div class="sort-bar">
+      <label class="sort-label" for="sort-select">Trier par :</label>
+      <div class="sort-select-wrap">
+        <select id="sort-select" class="sort-select">
+          <option value="relevance">Pertinence</option>
+          <option value="date-desc">Date (récent)</option>
+          <option value="date-asc">Date (ancien)</option>
+        </select>
+      </div>
+    </div>
+
+    
+    <div class="article" data-date="2026-07-15">
+      <h2><a href="https://aibusiness.com/agentic-ai/moving-enterprise-ai-from-pilots-payoff" target="_blank" rel="noopener">Moving Enterprise AI From Pilots to Payoff</a></h2>
+      <div class="source">aibusiness</div>
+      <div class="pub-date">15 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Le gouffre entre les pilotes IA en entreprise et le déploiement à grande échelle révèle un marché massif pour des solutions de mise en production, de mesure du ROI et d&#39;orchestration de workflows.</p>
+      <p class="why"><strong>Why it matters:</strong> Les entreprises sont prêtes à payer pour transformer leurs expérimentations en valeur concrète, créant une opportunité directe pour des startups qui résolvent les frictions d&#39;intégration, de gouvernance et de monétisation, là où la demande est la plus forte aujourd&#39;hui.</p>
+      <a class="read-more" href="https://aibusiness.com/agentic-ai/moving-enterprise-ai-from-pilots-payoff" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-16">
+      <h2><a href="https://venturebeat.com/ai/the-ai-compute-gap-enterprises-are-buying-infrastructure-faster-than-they-can-measure-what-it-costs" target="_blank" rel="noopener">The AI compute gap: Enterprises are buying infrastructure faster than they can measure what it costs</a></h2>
+      <div class="source">AI | VentureBeat</div>
+      <div class="pub-date">16 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Les entreprises investissent massivement dans l&#39;infrastructure IA sans pouvoir mesurer les coûts unitaires, créant un fossé béant entre les dépenses et la visibilité économique (GPU à moins de 50% d&#39;utilisation).</p>
+      <p class="why"><strong>Why it matters:</strong> Ce manque de visibilité financière crée une opportunité immédiate pour des outils de FinOps IA — observabilité des coûts, optimisation du compute, gestion du TCO — là où la demande est avérée et la volonté de payer prouvée par l&#39;accélération des dépacements.</p>
+      <a class="read-more" href="https://venturebeat.com/ai/the-ai-compute-gap-enterprises-are-buying-infrastructure-faster-than-they-can-measure-what-it-costs" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-15">
+      <h2><a href="https://www.cbinsights.com/research/ceo-interview-7ai/" target="_blank" rel="noopener">CEO Interview: 7AI</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">15 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> 7AI, fondée par d&#39;anciens experts en cybersécurité, développe une IA fondamentale axée sur l&#39;orchestration autonome d&#39;opérations de sécurité, signalant un virage vers des agents IA capables d&#39;exécuter des flux de travail complexes sans intervention humaine.</p>
+      <p class="why"><strong>Why it matters:</strong> Cette approche révèle une opportunité de marché majeure pour l&#39;automatisation de processus manuels douloureux en cybersécurité, où la pénurie de talents et les marges opérationnelles élevées créent une forte volonté de payer pour des solutions autonomes ; les modèles de monétisation émergents autour de ces agents IA spécialisés ouvrent une fenêtre stratégique pour de nouveaux entrants avant que les acteurs établis ne dominent la catégorie.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/ceo-interview-7ai/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-15">
+      <h2><a href="https://www.cbinsights.com/research/ceo-interview-cara/" target="_blank" rel="noopener">CEO Interview: Cara</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">15 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Cara se positionne comme une plateforme IA verticale, ciblant des workflows spécifiques que les outils horizontaux ne couvrent pas, révélant une demande pour des solutions spécialisées plutôt que généralistes.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela signale une opportunité de marché pour des startups IA qui peuvent capturer la valeur en se concentrant sur des niches mal servies par les LLM généralistes, où la volonté de payer est prouvée par des gains d&#39;efficacité mesurables dans des processus métiers précis.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/ceo-interview-cara/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-15">
+      <h2><a href="https://www.cbinsights.com/research/ceo-interview-leo-ai/" target="_blank" rel="noopener">CEO Interview: Leo AI</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">15 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Leo AI dévoile sa stratégie de marché et son positionnement pour adresser des besoins clients spécifiques dans l&#39;écosystème de l&#39;intelligence artificielle.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;analyse de cette interview offre un signal précoce sur la manière dont un nouvel entrant structure son offre et son TAM pour capturer la demande, révélant potentiellement des segments verticaux sous-desservis ou des modèles de monétisation émergents où les investisseurs commencent à parier.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/ceo-interview-leo-ai/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-16">
+      <h2><a href="https://techcrunch.com/2026/07/16/how-a-former-deepmind-researcher-raised-at-a-300m-pre-seed-valuation-before-launching-a-product/" target="_blank" rel="noopener">How a former DeepMind researcher raised at a $300M pre-seed valuation before launching a product</a></h2>
+      <div class="source">AI News &amp; Artificial Intelligence | TechCrunch</div>
+      <div class="pub-date">16 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Un ancien chercheur de DeepMind lève des fonds à une valorisation pré-amorçage de 300M $ pour conquérir l&#39;IA visuelle avant même de lancer un produit.</p>
+      <p class="why"><strong>Why it matters:</strong> Ce tour de financement massif sans produit prouve que les capitaux se positionnent agressivement sur l&#39;IA visuelle comme prochaine frontière, signalant une fenêtre critique pour identifier les lacunes du marché et les opportunités de création d&#39;entreprises avant que la catégorie ne devienne évidente.</p>
+      <a class="read-more" href="https://techcrunch.com/2026/07/16/how-a-former-deepmind-researcher-raised-at-a-300m-pre-seed-valuation-before-launching-a-product/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-16">
+      <h2><a href="https://www.saastr.com/three-3b-b2b-acquisitions-in-30-days-intercom-fin-cognite-and-maintainx-they-all-bought-the-same-thing-data-for-ai/" target="_blank" rel="noopener">Three $3B B2B Acquisitions in 30 Days: Intercom/Fin, Cognite, and MaintainX. They All Bought the Same Thing: Data for AI</a></h2>
+      <div class="source">SaaStrAI</div>
+      <div class="pub-date">16 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Trois acquisitions B2B d&#39;environ 3 milliards de dollars en un mois prouvent que la vraie valeur des IA d&#39;entreprise réside désormais dans l&#39;accès à des données workflows propriétaires et sectorielles.</p>
+      <p class="why"><strong>Why it matters:</strong> Les géants achètent l&#39;accès aux données plutôt que de construire des modèles, validant une fenêtre d&#39;opportunité massive pour les startups qui capturent et structurent des données de niche inexploitées pour devenir les cibles d&#39;acquisition de demain.</p>
+      <a class="read-more" href="https://www.saastr.com/three-3b-b2b-acquisitions-in-30-days-intercom-fin-cognite-and-maintainx-they-all-bought-the-same-thing-data-for-ai/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-16">
+      <h2><a href="https://techcrunch.com/2026/07/15/applied-computing-wants-to-give-oil-and-gas-operators-an-ai-model-for-the-entire-plant/" target="_blank" rel="noopener">Applied Computing wants to give oil and gas operators an AI model for the entire plant</a></h2>
+      <div class="source">AI News &amp; Artificial Intelligence | TechCrunch</div>
+      <div class="pub-date">16 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Applied Computing a levé 20M$ en Série A pour développer un modèle d&#39;IA fondamental dédié à l&#39;optimisation des installations pétrolières, gazières et pétrochimiques.</p>
+      <p class="why"><strong>Why it matters:</strong> Ce tour de financement signale une opportunité de marché claire : la création de modèles d&#39;IA verticaux pour les industries lourdes, un espace jusqu&#39;alors sous-desservi où l&#39;automatisation des processus manuels complexes pourrait générer des marges élevées et prouver une forte volonté de paiement de la part des entreprises.</p>
+      <a class="read-more" href="https://techcrunch.com/2026/07/15/applied-computing-wants-to-give-oil-and-gas-operators-an-ai-model-for-the-entire-plant/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-15">
+      <h2><a href="https://venturebeat.com/ai/agentic-orchestration-enterprise-ai-organizations-have-a-deployment-problem-not-a-platform-problem-and-most-are-calling-chatbots-agents" target="_blank" rel="noopener">Agentic orchestration: Enterprise AI organizations have a deployment problem, not a platform problem — and most are calling chatbots agents</a></h2>
+      <div class="source">AI | VentureBeat</div>
+      <div class="pub-date">15 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Les entreprises consolident l&#39;orchestration d&#39;agents sur les plateformes de modèles (Anthropic domine avec 40%), mais 71% admettent que leurs &#34;agents&#34; déployés sont de simples chatbots, révélant un fossé critique entre l&#39;ambition et la réalité d&#39;exécution multi-étapes.</p>
+      <p class="why"><strong>Why it matters:</strong> Ce fossé expose un marché non adressé massif pour des outils de contrôle financier en temps réel des coûts de tokens et des couches d&#39;orchestration véritablement multi-étapes, tandis que la stratégie hybride anti-lock-in des entreprises ouvre une fenêtre stratégique pour des challengers agnostiques capables de transformer ces wrappers en agents rentables.</p>
+      <a class="read-more" href="https://venturebeat.com/ai/agentic-orchestration-enterprise-ai-organizations-have-a-deployment-problem-not-a-platform-problem-and-most-are-calling-chatbots-agents" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-16">
+      <h2><a href="https://sifted.eu/articles/visma-ai-portfolio-reshaping-accounting-brnd/" target="_blank" rel="noopener">‘We want to make bookkeeping less painful’: How Visma and its AI portfolio are reshaping accounting</a></h2>
+      <div class="source">Sifted</div>
+      <div class="pub-date">16 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Visma consolide un portefeuille d&#39;IA verticale pour automatiser la saisie comptable, validant une forte volonté de payer des PME pour éliminer ce flux de travail manuel et douloureux.</p>
+      <p class="why"><strong>Why it matters:</strong> La stratégie d&#39;acquisition de Visma signale une fenêtre d&#39;opportunité massive pour les challengers : les cabinets de taille moyenne cherchent désespérément des solutions d&#39;automatisation comptable rentables, créant un marché blanc lucratif avant que les ERP traditionnels ne dominent.</p>
+      <a class="read-more" href="https://sifted.eu/articles/visma-ai-portfolio-reshaping-accounting-brnd/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-15">
+      <h2><a href="https://www.cbinsights.com/research/ceo-interview-snaprefund/" target="_blank" rel="noopener">CEO Interview: SnapRefund</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">15 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> SnapRefund automatise le processus manuel et douloureux des paiements de sinistres dans l&#39;assurance, un segment B2B historiquement sous-desservi par l&#39;IA.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela signale une catégorie émergente où les assureurs démontrent une volonté de payer pour l&#39;automatisation des workflows financiers de bout en bout, ouvrant une fenêtre d&#39;opportunité pour de nouveaux acteurs ciblant ces processus administratifs complexes.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/ceo-interview-snaprefund/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-15">
+      <h2><a href="https://www.cbinsights.com/research/executive-interview-lyzr/" target="_blank" rel="noopener">Executive Interview: Lyzr</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">15 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Lyzr se positionne sur le marché émergent des infrastructures d&#39;agents IA, ciblant les entreprises qui cherchent à déployer des agents autonomes sans développer la complexité sous-jacente de zéro.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;évolution vers une &#34;agent infrastructure&#34; révèle une fenêtre d&#39;opportunité B2B pour outiller le déploiement sécurisé, créant une dynamique &#34;build-vs-buy&#34; où la demande se déplace de la simple génération vers l&#39;orchestration de workflows autonomes.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/executive-interview-lyzr/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-15">
+      <h2><a href="https://www.cbinsights.com/research/ceo-interview-avawatz/" target="_blank" rel="noopener">CEO Interview: AvaWatz</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">15 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> AvaWatz, une startup spécialisée dans la robotique collaborative pilotée par l&#39;IA, dévoile sa vision du marché et la manière dont elle compte capturer une part de ce TAM en pleine expansion.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;interview signale une opportunité d&#39;investissement et un espace blanc naissant dans l&#39;automatisation des workflows physiques dangereux ou complexes, là où la demande pour des équipes de robots autonomes commence à prouver une réelle volonté de paiement de la part des entreprises.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/ceo-interview-avawatz/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-15">
+      <h2><a href="https://www.cbinsights.com/research/executive-interview-orbitsedge/" target="_blank" rel="noopener">Executive Interview: OrbitsEdge</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">15 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> OrbitsEdge cible un marché de l&#39;edge computing évalué entre 3 et 8 milliards de dollars pour répondre aux besoins croissants de traitement décentralisé des charges de travail IA.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;explosion du TAM de l&#39;edge computing signale une opportunité directe de contourner la congestion des clouds centralisés en construisant des infrastructures d&#39;inference locales, une approche de plus en plus adoptée par les investisseurs pour réduire la latence et les coûts de bande passante des déploiements d&#39;IA en entreprise.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/executive-interview-orbitsedge/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-16">
+      <h2><a href="https://www.saastr.com/the-bay-area-now-takes-51-of-every-ai-venture-dollar-and-53-of-every-b2b-dollar/" target="_blank" rel="noopener">The Bay Area Now Takes 51% of Every AI Venture Dollar. And 53% of Every B2B Dollar.</a></h2>
+      <div class="source">SaaStrAI</div>
+      <div class="pub-date">16 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> La Bay Area capte désormais 51 % de chaque dollar investi en IA et 53 % de chaque dollar B2B, consolidant son monopole sur le capital-risque technologique.</p>
+      <p class="why"><strong>Why it matters:</strong> Cette concentration extrême du capital signale que les investisseurs parient massivement sur l&#39;écosystème local, rendant crucial le positionnement géographique ou stratégique pour capter les flux de financement et identifier où la demande institutionnelle se dirige réellement.</p>
+      <a class="read-more" href="https://www.saastr.com/the-bay-area-now-takes-51-of-every-ai-venture-dollar-and-53-of-every-b2b-dollar/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-15">
+      <h2><a href="https://www.cbinsights.com/research/ceo-interview-novaspark-energy/" target="_blank" rel="noopener">CEO Interview: NovaSpark Energy</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">15 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> NovaSpark Energy cible un marché adressable immédiat dans le secteur de l&#39;énergie, cherchant à y intégrer des solutions optimisées par l&#39;IA pour répondre aux besoins spécifiques des clients.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;optimisation de la gestion énergétique par l&#39;IA représente une opportunité d&#39;investissement majeure dans une verticale historiquement sous-desservie, offrant un potentiel de création de valeur mesurable (ROI, marges) pour les startups capables d&#39;automatiser des processus manuels complexes et de capitaliser sur les forces du marché.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/ceo-interview-novaspark-energy/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-15">
+      <h2><a href="https://www.cbinsights.com/research/executive-interview-fortaegis/" target="_blank" rel="noopener">Executive Interview: Fortaegis</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">15 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Fortaegis dévoile sa vision du marché et de la manière dont son entreprise s&#39;inscrit dans l&#39;écosystème de la sécurité et de l&#39;IA.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;analyse de leur positionnement par le CTO révèle les besoins clients actuels et les failles du marché, offrant un signal fort sur les segments de la sécurité IA où la demande et les capitaux se dirigent.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/executive-interview-fortaegis/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-16">
+      <h2><a href="https://www.cbinsights.com/research/july-16-newsletter/" target="_blank" rel="noopener">Mega-rounds hit 81% of Q2 funding. One company explains why.</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">16 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Les méga-tours de financement ont capté 81 % des investissements du T2, illustré par la levée de 1,8 Md$ en Série E de Helsing.</p>
+      <p class="why"><strong>Why it matters:</strong> Cette concentration massive du capital sur quelques acteurs établis indique que les investisseurs privilégient les modèles IA à forte intensité capitalistique (infrastructure, défense), réduisant les fenêtres d&#39;opportunité pour les nouveaux entrants généralistes tout en signalant où se dirige réellement l&#39;argent des VC.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/july-16-newsletter/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-15">
+      <h2><a href="https://www.cbinsights.com/research/ceo-interview-thryve/" target="_blank" rel="noopener">CEO Interview: Thryve</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">15 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Thryve se positionne comme une couche d&#39;intégration unifiée pour les données de santé, un marché fragmenté où l&#39;IA nécessite des pipelines de données propres et normalisés pour fonctionner.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;intégration des données de santé est un goulot d&#39;étranglement critique qui crée une opportunité directe pour des startups construisant des couches d&#39;orchestration et de nettoyage de données propices à l&#39;IA, avec une volonté de payer claire de la part des entreprises cherchant à automatiser des workflows cliniques manuels et douloureux.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/ceo-interview-thryve/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-16">
+      <h2><a href="https://venturebeat.com/ai/the-ai-context-gap-enterprise-ai-organizations-have-a-trust-problem-not-a-retrieval-problem-and-most-are-still-building-the-fix" target="_blank" rel="noopener">The AI context gap: Enterprise AI organizations have a trust problem, not a retrieval problem — and most are still building the fix</a></h2>
+      <div class="source">AI | VentureBeat</div>
+      <div class="pub-date">16 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> 57 % des entreprises subissent des hallucinations confiantes de leurs agents IA dues à un contexte défaillant, créant un vide commercial massif pour les couches sémantiques gouvernées qui garantissent la fiabilité des données avant l&#39;inférence.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;adoption massive du RAG par les entreprises prouve une volonté de payer, mais la défiance envers les résultats ouvre une fenêtre d&#39;opportunité immédiate pour des startups capables de fiabiliser le contexte métier, transformant un problème de confiance infrastructurel en un avantage concurrentiel et une nouvelle catégorie de produits prête à émerger.</p>
+      <a class="read-more" href="https://venturebeat.com/ai/the-ai-context-gap-enterprise-ai-organizations-have-a-trust-problem-not-a-retrieval-problem-and-most-are-still-building-the-fix" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+
+    <footer>
+      Generated on 2026-07-17 07:14 &nbsp;·&nbsp; <a href="../index.html">Toutes les éditions</a> &nbsp;·&nbsp; <a href="../../index.html">← Accueil</a>
+    </footer>
+  </div>
+
+  <script>
+(function() {
+  var container = document.querySelector('.container');
+  var articles = Array.from(document.querySelectorAll('.article'));
+  articles.forEach(function(el, i) { el.dataset.index = i; });
+
+  document.getElementById('sort-select').addEventListener('change', function() {
+    var mode = this.value;
+    var sorted = articles.slice().sort(function(a, b) {
+      if (mode === 'relevance') return +a.dataset.index - +b.dataset.index;
+      if (mode === 'date-desc') return b.dataset.date.localeCompare(a.dataset.date);
+      if (mode === 'date-asc')  return a.dataset.date.localeCompare(b.dataset.date);
+      return 0;
+    });
+    var footer = container.querySelector('footer');
+    sorted.forEach(function(el) { container.insertBefore(el, footer); });
+  });
+})();
+  </script>
+</body>
+</html>
