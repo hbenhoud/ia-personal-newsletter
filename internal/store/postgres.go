@@ -107,25 +107,30 @@ func (p *Postgres) UpsertArticle(ctx context.Context, a Article) (int64, error) 
 	if a.FetchedAt.IsZero() {
 		a.FetchedAt = time.Now()
 	}
+	if a.KeyPoints == nil {
+		a.KeyPoints = []string{} // nil would bind as SQL NULL, violating the NOT NULL column
+	}
 
 	var id int64
 	err := p.pool.QueryRow(ctx, `
 		INSERT INTO articles
-			(url, slug, title, source_name, author, content_hash, tldr, why_matters, topic, embedding, published_at, fetched_at)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10::vector,$11,$12)
+			(url, slug, title, source_name, author, content_hash, tldr, overview, key_points, why_matters, topic, embedding, published_at, fetched_at)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12::vector,$13,$14)
 		ON CONFLICT (url) DO UPDATE SET
 			title       = EXCLUDED.title,
 			source_name = EXCLUDED.source_name,
 			author      = EXCLUDED.author,
 			content_hash= EXCLUDED.content_hash,
 			tldr        = EXCLUDED.tldr,
+			overview    = EXCLUDED.overview,
+			key_points  = EXCLUDED.key_points,
 			why_matters = EXCLUDED.why_matters,
 			topic       = EXCLUDED.topic,
 			embedding   = COALESCE(EXCLUDED.embedding, articles.embedding),
 			fetched_at  = EXCLUDED.fetched_at
 		RETURNING id`,
 		a.URL, a.Slug, a.Title, a.SourceName, a.Author, a.ContentHash,
-		a.TLDR, a.WhyItMatters, a.Topic, vecToText(a.Embedding),
+		a.TLDR, a.Overview, a.KeyPoints, a.WhyItMatters, a.Topic, vecToText(a.Embedding),
 		a.PublishedAt, a.FetchedAt,
 	).Scan(&id)
 	if err != nil {
@@ -242,11 +247,11 @@ func (p *Postgres) GetEditionBySlug(ctx context.Context, slug string) (*Edition,
 func (p *Postgres) GetArticleBySlug(ctx context.Context, slug string) (*Article, error) {
 	var a Article
 	err := p.pool.QueryRow(ctx, `
-		SELECT id, url, slug, title, source_name, author, tldr, why_matters,
+		SELECT id, url, slug, title, source_name, author, tldr, overview, key_points, why_matters,
 		       topic, published_at, fetched_at, created_at
 		FROM articles WHERE slug = $1`, slug,
 	).Scan(&a.ID, &a.URL, &a.Slug, &a.Title, &a.SourceName, &a.Author, &a.TLDR,
-		&a.WhyItMatters, &a.Topic, &a.PublishedAt, &a.FetchedAt, &a.CreatedAt)
+		&a.Overview, &a.KeyPoints, &a.WhyItMatters, &a.Topic, &a.PublishedAt, &a.FetchedAt, &a.CreatedAt)
 	if err == pgx.ErrNoRows {
 		return nil, nil
 	}

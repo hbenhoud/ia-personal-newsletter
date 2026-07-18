@@ -27,6 +27,9 @@ func (s *Server) articleJSONLD(a *store.Article) template.JS {
 	if a.SourceName != "" {
 		ld["author"] = map[string]any{"@type": "Organization", "name": a.SourceName}
 	}
+	if a.Overview != "" {
+		ld["articleBody"] = a.Overview
+	}
 	b, err := json.Marshal(ld)
 	if err != nil {
 		return ""

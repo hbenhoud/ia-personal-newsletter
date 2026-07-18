@@ -22,6 +22,8 @@ type Article struct {
 	Author       string
 	ContentHash  string
 	TLDR         string
+	Overview     string
+	KeyPoints    []string
 	WhyItMatters string
 	Topic        string
 	Embedding    []float32

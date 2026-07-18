@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"strings"
 	"time"
 	"unicode"
 
@@ -45,8 +46,9 @@ var pageFiles = map[string]string{
 // NewRenderer parses the embedded web templates.
 func NewRenderer() (*Renderer, error) {
 	funcs := template.FuncMap{
-		"title":   titleCase,
-		"fmtDate": fmtDate,
+		"title":      titleCase,
+		"fmtDate":    fmtDate,
+		"paragraphs": paragraphs,
 	}
 	pages := make(map[string]*template.Template, len(pageFiles))
 	for name, file := range pageFiles {
@@ -87,4 +89,20 @@ func fmtDate(t time.Time) string {
 		return ""
 	}
 	return t.Format("2 Jan 2006")
+}
+
+// paragraphs splits an Overview string (paragraphs separated by a blank line)
+// into a slice for the template to range over as individual <p> tags.
+func paragraphs(s string) []string {
+	if strings.TrimSpace(s) == "" {
+		return nil
+	}
+	parts := strings.Split(s, "\n\n")
+	out := make([]string, 0, len(parts))
+	for _, p := range parts {
+		if p = strings.TrimSpace(p); p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
 }

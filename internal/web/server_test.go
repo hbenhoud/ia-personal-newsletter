@@ -113,7 +113,12 @@ func newTestServer(t *testing.T) *Server {
 			{
 				ID: 1, Slug: "gpt-x-launch-abc123", URL: "https://ex.com/1",
 				Title: "GPT-X launch reshapes the frontier", SourceName: "Simon Willison", Topic: "technical",
-				TLDR: "A new frontier model shipped with a far larger context window and lower latency.",
+				TLDR:     "A new frontier model shipped with a far larger context window and lower latency.",
+				Overview: "The new model ships with a 1M-token context window.\n\nEarly benchmarks show double-digit gains on reasoning tasks.",
+				KeyPoints: []string{
+					"1M-token context window",
+					"Benchmark gains on reasoning tasks",
+				},
 				WhyItMatters: "It resets the price/performance baseline every builder plans around.",
 				Score:        0.94, Rank: 0,
 				PublishedAt: time.Date(2026, 7, 18, 0, 0, 0, 0, time.UTC),
@@ -203,7 +208,7 @@ func TestRoutesRender(t *testing.T) {
 	}{
 		{"/", 200, []string{"AI News", "GPT-X launch", `rel="canonical"`}},
 		{"/editions/technical-2026-07-18", 200, []string{"Technical · 18 Jul 2026", `href="/articles/gpt-x-launch-abc123"`}},
-		{"/articles/gpt-x-launch-abc123", 200, []string{"GPT-X launch", "application/ld+json", "NewsArticle", "price/performance baseline"}},
+		{"/articles/gpt-x-launch-abc123", 200, []string{"GPT-X launch", "application/ld+json", "NewsArticle", "price/performance baseline", "1M-token context window", "Key points"}},
 		{"/topics/technical", 200, []string{"Technical · 18 Jul 2026", "Past editions", "GPT-X launch"}},
 		{"/search?q=gpt", 200, []string{"result(s)", "GPT-X launch"}},
 		{"/feed.xml", 200, []string{"<rss", "GPT-X launch", "https://news.example.com/articles/gpt-x-launch-abc123"}},

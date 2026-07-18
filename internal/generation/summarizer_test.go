@@ -26,12 +26,31 @@ func (m *mockProvider) Complete(_ context.Context, _ string, _ llm.GenerationCon
 
 // --- AC-5: parseOutput ---
 
-func TestParseOutput_BothFields(t *testing.T) {
-	raw := "TL;DR: New LLaMA model released.\nWhy it matters: Advances open source LLMs."
-	tldr, why := parseOutput(raw)
+func TestParseOutput_AllFields(t *testing.T) {
+	raw := strings.Join([]string{
+		"TL;DR: New LLaMA model released.",
+		"Overview:",
+		"Meta shipped a new LLaMA model with a larger context window.",
+		"",
+		"Benchmarks show gains on reasoning tasks.",
+		"Key points:",
+		"- 128k context window",
+		"- Apache 2.0 license",
+		"Why it matters: Advances open source LLMs.",
+	}, "\n")
+	tldr, overview, keyPoints, why := parseOutput(raw)
 
 	if tldr != "New LLaMA model released." {
 		t.Errorf("TLDR: got %q", tldr)
+	}
+	if !strings.Contains(overview, "larger context window") || !strings.Contains(overview, "reasoning tasks") {
+		t.Errorf("Overview missing expected content: got %q", overview)
+	}
+	if !strings.Contains(overview, "\n\n") {
+		t.Error("Overview paragraphs should be separated by a blank line")
+	}
+	if len(keyPoints) != 2 || keyPoints[0] != "128k context window" || keyPoints[1] != "Apache 2.0 license" {
+		t.Errorf("KeyPoints: got %v", keyPoints)
 	}
 	if why != "Advances open source LLMs." {
 		t.Errorf("WhyItMatters: got %q", why)
@@ -40,7 +59,7 @@ func TestParseOutput_BothFields(t *testing.T) {
 
 func TestParseOutput_ExtraWhitespace(t *testing.T) {
 	raw := "  TL;DR:   Key insight here.  \n  Why it matters:   Very relevant.  "
-	tldr, why := parseOutput(raw)
+	tldr, _, _, why := parseOutput(raw)
 
 	if tldr != "Key insight here." {
 		t.Errorf("TLDR not trimmed: got %q", tldr)
@@ -52,7 +71,7 @@ func TestParseOutput_ExtraWhitespace(t *testing.T) {
 
 func TestParseOutput_FallbackWhenNoTLDR(t *testing.T) {
 	raw := "Just a plain response with no structured output."
-	tldr, why := parseOutput(raw)
+	tldr, overview, keyPoints, why := parseOutput(raw)
 
 	if tldr == "" {
 		t.Error("TLDR fallback should use the raw text")
@@ -60,12 +79,15 @@ func TestParseOutput_FallbackWhenNoTLDR(t *testing.T) {
 	if why != "" {
 		t.Error("Why should be empty when not present")
 	}
+	if overview != "" || len(keyPoints) != 0 {
+		t.Error("Overview/KeyPoints should be empty when not present")
+	}
 }
 
 func TestParseOutput_MultiLineTLDR(t *testing.T) {
 	// Only first matching line should be used
 	raw := "TL;DR: First summary.\nTL;DR: Second summary.\nWhy it matters: Relevant."
-	tldr, _ := parseOutput(raw)
+	tldr, _, _, _ := parseOutput(raw)
 	// The last matching line wins (loop overwrites)
 	if !strings.Contains(tldr, "summary") {
 		t.Errorf("unexpected TLDR: %q", tldr)
@@ -73,9 +95,9 @@ func TestParseOutput_MultiLineTLDR(t *testing.T) {
 }
 
 func TestParseOutput_NoFillerAccepted(t *testing.T) {
-	// LLM output with only the two expected lines
+	// LLM output with only the two simplest expected lines
 	raw := "TL;DR: Short summary.\nWhy it matters: Very relevant."
-	tldr, why := parseOutput(raw)
+	tldr, _, _, why := parseOutput(raw)
 
 	if tldr == "" || why == "" {
 		t.Error("expected both fields to be populated")
@@ -86,6 +108,20 @@ func TestParseOutput_NoFillerAccepted(t *testing.T) {
 	}
 	if strings.Contains(why, "Why it matters:") {
 		t.Error("Why should not include 'Why it matters:' prefix")
+	}
+}
+
+func TestParseOutput_KeyPointsBulletVariants(t *testing.T) {
+	raw := "Key points:\n- dash bullet\n* star bullet\n• dot bullet"
+	_, _, keyPoints, _ := parseOutput(raw)
+	want := []string{"dash bullet", "star bullet", "dot bullet"}
+	if len(keyPoints) != len(want) {
+		t.Fatalf("KeyPoints: got %v, want %v", keyPoints, want)
+	}
+	for i, w := range want {
+		if keyPoints[i] != w {
+			t.Errorf("KeyPoints[%d]: got %q, want %q", i, keyPoints[i], w)
+		}
 	}
 }
 

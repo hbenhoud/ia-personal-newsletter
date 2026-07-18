@@ -7,7 +7,21 @@
 
   <div class="prose prose-lg prose-neutral mt-8 max-w-none dark:prose-invert">
     {{if .TLDR}}<p class="lead">{{.TLDR}}</p>{{end}}
-    {{if .WhyItMatters}}<blockquote><strong>Why it matters —</strong> {{.WhyItMatters}}</blockquote>{{end}}
+    {{range paragraphs .Overview}}<p>{{.}}</p>{{end}}
+    {{if .KeyPoints}}
+    <div class="not-prose mt-8">
+      <div class="mb-2 text-base font-bold text-neutral-900 dark:text-white">Key points</div>
+      <ul class="list-disc space-y-2 pl-5 text-lg leading-relaxed text-neutral-800 dark:text-neutral-100">
+        {{range .KeyPoints}}<li>{{.}}</li>{{end}}
+      </ul>
+    </div>
+    {{end}}
+    {{if .WhyItMatters}}
+    <div class="not-prose mt-8">
+      <div class="mb-2 text-base font-bold text-neutral-900 dark:text-white">Impact</div>
+      <p class="text-lg leading-relaxed text-neutral-800 dark:text-neutral-100">{{.WhyItMatters}}</p>
+    </div>
+    {{end}}
   </div>
 
   <a href="{{.URL}}" target="_blank" rel="noopener"

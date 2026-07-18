@@ -13,6 +13,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync"
 	"time"
 	"unicode"
 
@@ -20,6 +21,7 @@ import (
 	"github.com/hbenhoud/ia-personal-newsletter/internal/dotenv"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/email"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/embedding"
+	"github.com/hbenhoud/ia-personal-newsletter/internal/extract"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/filtering"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/generation"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/ingestion"
@@ -27,6 +29,10 @@ import (
 	"github.com/hbenhoud/ia-personal-newsletter/internal/store"
 	"github.com/hbenhoud/ia-personal-newsletter/templates"
 )
+
+// maxConcurrentFetches bounds how many full-article page fetches run at once
+// during enrichment, so a slow/misbehaving source can't stall the whole run.
+const maxConcurrentFetches = 4
 
 const configDir = "./config"
 
@@ -70,7 +76,9 @@ func run(ctx context.Context) error {
 		return fmt.Errorf("LLM provider: %w", err)
 	}
 
-	promptContent, err := templates.FS.ReadFile("prompts/summarize.tmpl")
+	// The dynamic product uses its own richer prompt (full overview + key
+	// points) so the frozen static CLI's prompt/cost profile stays untouched.
+	promptContent, err := templates.FS.ReadFile("prompts/summarize_rich.tmpl")
 	if err != nil {
 		return fmt.Errorf("reading embedded prompt template: %w", err)
 	}
@@ -139,7 +147,15 @@ func ingestProfile(
 		scored = scored[:cfg.Output.ItemsPerIssue]
 	}
 
-	summarizer, err := generation.NewSummarizer(llmProvider, promptContent)
+	// Fetch each selected article's full text so the summary can be
+	// self-sufficient; on failure (paywall, timeout, blocked) keep the RSS
+	// excerpt already in scored[i].Article.Content.
+	enrichWithFullText(ctx, pc.Name, scored)
+
+	summarizer, err := generation.NewSummarizerWithOptions(llmProvider, promptContent, generation.Options{
+		MaxTokens:       900,
+		ContentMaxChars: 6000,
+	})
 	if err != nil {
 		return fmt.Errorf("creating summarizer: %w", err)
 	}
@@ -168,6 +184,8 @@ func ingestProfile(
 			SourceName:   a.Source,
 			ContentHash:  contentHash(a.Title, a.Content),
 			TLDR:         sum.TLDR,
+			Overview:     sum.Overview,
+			KeyPoints:    sum.KeyPoints,
 			WhyItMatters: sum.WhyItMatters,
 			Topic:        pc.Slug(),
 			Embedding:    emb,
@@ -207,6 +225,32 @@ func ingestProfile(
 	return nil
 }
 
+// enrichWithFullText fetches each article's source page and, on success,
+// replaces its RSS excerpt with the full extracted text — bounded to
+// maxConcurrentFetches at a time so one slow source can't stall the run.
+// Failures (paywall, timeout, blocked) are logged and leave the excerpt as-is.
+func enrichWithFullText(ctx context.Context, profileName string, scored []filtering.ScoredArticle) {
+	sem := make(chan struct{}, maxConcurrentFetches)
+	var wg sync.WaitGroup
+	for i := range scored {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			sem <- struct{}{}
+			defer func() { <-sem }()
+
+			full, err := extract.FetchArticle(ctx, scored[i].Article.URL)
+			if err != nil {
+				log.Printf("profile %q: full-text fetch failed for %q, using RSS excerpt: %v",
+					profileName, scored[i].Article.Title, err)
+				return
+			}
+			scored[i].Article.Content = full
+		}(i)
+	}
+	wg.Wait()
+}
+
 // renderEditionEmail builds an email-safe HTML body (inline styles) for one
 // edition, linking each article to its permalink on the site.
 func renderEditionEmail(baseURL, editionTitle string, summaries []generation.Summary) string {
@@ -227,7 +271,7 @@ func renderEditionEmail(baseURL, editionTitle string, summaries []generation.Sum
 			b.WriteString(`<p style="font-size:15px;line-height:1.5;color:#333;margin:6px 0">` + html.EscapeString(sum.TLDR) + `</p>`)
 		}
 		if sum.WhyItMatters != "" {
-			b.WriteString(`<p style="font-size:14px;color:#666;margin:6px 0"><strong>Why it matters:</strong> ` + html.EscapeString(sum.WhyItMatters) + `</p>`)
+			b.WriteString(`<p style="font-size:14px;color:#666;margin:6px 0"><strong>Impact:</strong> ` + html.EscapeString(sum.WhyItMatters) + `</p>`)
 		}
 		b.WriteString(`</div>`)
 	}
