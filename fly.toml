@@ -1,0 +1,25 @@
+# Fly.io deployment for the SSR server. Rename `app` and set secrets before use:
+#   fly secrets set DATABASE_URL=... SITE_BASE_URL=https://your-app.fly.dev \
+#     SITE_NAME="..." SITE_DESCRIPTION="..."
+# Postgres itself is managed externally (Neon/Supabase) via DATABASE_URL.
+app = "ia-newsletter"
+primary_region = "cdg"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[http_service.checks]]
+  method = "GET"
+  path = "/healthz"
+  interval = "30s"
+  timeout = "5s"
+
+[env]
+  PORT = "8080"

@@ -1,0 +1,45 @@
+{{define "content"}}
+{{with .Data}}
+{{if .Blocks}}
+{{range .Blocks}}
+<section class="border-b border-neutral-200 py-10 last:border-0 dark:border-neutral-800">
+  <div class="mb-5 flex items-baseline justify-between gap-4">
+    <a href="/topics/{{.Topic}}" class="text-xs font-semibold uppercase tracking-wide text-brand hover:opacity-80">{{.Topic | title}}</a>
+    <a href="/topics/{{.Topic}}" class="text-sm font-medium text-brand hover:opacity-80">All {{.Topic | title}} →</a>
+  </div>
+
+  {{with .Lead}}
+  <h2 class="text-2xl font-extrabold leading-tight tracking-tight text-neutral-900 sm:text-3xl dark:text-white">
+    <a href="/articles/{{.Slug}}" class="hover:text-brand dark:hover:text-brand">{{.Title}}</a>
+  </h2>
+  {{if .TLDR}}<p class="mt-3 font-serif text-lg leading-relaxed text-neutral-600 dark:text-neutral-300">{{.TLDR}}</p>{{end}}
+  <p class="mt-3 text-sm text-neutral-500 dark:text-neutral-400">{{.SourceName}} · {{fmtDate .PublishedAt}}</p>
+  {{end}}
+
+  {{if .More}}
+  <div class="mt-6 divide-y divide-neutral-200 dark:divide-neutral-800">
+    {{range .More}}
+    <article class="py-4">
+      <h3 class="text-lg font-bold leading-snug tracking-tight text-neutral-900 dark:text-white">
+        <a href="/articles/{{.Slug}}" class="hover:text-brand dark:hover:text-brand">{{.Title}}</a>
+      </h3>
+      <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">{{.SourceName}} · {{fmtDate .PublishedAt}}</p>
+    </article>
+    {{end}}
+  </div>
+  {{end}}
+
+  <p class="mt-6 text-sm"><a href="/editions/{{.Slug}}" class="font-medium text-brand hover:opacity-80">Read the {{fmtDate .Date}} edition →</a></p>
+</section>
+{{end}}
+
+{{else}}
+<section class="py-16">
+  <div class="mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-500">AI news · signal over noise</div>
+  <h1 class="text-4xl font-extrabold tracking-tight text-neutral-900 dark:text-white">Cut through the noise.</h1>
+  <p class="mt-3 font-serif text-xl text-neutral-600 dark:text-neutral-300">{{$.SiteName}} — curated AI news, summarized and ranked.</p>
+</section>
+<p class="py-12 text-neutral-500">No articles yet. Run the ingest job to publish the first edition.</p>
+{{end}}
+{{end}}
+{{end}}

@@ -1,0 +1,18 @@
+{{define "content"}}
+{{with .Data}}{{with .Article}}
+<article class="py-10">
+  <div class="mb-3 text-xs font-semibold uppercase tracking-wide text-brand">{{.SourceName}}</div>
+  <h1 class="text-3xl font-extrabold leading-tight tracking-tight text-neutral-900 sm:text-4xl dark:text-white">{{.Title}}</h1>
+  <p class="mt-3 text-sm text-neutral-500 dark:text-neutral-400">{{fmtDate .PublishedAt}}{{if .Topic}} · <a href="/topics/{{.Topic}}" class="hover:text-neutral-900 dark:hover:text-white">{{.Topic | title}}</a>{{end}}</p>
+
+  <div class="prose prose-lg prose-neutral mt-8 max-w-none dark:prose-invert">
+    {{if .TLDR}}<p class="lead">{{.TLDR}}</p>{{end}}
+    {{if .WhyItMatters}}<blockquote><strong>Why it matters —</strong> {{.WhyItMatters}}</blockquote>{{end}}
+  </div>
+
+  <a href="{{.URL}}" target="_blank" rel="noopener"
+     class="mt-8 inline-block rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-white hover:opacity-90">Read the full article ↗</a>
+</article>
+{{end}}
+{{end}}
+{{end}}

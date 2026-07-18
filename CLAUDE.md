@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Two products in one repo
+
+1. **Static CLI (`cmd/newsletter`) — FROZEN.** The original static-site generator. Kept working for personal export; no longer evolved. Everything under "Architecture" below describes it.
+2. **Dynamic product (`cmd/ingest` + `cmd/server`) — ACTIVE.** A serious, SEO-first newsletter web app backed by Postgres. This is where new work happens. See "Dynamic product" below.
+
 ## Build & Run
 
 ```bash
@@ -18,9 +23,37 @@ go vet ./...
 go test ./...
 ```
 
-The binary must be run from the project root — it reads `config/`, `templates/`, and writes to `output/` and `.cache/` using relative paths.
+The `newsletter` binary must be run from the project root — it reads `config/`, `templates/`, and writes to `output/` and `.cache/` using relative paths.
 
-## Architecture
+```bash
+# Dynamic product (needs Postgres with the pgvector extension via DATABASE_URL)
+go run ./cmd/ingest    # RSS pipeline → persists articles/editions to Postgres
+go run ./cmd/server    # SSR website rendered from Postgres (PORT, SITE_* env vars)
+```
+
+## Dynamic product (active)
+
+`Ingest → filter → summarize` reuses the frozen core packages, but the **sink is Postgres, not HTML** — the DB is the source of truth; articles dedup on URL and are never deleted (archives persist).
+
+```
+cmd/ingest/            Runs the pipeline, persists articles (+ pgvector embeddings) and editions
+cmd/server/            Stdlib net/http SSR site (env config: PORT, DATABASE_URL, SITE_NAME/BASE_URL/DESCRIPTION)
+internal/store/        Store interface + pgx impl + embedded SQL migrations (pgvector). Vectors passed/read as text, cast ::vector
+internal/web/          Renderer (embedded templates), handlers, SEO (JSON-LD, sitemap.xml, robots.txt, feed.xml)
+internal/dotenv/       Shared .env loader for the new binaries
+templates/embed.go     go:embed of prompts/, themes/, web/ (self-contained binaries)
+templates/web/*.html   Server-side layout + partials + pages (Tailwind classes, Medium-style)
+web/tailwind/input.css Tailwind v4 source → compiled to templates/web/app.css (served at /static/app.css)
+```
+
+**Styling = Tailwind CSS v4 + typography plugin (no Node).** Templates use Tailwind utility classes;
+article bodies use `prose`. The standalone CLI lives at `bin/tailwindcss` (gitignored; `make tailwind`
+downloads it). Edit templates or `web/tailwind/input.css`, then run **`make css`** to rebuild
+`templates/web/app.css` (committed + embedded, so `go build`/Docker need no Tailwind step).
+
+Routes: `/` (home, grouped by topic — latest edition + top articles per topic, never a mixed cross-topic feed), `/editions/{slug}` and `/topics/{topic}` both render an **edition view** (its articles + a "Past editions" `<details>` dropdown selector + prev/next) — `/topics/{topic}` shows that topic's **latest** edition, its canonical being the dated permalink; `/articles/{slug}`; `/search`; plus `/feed.xml`, `/sitemap.xml`, `/robots.txt`, `/static/app.css`, `/healthz`. `renderEditionView` is the shared renderer. There is no "Archive" and no numbered pagination — older editions are reached via the Past-editions selector / prev-next. The `message` template backs empty states + 404. Deploy: `Dockerfile` (server) + `fly.toml`; `.github/workflows/product.yml` runs `cmd/ingest` on a cron and deploys the server. Postgres is managed externally (Neon/Supabase). Roadmap (see plan): Phase 2 email subscription, Phase 3 accounts/premium, Phase 4 BYO-AI RAG chat.
+
+## Architecture (frozen static CLI)
 
 The pipeline runs in this order: **Ingest → Pre-filter → Embed → Score → Summarize → Render**, and it runs **once per profile** — each profile is an independent newsletter edition with its own RSS sources and its own `profile.md`.
 

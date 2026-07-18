@@ -1,0 +1,30 @@
+{{define "content"}}
+{{with .Data}}
+<section class="py-10">
+  <h1 class="text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-4xl dark:text-white">Search</h1>
+  <form action="/search" method="get" role="search" class="mt-5 flex gap-2">
+    <input type="search" name="q" value="{{.Query}}" placeholder="Search articles…" aria-label="Search articles" autofocus
+      class="w-full rounded-full border border-neutral-300 bg-white px-4 py-2.5 text-neutral-800 focus:border-neutral-900 focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100">
+    <button type="submit" class="shrink-0 rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-white hover:opacity-90">Search</button>
+  </form>
+</section>
+
+{{if .Query}}
+<div class="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">{{len .Results}} result(s) for “{{.Query}}”</div>
+{{if .Results}}
+<div class="divide-y divide-neutral-200 dark:divide-neutral-800">
+  {{range .Results}}
+  <article class="py-8">
+    <div class="mb-1 text-xs font-semibold uppercase tracking-wide text-brand">{{.SourceName}}</div>
+    <h3 class="text-2xl font-bold leading-snug tracking-tight text-neutral-900 dark:text-white"><a href="/articles/{{.Slug}}" class="hover:text-brand dark:hover:text-brand">{{.Title}}</a></h3>
+    {{if .TLDR}}<p class="mt-2 font-serif text-lg leading-relaxed text-neutral-600 dark:text-neutral-300">{{.TLDR}}</p>{{end}}
+    <p class="mt-3 text-sm text-neutral-500 dark:text-neutral-400">{{fmtDate .PublishedAt}}{{if .Topic}} · {{.Topic | title}}{{end}}</p>
+  </article>
+  {{end}}
+</div>
+{{else}}
+<p class="py-12 text-neutral-500">No matches. Try different keywords.</p>
+{{end}}
+{{end}}
+{{end}}
+{{end}}

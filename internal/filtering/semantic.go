@@ -118,6 +118,11 @@ func preFilter(articles []ingestion.Article, cfg Config) []ingestion.Article {
 	return out
 }
 
+// ArticleText returns the exact text used to embed an article, so callers (e.g.
+// the ingest worker persisting vectors) can reuse the embedding cache instead of
+// re-embedding with a slightly different string.
+func ArticleText(a ingestion.Article) string { return articleText(a) }
+
 // articleText builds the text representation used for embedding.
 func articleText(a ingestion.Article) string {
 	text := a.Title + "\n" + a.Content

@@ -1,0 +1,31 @@
+{{define "base"}}<!doctype html>
+<html lang="{{if .Language}}{{.Language}}{{else}}en{{end}}" class="antialiased">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{if eq .Title .SiteName}}{{.SiteName}}{{else}}{{.Title}} · {{.SiteName}}{{end}}</title>
+  {{if .Description}}<meta name="description" content="{{.Description}}">{{end}}
+  {{if .CanonicalURL}}<link rel="canonical" href="{{.CanonicalURL}}">{{end}}
+  <meta property="og:site_name" content="{{.SiteName}}">
+  <meta property="og:type" content="{{if .OGType}}{{.OGType}}{{else}}website{{end}}">
+  <meta property="og:title" content="{{.Title}}">
+  {{if .Description}}<meta property="og:description" content="{{.Description}}">{{end}}
+  {{if .CanonicalURL}}<meta property="og:url" content="{{.CanonicalURL}}">{{end}}
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{.Title}}">
+  {{if .Description}}<meta name="twitter:description" content="{{.Description}}">{{end}}
+  <link rel="alternate" type="application/rss+xml" title="{{.SiteName}}" href="/feed.xml">
+  {{if .JSONLD}}<script type="application/ld+json">{{.JSONLD}}</script>{{end}}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/app.css{{if .AssetVer}}?v={{.AssetVer}}{{end}}">
+</head>
+<body class="min-h-screen bg-white text-neutral-800 dark:bg-neutral-950 dark:text-neutral-200 font-sans">
+  {{template "header" .}}
+  <main class="mx-auto max-w-4xl px-6 py-4">
+    {{template "content" .}}
+  </main>
+  {{template "footer" .}}
+</body>
+</html>{{end}}

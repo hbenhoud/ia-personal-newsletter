@@ -1,0 +1,59 @@
+name: Product (ingest + deploy)
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # daily ingestion at 06:00 UTC
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  # Populate the production database from the RSS pipeline. Postgres (Neon/
+  # Supabase) is reached via the DATABASE_URL secret; provider keys drive
+  # embedding + summarization, exactly like the static workflow.
+  ingest:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
+
+      - uses: actions/cache@v4
+        with:
+          path: .cache/
+          key: embeddings-${{ hashFiles('config/newsletter.yaml') }}-${{ github.run_id }}
+          restore-keys: |
+            embeddings-${{ hashFiles('config/newsletter.yaml') }}-
+
+      - name: Write profiles
+        run: |
+          mkdir -p config/profiles
+          printf '%s' "$PROFILE_TECHNICAL_MD" > config/profiles/technical.md
+          printf '%s' "$PROFILE_BUSINESS_MD"  > config/profiles/business.md
+        env:
+          PROFILE_TECHNICAL_MD: ${{ secrets.PROFILE_TECHNICAL_MD }}
+          PROFILE_BUSINESS_MD: ${{ secrets.PROFILE_BUSINESS_MD }}
+
+      - name: Ingest into Postgres
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+        run: go run ./cmd/ingest
+
+  # Deploy the SSR server to Fly.io. Requires FLY_API_TOKEN and a one-time
+  # `fly launch`/`fly secrets set DATABASE_URL=...` for the app in fly.toml.
+  deploy:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    concurrency: deploy-${{ github.ref }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

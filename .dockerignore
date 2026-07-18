@@ -1,0 +1,10 @@
+.git
+.github
+output
+.cache
+*.md
+config/profiles
+.env
+newsletter
+bin
+web/tailwind

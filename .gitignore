@@ -8,8 +8,13 @@ output/
 # Embedding cache
 .cache/
 
-# Build binary
-newsletter
+# Build binaries (repo-root only — must not match cmd/server, cmd/ingest, cmd/newsletter)
+/newsletter
+/server
+/ingest
+
+# Tailwind standalone CLI (downloaded locally; fetched in CI)
+bin/
 
 # Environment variables (API keys)
 .env
