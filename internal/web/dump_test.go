@@ -15,13 +15,14 @@ func TestDumpHTML(t *testing.T) {
 	if dir == "" {
 		t.Skip("DUMP_DIR not set")
 	}
-	s := newTestServer(t)
+	s := newTestServerWithSender(t, &fakeSender{}) // email enabled → footer shows the form
 	pages := map[string]string{
-		"home.html":    "/",
-		"edition.html": "/editions/technical-2026-07-18",
-		"article.html": "/articles/gpt-x-launch-abc123",
-		"topic.html":   "/topics/technical",
-		"search.html":  "/search?q=gpt",
+		"home.html":       "/",
+		"edition.html":    "/editions/technical-2026-07-18",
+		"article.html":    "/articles/gpt-x-launch-abc123",
+		"topic.html":      "/topics/technical",
+		"search.html":     "/search?q=gpt",
+		"subscribed.html": "/subscribed?status=ok",
 	}
 	for file, path := range pages {
 		req := httptest.NewRequest(http.MethodGet, path, nil)

@@ -9,13 +9,16 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"html"
 	"log"
 	"os"
+	"strings"
 	"time"
 	"unicode"
 
 	"github.com/hbenhoud/ia-personal-newsletter/internal/config"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/dotenv"
+	"github.com/hbenhoud/ia-personal-newsletter/internal/email"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/embedding"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/filtering"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/generation"
@@ -72,10 +75,22 @@ func run(ctx context.Context) error {
 		return fmt.Errorf("reading embedded prompt template: %w", err)
 	}
 
+	// Email broadcast is optional: without EMAIL_API_KEY, editions are still
+	// persisted, just not emailed.
+	var sender email.Sender
+	if ecfg, ok := email.ConfigFromEnv(os.Getenv); ok {
+		sender, err = email.NewSender(ecfg)
+		if err != nil {
+			return fmt.Errorf("email provider: %w", err)
+		}
+		log.Printf("ingest: broadcast enabled (%s)", sender.Name())
+	}
+	baseURL := os.Getenv("SITE_BASE_URL")
+
 	var failures int
 	for _, pc := range cfg.Profiles {
 		log.Printf("profile %q: ingesting", pc.Name)
-		if err := ingestProfile(ctx, cfg, pc, embedder, llmProvider, string(promptContent), st); err != nil {
+		if err := ingestProfile(ctx, cfg, pc, embedder, llmProvider, string(promptContent), st, sender, baseURL); err != nil {
 			failures++
 			log.Printf("profile %q failed: %v", pc.Name, err)
 		}
@@ -96,6 +111,8 @@ func ingestProfile(
 	llmProvider llm.Provider,
 	promptContent string,
 	st store.Store,
+	sender email.Sender,
+	baseURL string,
 ) error {
 	prof := pc.Profile
 
@@ -176,7 +193,46 @@ func ingestProfile(
 		return err
 	}
 	log.Printf("profile %q: edition %s with %d articles", pc.Name, editionSlug, len(members))
+
+	// Email the new edition to subscribers (best-effort; a failure here must
+	// not fail the ingest).
+	if sender != nil {
+		htmlBody := renderEditionEmail(baseURL, editionTitle, summaries)
+		if err := sender.Broadcast(ctx, editionTitle, htmlBody); err != nil {
+			log.Printf("profile %q: broadcast failed: %v", pc.Name, err)
+		} else {
+			log.Printf("profile %q: broadcast sent for %s", pc.Name, editionSlug)
+		}
+	}
 	return nil
+}
+
+// renderEditionEmail builds an email-safe HTML body (inline styles) for one
+// edition, linking each article to its permalink on the site.
+func renderEditionEmail(baseURL, editionTitle string, summaries []generation.Summary) string {
+	base := strings.TrimRight(baseURL, "/")
+	var b strings.Builder
+	b.WriteString(`<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;padding:16px;color:#1a1a1a">`)
+	b.WriteString(`<h1 style="font-size:24px;margin:0 0 24px">` + html.EscapeString(editionTitle) + `</h1>`)
+	for _, sum := range summaries {
+		a := sum.Article
+		link := a.URL
+		if base != "" {
+			link = base + "/articles/" + store.Slugify(a.Title, a.URL)
+		}
+		b.WriteString(`<div style="margin:0 0 24px;padding-bottom:16px;border-bottom:1px solid #ececec">`)
+		b.WriteString(`<div style="font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#059669;font-weight:700">` + html.EscapeString(a.Source) + `</div>`)
+		b.WriteString(`<h2 style="font-size:18px;line-height:1.3;margin:6px 0"><a href="` + html.EscapeString(link) + `" style="color:#111;text-decoration:none">` + html.EscapeString(a.Title) + `</a></h2>`)
+		if sum.TLDR != "" {
+			b.WriteString(`<p style="font-size:15px;line-height:1.5;color:#333;margin:6px 0">` + html.EscapeString(sum.TLDR) + `</p>`)
+		}
+		if sum.WhyItMatters != "" {
+			b.WriteString(`<p style="font-size:14px;color:#666;margin:6px 0"><strong>Why it matters:</strong> ` + html.EscapeString(sum.WhyItMatters) + `</p>`)
+		}
+		b.WriteString(`</div>`)
+	}
+	b.WriteString(`</div>`)
+	return b.String()
 }
 
 func toFloat32(v []float64) []float32 {

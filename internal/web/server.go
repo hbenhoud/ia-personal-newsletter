@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hbenhoud/ia-personal-newsletter/internal/email"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/store"
 	"github.com/hbenhoud/ia-personal-newsletter/templates"
 )
@@ -22,14 +23,17 @@ type Config struct {
 
 // Server serves the SSR site from the store.
 type Server struct {
-	store    store.Store
-	renderer *Renderer
-	cfg      Config
-	assetVer string // short hash of app.css, for cache-busting the stylesheet URL
+	store      store.Store
+	renderer   *Renderer
+	cfg        Config
+	assetVer   string      // short hash of app.css, for cache-busting the stylesheet URL
+	sender     email.Sender // nil when email is not configured
+	subLimiter *rateLimiter
 }
 
-// NewServer wires a Server.
-func NewServer(st store.Store, r *Renderer, cfg Config) *Server {
+// NewServer wires a Server. sender may be nil (email not configured), in which
+// case the subscribe endpoint degrades gracefully.
+func NewServer(st store.Store, r *Renderer, cfg Config, sender email.Sender) *Server {
 	cfg.BaseURL = strings.TrimRight(cfg.BaseURL, "/")
 	if cfg.SiteName == "" {
 		cfg.SiteName = "AI Newsletter"
@@ -39,8 +43,18 @@ func NewServer(st store.Store, r *Renderer, cfg Config) *Server {
 		sum := sha256.Sum256(css)
 		ver = hex.EncodeToString(sum[:])[:8]
 	}
-	return &Server{store: st, renderer: r, cfg: cfg, assetVer: ver}
+	return &Server{
+		store:      st,
+		renderer:   r,
+		cfg:        cfg,
+		assetVer:   ver,
+		sender:     sender,
+		subLimiter: newRateLimiter(5, 10*time.Minute),
+	}
 }
+
+// EmailEnabled reports whether subscriptions are configured.
+func (s *Server) EmailEnabled() bool { return s.sender != nil }
 
 // Routes returns the HTTP handler for the whole site (Go 1.22 pattern mux).
 func (s *Server) Routes() http.Handler {
@@ -50,6 +64,8 @@ func (s *Server) Routes() http.Handler {
 	mux.HandleFunc("GET /articles/{slug}", s.handleArticle)
 	mux.HandleFunc("GET /topics/{topic}", s.handleTopic)
 	mux.HandleFunc("GET /search", s.handleSearch)
+	mux.HandleFunc("POST /api/subscribe", s.handleSubscribe)
+	mux.HandleFunc("GET /subscribed", s.handleSubscribed)
 	mux.HandleFunc("GET /feed.xml", s.handleFeed)
 	mux.HandleFunc("GET /sitemap.xml", s.handleSitemap)
 	mux.HandleFunc("GET /robots.txt", s.handleRobots)
@@ -77,6 +93,7 @@ func (s *Server) basePage(ctx context.Context, title, desc, path string) PageDat
 		CanonicalURL: s.canonical(path),
 		Language:     "en",
 		AssetVer:     s.assetVer,
+		EmailEnabled: s.sender != nil,
 		Topics:       topics,
 	}
 }

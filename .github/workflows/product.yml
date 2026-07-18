@@ -37,12 +37,18 @@ jobs:
           PROFILE_TECHNICAL_MD: ${{ secrets.PROFILE_TECHNICAL_MD }}
           PROFILE_BUSINESS_MD: ${{ secrets.PROFILE_BUSINESS_MD }}
 
-      - name: Ingest into Postgres
+      - name: Ingest into Postgres (and email the new editions)
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+          # Email broadcast (optional): unset EMAIL_API_KEY to skip sending.
+          SITE_BASE_URL: ${{ vars.SITE_BASE_URL }}
+          EMAIL_PROVIDER: ${{ vars.EMAIL_PROVIDER }}
+          EMAIL_API_KEY: ${{ secrets.EMAIL_API_KEY }}
+          EMAIL_FROM: ${{ vars.EMAIL_FROM }}
+          EMAIL_AUDIENCE_ID: ${{ vars.EMAIL_AUDIENCE_ID }}
         run: go run ./cmd/ingest
 
   # Deploy the SSR server to Fly.io. Requires FLY_API_TOKEN and a one-time

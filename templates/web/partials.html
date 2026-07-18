@@ -34,7 +34,18 @@
 
 {{define "footer"}}<footer id="subscribe" class="mt-16 border-t border-neutral-200 dark:border-neutral-800">
   <div class="mx-auto max-w-4xl px-6 py-12 text-sm text-neutral-500 dark:text-neutral-400">
-    <p class="mb-3 text-neutral-800 dark:text-neutral-200"><strong class="font-semibold">Get every edition by email.</strong> One digest, ranked by relevance. Subscription launching soon.</p>
+    {{if .EmailEnabled}}
+    <div class="mb-8 max-w-md">
+      <p class="mb-3 text-neutral-800 dark:text-neutral-200"><strong class="font-semibold">Get every edition by email.</strong> One digest, ranked by relevance.</p>
+      <form method="post" action="/api/subscribe" class="flex gap-2">
+        <input type="email" name="email" required autocomplete="email" placeholder="you@example.com"
+          class="w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2 text-sm text-neutral-800 focus:border-brand focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100">
+        <button type="submit" class="shrink-0 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white hover:opacity-90">Subscribe</button>
+      </form>
+    </div>
+    {{else}}
+    <p class="mb-8 text-neutral-800 dark:text-neutral-200"><strong class="font-semibold">Get every edition by email.</strong> One digest, ranked by relevance. Subscription launching soon.</p>
+    {{end}}
     <p>© {{.Year}} {{.SiteName}}{{range .Topics}} · <a href="/topics/{{.}}" class="hover:text-neutral-900 dark:hover:text-white">{{. | title}}</a>{{end}} · <a href="/feed.xml" class="hover:text-neutral-900 dark:hover:text-white">RSS</a></p>
   </div>
 </footer>{{end}}

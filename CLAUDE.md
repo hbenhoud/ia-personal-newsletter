@@ -40,11 +40,21 @@ cmd/ingest/            Runs the pipeline, persists articles (+ pgvector embeddin
 cmd/server/            Stdlib net/http SSR site (env config: PORT, DATABASE_URL, SITE_NAME/BASE_URL/DESCRIPTION)
 internal/store/        Store interface + pgx impl + embedded SQL migrations (pgvector). Vectors passed/read as text, cast ::vector
 internal/web/          Renderer (embedded templates), handlers, SEO (JSON-LD, sitemap.xml, robots.txt, feed.xml)
+internal/email/        Sender interface (Subscribe/Broadcast) + Buttondown & Resend impls + factory
 internal/dotenv/       Shared .env loader for the new binaries
 templates/embed.go     go:embed of prompts/, themes/, web/ (self-contained binaries)
 templates/web/*.html   Server-side layout + partials + pages (Tailwind classes, Medium-style)
 web/tailwind/input.css Tailwind v4 source → compiled to templates/web/app.css (served at /static/app.css)
 ```
+
+**Email subscription (Phase 2).** `internal/email` mirrors the provider pattern:
+`email.Sender` (`Subscribe`, `Broadcast`) with Buttondown (default) and Resend impls, built from
+env via `email.ConfigFromEnv` (`EMAIL_PROVIDER`, `EMAIL_API_KEY`, `EMAIL_FROM`, `EMAIL_AUDIENCE_ID`).
+The server exposes `POST /api/subscribe` (email validation + per-IP rate limit) → provider double
+opt-in, and a `/subscribed` feedback page; the footer form shows only when email is configured
+(`PageData.EmailEnabled`). `cmd/ingest` broadcasts each new edition (best-effort) when email is
+configured. All email is **optional** — without `EMAIL_API_KEY` the product runs and the form reads
+"launching soon".
 
 **Styling = Tailwind CSS v4 + typography plugin (no Node).** Templates use Tailwind utility classes;
 article bodies use `prose`. The standalone CLI lives at `bin/tailwindcss` (gitignored; `make tailwind`

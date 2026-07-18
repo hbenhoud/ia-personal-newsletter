@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/hbenhoud/ia-personal-newsletter/internal/dotenv"
+	"github.com/hbenhoud/ia-personal-newsletter/internal/email"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/store"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/web"
 )
@@ -35,11 +36,24 @@ func run() error {
 		return err
 	}
 
+	// Email is optional: without EMAIL_API_KEY the subscribe form degrades
+	// gracefully to "launching soon".
+	var sender email.Sender
+	if cfg, ok := email.ConfigFromEnv(os.Getenv); ok {
+		sender, err = email.NewSender(cfg)
+		if err != nil {
+			return err
+		}
+		log.Printf("server: email enabled (%s)", sender.Name())
+	} else {
+		log.Print("server: email not configured (set EMAIL_API_KEY to enable subscriptions)")
+	}
+
 	srv := web.NewServer(st, renderer, web.Config{
 		SiteName:    envOr("SITE_NAME", "AI Newsletter"),
 		BaseURL:     os.Getenv("SITE_BASE_URL"),
 		Description: envOr("SITE_DESCRIPTION", "Curated AI news, summarized and ranked for you."),
-	})
+	}, sender)
 
 	addr := ":" + envOr("PORT", "8080")
 	httpSrv := &http.Server{

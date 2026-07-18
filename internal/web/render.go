@@ -23,6 +23,7 @@ type PageData struct {
 	Language     string
 	JSONLD       template.JS
 	AssetVer     string
+	EmailEnabled bool
 	Topics       []string
 	Year         int
 	Data         any

@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 	"time"
@@ -152,7 +153,36 @@ func newTestServer(t *testing.T) *Server {
 		},
 		editions: append(makeEditions("technical", 12), makeEditions("business", 4)...),
 	}
-	return NewServer(fs, r, Config{SiteName: "AI News", BaseURL: "https://news.example.com", Description: "desc"})
+	return NewServer(fs, r, Config{SiteName: "AI News", BaseURL: "https://news.example.com", Description: "desc"}, nil)
+}
+
+// fakeSender records subscribe calls for the subscription tests.
+type fakeSender struct {
+	subscribed []string
+	fail       bool
+}
+
+func (f *fakeSender) Name() string { return "fake" }
+func (f *fakeSender) Subscribe(_ context.Context, email string) error {
+	if f.fail {
+		return errFakeSender
+	}
+	f.subscribed = append(f.subscribed, email)
+	return nil
+}
+func (f *fakeSender) Broadcast(context.Context, string, string) error { return nil }
+
+var errFakeSender = errorString("sender down")
+
+type errorString string
+
+func (e errorString) Error() string { return string(e) }
+
+func newTestServerWithSender(t *testing.T, sender *fakeSender) *Server {
+	t.Helper()
+	s := newTestServer(t)
+	s.sender = sender
+	return s
 }
 
 func get(t *testing.T, s *Server, path string) (*http.Response, string) {
@@ -228,6 +258,73 @@ func TestEmptyTopic(t *testing.T) {
 	}
 	if !strings.Contains(body, "Nothing published") {
 		t.Error("empty topic should show a friendly message")
+	}
+}
+
+func postForm(t *testing.T, s *Server, path string, form url.Values) *http.Response {
+	t.Helper()
+	req := httptest.NewRequest(http.MethodPost, path, strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rec := httptest.NewRecorder()
+	s.Routes().ServeHTTP(rec, req)
+	return rec.Result()
+}
+
+func TestSubscribeValid(t *testing.T) {
+	sender := &fakeSender{}
+	s := newTestServerWithSender(t, sender)
+	res := postForm(t, s, "/api/subscribe", url.Values{"email": {"reader@example.com"}})
+	if res.StatusCode != http.StatusSeeOther {
+		t.Fatalf("status = %d, want 303", res.StatusCode)
+	}
+	if loc := res.Header.Get("Location"); loc != "/subscribed?status=ok" {
+		t.Errorf("location = %q", loc)
+	}
+	if len(sender.subscribed) != 1 || sender.subscribed[0] != "reader@example.com" {
+		t.Errorf("subscribed = %v", sender.subscribed)
+	}
+}
+
+func TestSubscribeInvalidEmail(t *testing.T) {
+	sender := &fakeSender{}
+	s := newTestServerWithSender(t, sender)
+	res := postForm(t, s, "/api/subscribe", url.Values{"email": {"not-an-email"}})
+	if res.Header.Get("Location") != "/subscribed?status=invalid" {
+		t.Errorf("location = %q", res.Header.Get("Location"))
+	}
+	if len(sender.subscribed) != 0 {
+		t.Error("invalid email should not reach the sender")
+	}
+}
+
+func TestSubscribeUnavailableWhenNoSender(t *testing.T) {
+	s := newTestServer(t) // sender nil
+	res := postForm(t, s, "/api/subscribe", url.Values{"email": {"a@b.com"}})
+	if res.Header.Get("Location") != "/subscribed?status=unavailable" {
+		t.Errorf("location = %q", res.Header.Get("Location"))
+	}
+}
+
+func TestSubscribeRateLimited(t *testing.T) {
+	s := newTestServerWithSender(t, &fakeSender{})
+	var last *http.Response
+	for i := 0; i < 7; i++ {
+		last = postForm(t, s, "/api/subscribe", url.Values{"email": {"a@b.com"}})
+	}
+	if last.Header.Get("Location") != "/subscribed?status=ratelimited" {
+		t.Errorf("expected rate limit after repeated attempts, got %q", last.Header.Get("Location"))
+	}
+}
+
+func TestSubscribedPage(t *testing.T) {
+	s := newTestServer(t)
+	res, body := get(t, s, "/subscribed?status=ok")
+	if res.StatusCode != 200 || !strings.Contains(body, "Check your inbox") {
+		t.Errorf("status=%d body missing confirmation", res.StatusCode)
+	}
+	res2, _ := get(t, s, "/subscribed?status=invalid")
+	if res2.StatusCode != http.StatusBadRequest {
+		t.Errorf("invalid status page = %d, want 400", res2.StatusCode)
 	}
 }
 
