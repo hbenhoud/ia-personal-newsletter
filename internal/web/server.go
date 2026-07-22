@@ -19,6 +19,10 @@ type Config struct {
 	SiteName    string
 	BaseURL     string // e.g. https://news.example.com (no trailing slash)
 	Description string
+	// GAMeasurementID enables Google Analytics 4 when set (e.g. "G-XXXXXXX").
+	// The tracking script only loads after the visitor accepts the consent
+	// banner (templates/web/layout.html) — never on page load itself.
+	GAMeasurementID string
 }
 
 // Server serves the SSR site from the store.
@@ -26,7 +30,7 @@ type Server struct {
 	store      store.Store
 	renderer   *Renderer
 	cfg        Config
-	assetVer   string      // short hash of app.css, for cache-busting the stylesheet URL
+	assetVer   string       // short hash of app.css, for cache-busting the stylesheet URL
 	sender     email.Sender // nil when email is not configured
 	subLimiter *rateLimiter
 }
@@ -64,6 +68,7 @@ func (s *Server) Routes() http.Handler {
 	mux.HandleFunc("GET /articles/{slug}", s.handleArticle)
 	mux.HandleFunc("GET /topics/{topic}", s.handleTopic)
 	mux.HandleFunc("GET /search", s.handleSearch)
+	mux.HandleFunc("GET /privacy", s.handlePrivacy)
 	mux.HandleFunc("POST /api/subscribe", s.handleSubscribe)
 	mux.HandleFunc("GET /subscribed", s.handleSubscribed)
 	mux.HandleFunc("GET /feed.xml", s.handleFeed)
@@ -86,15 +91,21 @@ func (s *Server) basePage(ctx context.Context, title, desc, path string) PageDat
 	if desc == "" {
 		desc = s.cfg.Description
 	}
+	var providerName string
+	if s.sender != nil {
+		providerName = titleCase(s.sender.Name())
+	}
 	return PageData{
-		SiteName:     s.cfg.SiteName,
-		Title:        title,
-		Description:  desc,
-		CanonicalURL: s.canonical(path),
-		Language:     "en",
-		AssetVer:     s.assetVer,
-		EmailEnabled: s.sender != nil,
-		Topics:       topics,
+		SiteName:          s.cfg.SiteName,
+		Title:             title,
+		Description:       desc,
+		CanonicalURL:      s.canonical(path),
+		Language:          "en",
+		AssetVer:          s.assetVer,
+		EmailEnabled:      s.sender != nil,
+		EmailProviderName: providerName,
+		GAMeasurementID:   s.cfg.GAMeasurementID,
+		Topics:            topics,
 	}
 }
 
@@ -298,6 +309,11 @@ func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 		Results []store.Article
 	}{q, results}
 	s.render(w, "search", pd)
+}
+
+func (s *Server) handlePrivacy(w http.ResponseWriter, r *http.Request) {
+	pd := s.basePage(r.Context(), "Privacy Policy", "How this site handles your data.", "/privacy")
+	s.render(w, "privacy", pd)
 }
 
 // handleCSS serves the Tailwind-compiled stylesheet embedded from

@@ -15,19 +15,21 @@ import (
 
 // PageData is the common template context; Data carries the page-specific value.
 type PageData struct {
-	SiteName     string
-	Title        string
-	Description  string
-	CanonicalURL string
-	OGType       string
-	OGImage      string
-	Language     string
-	JSONLD       template.JS
-	AssetVer     string
-	EmailEnabled bool
-	Topics       []string
-	Year         int
-	Data         any
+	SiteName          string
+	Title             string
+	Description       string
+	CanonicalURL      string
+	OGType            string
+	OGImage           string
+	Language          string
+	JSONLD            template.JS
+	AssetVer          string
+	EmailEnabled      bool
+	EmailProviderName string
+	GAMeasurementID   string
+	Topics            []string
+	Year              int
+	Data              any
 }
 
 // Renderer holds one parsed template set per page (layout + partials + page).
@@ -41,6 +43,7 @@ var pageFiles = map[string]string{
 	"article": "web/article.html",
 	"search":  "web/search.html",
 	"message": "web/message.html",
+	"privacy": "web/privacy.html",
 }
 
 // NewRenderer parses the embedded web templates.

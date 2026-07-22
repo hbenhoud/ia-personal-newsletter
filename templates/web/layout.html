@@ -27,5 +27,51 @@
     {{template "content" .}}
   </main>
   {{template "footer" .}}
+  {{if .GAMeasurementID}}
+  <div id="ga-consent-banner" class="fixed inset-x-0 bottom-0 z-30 hidden border-t border-neutral-200 bg-white/95 px-6 py-4 backdrop-blur dark:border-neutral-800 dark:bg-neutral-950/95">
+    <div class="mx-auto flex max-w-4xl flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-sm text-neutral-600 dark:text-neutral-400">
+        We use analytics to understand site usage. <a href="/privacy" class="underline hover:text-neutral-900 dark:hover:text-white">Learn more</a>.
+      </p>
+      <div class="flex shrink-0 gap-2">
+        <button type="button" onclick="gaConsent(false)" class="rounded-full px-4 py-2 text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white">Decline</button>
+        <button type="button" onclick="gaConsent(true)" class="rounded-full bg-brand px-4 py-2 text-sm font-medium text-white hover:opacity-90">Accept</button>
+      </div>
+    </div>
+  </div>
+  <script>
+  (function() {
+    var GA_ID = "{{.GAMeasurementID}}";
+    function loadGA() {
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', GA_ID);
+    }
+    function banner() { return document.getElementById('ga-consent-banner'); }
+    window.gaConsent = function(granted) {
+      localStorage.setItem('ga-consent', granted ? 'granted' : 'denied');
+      var b = banner();
+      if (b) b.classList.add('hidden');
+      if (granted) loadGA();
+    };
+    window.gaShowConsentBanner = function() {
+      var b = banner();
+      if (b) b.classList.remove('hidden');
+    };
+    var consent = localStorage.getItem('ga-consent');
+    if (consent === 'granted') {
+      loadGA();
+    } else if (consent !== 'denied') {
+      gaShowConsentBanner();
+    }
+  })();
+  </script>
+  {{end}}
 </body>
 </html>{{end}}

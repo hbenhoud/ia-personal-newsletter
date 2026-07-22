@@ -350,3 +350,37 @@ func TestCanonicalURL(t *testing.T) {
 		t.Fatalf("canonical root = %q", got)
 	}
 }
+
+func TestPrivacyPage(t *testing.T) {
+	s := newTestServer(t)
+	res, body := get(t, s, "/privacy")
+	if res.StatusCode != http.StatusOK {
+		t.Fatalf("status = %d, want 200", res.StatusCode)
+	}
+	if !strings.Contains(body, "Privacy Policy") {
+		t.Error("expected privacy page heading")
+	}
+}
+
+func TestNoAnalyticsWithoutGAConfigured(t *testing.T) {
+	s := newTestServer(t)
+	_, body := get(t, s, "/")
+	if strings.Contains(body, "googletagmanager.com") {
+		t.Error("GA script referenced without GAMeasurementID configured")
+	}
+	if strings.Contains(body, "ga-consent-banner") {
+		t.Error("consent banner rendered without GAMeasurementID configured")
+	}
+}
+
+func TestAnalyticsBannerWhenGAConfigured(t *testing.T) {
+	s := newTestServer(t)
+	s.cfg.GAMeasurementID = "G-TEST123"
+	_, body := get(t, s, "/")
+	if !strings.Contains(body, "ga-consent-banner") {
+		t.Error("expected consent banner when GAMeasurementID is set")
+	}
+	if !strings.Contains(body, "G-TEST123") {
+		t.Error("expected measurement ID in page source")
+	}
+}

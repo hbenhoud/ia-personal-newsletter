@@ -46,6 +46,6 @@
     {{else}}
     <p class="mb-8 text-neutral-800 dark:text-neutral-200"><strong class="font-semibold">Get every edition by email.</strong> One digest, ranked by relevance. Subscription launching soon.</p>
     {{end}}
-    <p>© {{.Year}} {{.SiteName}}{{range .Topics}} · <a href="/topics/{{.}}" class="hover:text-neutral-900 dark:hover:text-white">{{. | title}}</a>{{end}} · <a href="/feed.xml" class="hover:text-neutral-900 dark:hover:text-white">RSS</a></p>
+    <p>© {{.Year}} {{.SiteName}}{{range .Topics}} · <a href="/topics/{{.}}" class="hover:text-neutral-900 dark:hover:text-white">{{. | title}}</a>{{end}} · <a href="/feed.xml" class="hover:text-neutral-900 dark:hover:text-white">RSS</a> · <a href="/privacy" class="hover:text-neutral-900 dark:hover:text-white">Privacy</a>{{if .GAMeasurementID}} · <button type="button" onclick="gaShowConsentBanner()" class="appearance-none border-0 bg-transparent p-0 text-inherit hover:text-neutral-900 dark:hover:text-white">Cookie preferences</button>{{end}}</p>
   </div>
 </footer>{{end}}

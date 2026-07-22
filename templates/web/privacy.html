@@ -1,0 +1,34 @@
+{{define "content"}}
+<article class="py-10">
+  <h1 class="text-3xl font-extrabold leading-tight tracking-tight text-neutral-900 sm:text-4xl dark:text-white">Privacy Policy</h1>
+  <p class="mt-3 text-sm text-neutral-500 dark:text-neutral-400">What {{.SiteName}} collects, and why.</p>
+
+  <div class="prose prose-lg prose-neutral mt-8 max-w-none dark:prose-invert">
+    <p><em>Last updated: July 22, 2026.</em></p>
+    <p>This page describes, factually, what this site does with visitor data as of the date above.
+    It is not a substitute for legal advice.</p>
+
+    <h2>Analytics</h2>
+    <p>{{if .GAMeasurementID}}This site uses Google Analytics (GA4) to understand traffic and usage:
+    which pages are read, roughly where visitors come from, and how many people visit. The tracking
+    script only loads after you accept the cookie banner; if you decline, no analytics script ever
+    loads and no analytics cookie is set. You can change your choice at any time from the "Cookie
+    preferences" link in the footer.{{else}}This site does not currently run any analytics or
+    tracking.{{end}}</p>
+
+    <h2>Email subscription</h2>
+    <p>{{if .EmailEnabled}}If you subscribe to email updates, your email address is stored and
+    processed by {{.EmailProviderName}}, our email provider, solely to send you new editions. You
+    can unsubscribe at any time via the link in any email you receive.{{else}}Email subscriptions
+    aren't available yet on this site.{{end}}</p>
+
+    <h2>As of the date above</h2>
+    <p>We don't sell or share visitor or subscriber data with third parties for advertising, and we
+    don't run any tracking beyond what's described above. If that ever changes (a new analytics
+    tool, an ad partner, anything that processes visitor data), this page will be updated first.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about this policy: [contact email].</p>
+  </div>
+</article>
+{{end}}

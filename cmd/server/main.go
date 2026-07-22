@@ -50,9 +50,10 @@ func run() error {
 	}
 
 	srv := web.NewServer(st, renderer, web.Config{
-		SiteName:    envOr("SITE_NAME", "AI Newsletter"),
-		BaseURL:     os.Getenv("SITE_BASE_URL"),
-		Description: envOr("SITE_DESCRIPTION", "Curated AI news, summarized and ranked for you."),
+		SiteName:        envOr("SITE_NAME", "AI Newsletter"),
+		BaseURL:         os.Getenv("SITE_BASE_URL"),
+		Description:     envOr("SITE_DESCRIPTION", "Curated AI news, summarized and ranked for you."),
+		GAMeasurementID: os.Getenv("GA_MEASUREMENT_ID"),
 	}, sender)
 
 	addr := ":" + envOr("PORT", "8080")
