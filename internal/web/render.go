@@ -75,9 +75,18 @@ func (r *Renderer) Render(w io.Writer, name string, pd PageData) error {
 	return t.ExecuteTemplate(w, "base", pd)
 }
 
+// minorWords are lowercased by titleCase unless they're the slug's first
+// word, matching conventional English title casing (e.g. "ai-at-work" ->
+// "AI at Work", not "AI At Work").
+var minorWords = map[string]bool{
+	"a": true, "an": true, "and": true, "at": true, "by": true, "for": true,
+	"from": true, "in": true, "nor": true, "of": true, "on": true, "or": true,
+	"the": true, "to": true, "with": true,
+}
+
 // titleCase turns a hyphenated topic slug (e.g. "the-frontier") into a
 // display label ("The Frontier"). "ai" is special-cased to the acronym
-// since it's core vocabulary for this product ("ai-at-work" -> "AI At Work").
+// since it's core vocabulary for this product ("ai-at-work" -> "AI at Work").
 func titleCase(s string) string {
 	words := strings.Split(s, "-")
 	for i, w := range words {
@@ -86,6 +95,10 @@ func titleCase(s string) string {
 		}
 		if strings.EqualFold(w, "ai") {
 			words[i] = "AI"
+			continue
+		}
+		if i > 0 && minorWords[strings.ToLower(w)] {
+			words[i] = strings.ToLower(w)
 			continue
 		}
 		r := []rune(w)
