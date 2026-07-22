@@ -133,6 +133,7 @@ func run(ctx context.Context) error {
 // editionSection is one profile's contribution to the combined email.
 type editionSection struct {
 	Title     string
+	Slug      string
 	Summaries []generation.Summary
 }
 
@@ -238,7 +239,7 @@ func ingestProfile(
 	}
 	log.Printf("profile %q: edition %s with %d articles", pc.Name, editionSlug, len(members))
 
-	return &editionSection{Title: editionTitle, Summaries: summaries}, nil
+	return &editionSection{Title: editionTitle, Slug: editionSlug, Summaries: summaries}, nil
 }
 
 // enrichWithFullText fetches each article's source page and, on success,
@@ -267,10 +268,17 @@ func enrichWithFullText(ctx context.Context, profileName string, scored []filter
 	wg.Wait()
 }
 
+// maxArticlesPerEmailSection caps how many articles from one profile's
+// edition appear in the combined email — editions can hold up to
+// ItemsPerIssue (20) articles, too many to read in one email. Summaries
+// arrive pre-ranked by score, so this keeps each section's best picks and
+// links to the full edition on the site for the rest.
+const maxArticlesPerEmailSection = 5
+
 // renderCombinedEmail builds an email-safe HTML body (inline styles) covering
 // every profile's new edition from one ingest run, so subscribers get a single
-// email per run rather than one per profile. Each section links its articles
-// to their permalink on the site.
+// email per run rather than one per profile. Each section shows its top
+// articles (linked to their permalink) plus a link to the full edition.
 func renderCombinedEmail(baseURL, subject string, sections []editionSection) string {
 	base := strings.TrimRight(baseURL, "/")
 	var b strings.Builder
@@ -278,7 +286,11 @@ func renderCombinedEmail(baseURL, subject string, sections []editionSection) str
 	b.WriteString(`<h1 style="font-size:24px;margin:0 0 24px">` + html.EscapeString(subject) + `</h1>`)
 	for _, sec := range sections {
 		b.WriteString(`<h2 style="font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:#059669;font-weight:700;margin:28px 0 12px">` + html.EscapeString(sec.Title) + `</h2>`)
-		for _, sum := range sec.Summaries {
+		top := sec.Summaries
+		if len(top) > maxArticlesPerEmailSection {
+			top = top[:maxArticlesPerEmailSection]
+		}
+		for _, sum := range top {
 			a := sum.Article
 			link := a.URL
 			if base != "" {
@@ -291,6 +303,9 @@ func renderCombinedEmail(baseURL, subject string, sections []editionSection) str
 				b.WriteString(`<p style="font-size:15px;line-height:1.5;color:#333;margin:6px 0">` + html.EscapeString(sum.TLDR) + `</p>`)
 			}
 			b.WriteString(`</div>`)
+		}
+		if base != "" && len(sec.Summaries) > maxArticlesPerEmailSection {
+			b.WriteString(`<p style="margin:0 0 8px"><a href="` + html.EscapeString(base+"/editions/"+sec.Slug) + `" style="color:#059669;font-size:14px;font-weight:600;text-decoration:none">See all ` + fmt.Sprint(len(sec.Summaries)) + ` articles →</a></p>`)
 		}
 	}
 	b.WriteString(`</div>`)
