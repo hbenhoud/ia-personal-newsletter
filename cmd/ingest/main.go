@@ -96,21 +96,49 @@ func run(ctx context.Context) error {
 	baseURL := os.Getenv("SITE_BASE_URL")
 
 	var failures int
+	var sections []editionSection
 	for _, pc := range cfg.Profiles {
 		log.Printf("profile %q: ingesting", pc.Name)
-		if err := ingestProfile(ctx, cfg, pc, embedder, llmProvider, string(promptContent), st, sender, baseURL); err != nil {
+		data, err := ingestProfile(ctx, cfg, pc, embedder, llmProvider, string(promptContent), st)
+		if err != nil {
 			failures++
 			log.Printf("profile %q failed: %v", pc.Name, err)
+			continue
+		}
+		if data != nil {
+			sections = append(sections, *data)
 		}
 	}
+
+	// One combined email per ingest run, covering every profile's new edition —
+	// not one email per profile, so subscribers aren't spammed per topic. A
+	// single global audience for now; per-profile targeting is deferred until
+	// the profile list stabilizes.
+	if sender != nil && len(sections) > 0 {
+		subject := fmt.Sprintf("%s · %s", envOr("SITE_NAME", "AI Newsletter"), time.Now().Format("2 Jan 2006"))
+		htmlBody := renderCombinedEmail(baseURL, subject, sections)
+		if err := sender.Broadcast(ctx, subject, htmlBody); err != nil {
+			log.Printf("ingest: broadcast failed: %v", err)
+		} else {
+			log.Printf("ingest: broadcast sent (%d section(s))", len(sections))
+		}
+	}
+
 	if failures > 0 {
 		return fmt.Errorf("%d of %d profiles failed", failures, len(cfg.Profiles))
 	}
 	return nil
 }
 
+// editionSection is one profile's contribution to the combined email.
+type editionSection struct {
+	Title     string
+	Summaries []generation.Summary
+}
+
 // ingestProfile runs the pipeline for one profile and persists its articles and
-// a new edition to the store.
+// a new edition to the store. It returns the data needed for that profile's
+// section of the combined email, or nil if no edition was created.
 func ingestProfile(
 	ctx context.Context,
 	cfg *config.Config,
@@ -119,14 +147,12 @@ func ingestProfile(
 	llmProvider llm.Provider,
 	promptContent string,
 	st store.Store,
-	sender email.Sender,
-	baseURL string,
-) error {
+) (*editionSection, error) {
 	prof := pc.Profile
 
 	articles, err := ingestion.FetchAll(ctx, pc.Sources.RSS)
 	if err != nil {
-		return fmt.Errorf("ingestion: %w", err)
+		return nil, fmt.Errorf("ingestion: %w", err)
 	}
 
 	scored, err := filtering.Filter(ctx, articles, prof.Text, embedder, filtering.Config{
@@ -137,11 +163,11 @@ func ingestProfile(
 		ExcludeKeywords:     cfg.Filtering.ExcludeKeywords,
 	})
 	if err != nil {
-		return fmt.Errorf("filtering: %w", err)
+		return nil, fmt.Errorf("filtering: %w", err)
 	}
 	if len(scored) == 0 {
 		log.Printf("profile %q: no articles matched; skipping edition", pc.Name)
-		return nil
+		return nil, nil
 	}
 	if cfg.Output.ItemsPerIssue > 0 && len(scored) > cfg.Output.ItemsPerIssue {
 		scored = scored[:cfg.Output.ItemsPerIssue]
@@ -157,11 +183,11 @@ func ingestProfile(
 		ContentMaxChars: 6000,
 	})
 	if err != nil {
-		return fmt.Errorf("creating summarizer: %w", err)
+		return nil, fmt.Errorf("creating summarizer: %w", err)
 	}
 	summaries, err := summarizer.Summarize(ctx, scored, prof.Level, prof.Interests, prof.Language)
 	if err != nil {
-		return fmt.Errorf("summarization: %w", err)
+		return nil, fmt.Errorf("summarization: %w", err)
 	}
 
 	// Persist each article (dedup on URL) with its embedding, then create the
@@ -193,7 +219,7 @@ func ingestProfile(
 			FetchedAt:    a.FetchedAt,
 		})
 		if err != nil {
-			return err
+			return nil, err
 		}
 		members = append(members, store.EditionMember{ArticleID: id, Rank: i, Score: sum.Score})
 	}
@@ -208,21 +234,11 @@ func ingestProfile(
 		Language:    prof.Language,
 		PublishedAt: now,
 	}, members); err != nil {
-		return err
+		return nil, err
 	}
 	log.Printf("profile %q: edition %s with %d articles", pc.Name, editionSlug, len(members))
 
-	// Email the new edition to subscribers (best-effort; a failure here must
-	// not fail the ingest).
-	if sender != nil {
-		htmlBody := renderEditionEmail(baseURL, editionTitle, summaries)
-		if err := sender.Broadcast(ctx, editionTitle, htmlBody); err != nil {
-			log.Printf("profile %q: broadcast failed: %v", pc.Name, err)
-		} else {
-			log.Printf("profile %q: broadcast sent for %s", pc.Name, editionSlug)
-		}
-	}
-	return nil
+	return &editionSection{Title: editionTitle, Summaries: summaries}, nil
 }
 
 // enrichWithFullText fetches each article's source page and, on success,
@@ -251,32 +267,41 @@ func enrichWithFullText(ctx context.Context, profileName string, scored []filter
 	wg.Wait()
 }
 
-// renderEditionEmail builds an email-safe HTML body (inline styles) for one
-// edition, linking each article to its permalink on the site.
-func renderEditionEmail(baseURL, editionTitle string, summaries []generation.Summary) string {
+// renderCombinedEmail builds an email-safe HTML body (inline styles) covering
+// every profile's new edition from one ingest run, so subscribers get a single
+// email per run rather than one per profile. Each section links its articles
+// to their permalink on the site.
+func renderCombinedEmail(baseURL, subject string, sections []editionSection) string {
 	base := strings.TrimRight(baseURL, "/")
 	var b strings.Builder
 	b.WriteString(`<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;padding:16px;color:#1a1a1a">`)
-	b.WriteString(`<h1 style="font-size:24px;margin:0 0 24px">` + html.EscapeString(editionTitle) + `</h1>`)
-	for _, sum := range summaries {
-		a := sum.Article
-		link := a.URL
-		if base != "" {
-			link = base + "/articles/" + store.Slugify(a.Title, a.URL)
+	b.WriteString(`<h1 style="font-size:24px;margin:0 0 24px">` + html.EscapeString(subject) + `</h1>`)
+	for _, sec := range sections {
+		b.WriteString(`<h2 style="font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:#059669;font-weight:700;margin:28px 0 12px">` + html.EscapeString(sec.Title) + `</h2>`)
+		for _, sum := range sec.Summaries {
+			a := sum.Article
+			link := a.URL
+			if base != "" {
+				link = base + "/articles/" + store.Slugify(a.Title, a.URL)
+			}
+			b.WriteString(`<div style="margin:0 0 24px;padding-bottom:16px;border-bottom:1px solid #ececec">`)
+			b.WriteString(`<div style="font-size:12px;color:#888">` + html.EscapeString(a.Source) + `</div>`)
+			b.WriteString(`<h3 style="font-size:18px;line-height:1.3;margin:6px 0"><a href="` + html.EscapeString(link) + `" style="color:#111;text-decoration:none">` + html.EscapeString(a.Title) + `</a></h3>`)
+			if sum.TLDR != "" {
+				b.WriteString(`<p style="font-size:15px;line-height:1.5;color:#333;margin:6px 0">` + html.EscapeString(sum.TLDR) + `</p>`)
+			}
+			b.WriteString(`</div>`)
 		}
-		b.WriteString(`<div style="margin:0 0 24px;padding-bottom:16px;border-bottom:1px solid #ececec">`)
-		b.WriteString(`<div style="font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#059669;font-weight:700">` + html.EscapeString(a.Source) + `</div>`)
-		b.WriteString(`<h2 style="font-size:18px;line-height:1.3;margin:6px 0"><a href="` + html.EscapeString(link) + `" style="color:#111;text-decoration:none">` + html.EscapeString(a.Title) + `</a></h2>`)
-		if sum.TLDR != "" {
-			b.WriteString(`<p style="font-size:15px;line-height:1.5;color:#333;margin:6px 0">` + html.EscapeString(sum.TLDR) + `</p>`)
-		}
-		if sum.WhyItMatters != "" {
-			b.WriteString(`<p style="font-size:14px;color:#666;margin:6px 0"><strong>Impact:</strong> ` + html.EscapeString(sum.WhyItMatters) + `</p>`)
-		}
-		b.WriteString(`</div>`)
 	}
 	b.WriteString(`</div>`)
 	return b.String()
+}
+
+func envOr(key, def string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return def
 }
 
 func toFloat32(v []float64) []float32 {
