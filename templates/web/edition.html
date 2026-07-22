@@ -2,13 +2,10 @@
 {{with .Data}}
 {{with .Edition}}
 <section class="border-b border-neutral-200 py-10 dark:border-neutral-800">
-  <div class="flex flex-wrap items-start justify-between gap-4">
-    <div class="min-w-0">
-      <div class="mb-2 text-xs font-semibold uppercase tracking-wide text-brand">{{.Topic | title}} edition</div>
-      <h1 class="text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-4xl dark:text-white">{{.Title}}</h1>
-      <p class="mt-2 text-sm text-neutral-500 dark:text-neutral-400">{{fmtDate .PublishedAt}} · {{len .Articles}} articles</p>
-    </div>
-    <div class="shrink-0">{{template "datepicker" $.Data}}</div>
+  <div class="min-w-0">
+    <div class="mb-2 text-xs font-semibold uppercase tracking-wide text-brand">{{.Topic | title}} edition</div>
+    <h1 class="text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-4xl dark:text-white">{{.Title}}</h1>
+    <p class="mt-2 text-sm text-neutral-500 dark:text-neutral-400">{{fmtDate .PublishedAt}} · {{len .Articles}} articles</p>
   </div>
 </section>
 

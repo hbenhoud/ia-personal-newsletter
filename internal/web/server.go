@@ -220,8 +220,7 @@ func (s *Server) handleArticle(w http.ResponseWriter, r *http.Request) {
 }
 
 // handleTopic shows the topic's latest edition directly — never a bare list of
-// dates. Older editions are reached from there via the "Past editions" selector
-// and prev/next navigation.
+// dates. Older editions are reached from there via prev/next navigation.
 func (s *Server) handleTopic(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	topic := r.PathValue("topic")
@@ -246,9 +245,9 @@ func (s *Server) handleTopic(w http.ResponseWriter, r *http.Request) {
 	s.renderEditionView(w, r, ed)
 }
 
-// renderEditionView renders an edition's articles with the "Past editions"
-// selector and prev/next navigation. The canonical URL is always the edition's
-// dated permalink, even when the view is reached via /topics/{topic}.
+// renderEditionView renders an edition's articles with prev/next navigation.
+// The canonical URL is always the edition's dated permalink, even when the
+// view is reached via /topics/{topic}.
 func (s *Server) renderEditionView(w http.ResponseWriter, r *http.Request, ed *store.Edition) {
 	ctx := r.Context()
 
@@ -274,11 +273,9 @@ func (s *Server) renderEditionView(w http.ResponseWriter, r *http.Request, ed *s
 	pd := s.basePage(ctx, ed.Title, desc, "/editions/"+ed.Slug)
 	pd.OGType = "article"
 	pd.Data = struct {
-		Edition     *store.Edition
-		Prev, Next  *store.Edition
-		AllEditions []store.Edition
-		CurrentSlug string
-	}{ed, prev, next, siblings, ed.Slug}
+		Edition    *store.Edition
+		Prev, Next *store.Edition
+	}{ed, prev, next}
 	s.render(w, "edition", pd)
 }
 

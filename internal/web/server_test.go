@@ -211,7 +211,7 @@ func TestRoutesRender(t *testing.T) {
 		{"/", 200, []string{"AI News", "GPT-X launch", `rel="canonical"`}},
 		{"/editions/technical-2026-07-18", 200, []string{"Technical · 18 Jul 2026", `href="/articles/gpt-x-launch-abc123"`}},
 		{"/articles/gpt-x-launch-abc123", 200, []string{"GPT-X launch", "application/ld+json", "NewsArticle", "price/performance baseline", "1M-token context window", "Key points"}},
-		{"/topics/technical", 200, []string{"Technical · 18 Jul 2026", "Past editions", "GPT-X launch"}},
+		{"/topics/technical", 200, []string{"Technical · 18 Jul 2026", "Previous edition", "GPT-X launch"}},
 		{"/search?q=gpt", 200, []string{"result(s)", "GPT-X launch"}},
 		{"/feed.xml", 200, []string{"<rss", "GPT-X launch", "https://news.example.com/articles/gpt-x-launch-abc123"}},
 		{"/sitemap.xml", 200, []string{"<urlset", "/editions/technical-2026-07-18", "/articles/gpt-x-launch-abc123"}},
@@ -244,12 +244,9 @@ func TestTopicShowsLatestEditionWithPicker(t *testing.T) {
 	if !strings.Contains(body, "GPT-X launch") {
 		t.Error("topic page should show the latest edition's articles")
 	}
-	// The "Past editions" picker lets the reader jump to older editions.
-	if !strings.Contains(body, "Past editions") {
-		t.Error("topic page should render the Past editions picker")
-	}
-	if !strings.Contains(body, `href="/editions/technical-2026-07-09"`) {
-		t.Error("picker should link to older editions")
+	// Older editions are reached via the prev/next nav, not a picker.
+	if !strings.Contains(body, `href="/editions/technical-2026-07-17"`) {
+		t.Error("prev/next nav should link to the older edition")
 	}
 	// Canonical points at the dated permalink, not the topic URL.
 	if !strings.Contains(body, `rel="canonical" href="https://news.example.com/editions/technical-2026-07-18"`) {
