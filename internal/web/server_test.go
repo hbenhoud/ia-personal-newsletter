@@ -9,6 +9,8 @@ import (
 	"testing"
 	"time"
 
+	"go.uber.org/zap"
+
 	"github.com/hbenhoud/ia-personal-newsletter/internal/store"
 )
 
@@ -158,7 +160,7 @@ func newTestServer(t *testing.T) *Server {
 		},
 		editions: append(makeEditions("technical", 12), makeEditions("business", 4)...),
 	}
-	return NewServer(fs, r, Config{SiteName: "AI News", BaseURL: "https://news.example.com", Description: "desc"}, nil)
+	return NewServer(fs, r, Config{SiteName: "AI News", BaseURL: "https://news.example.com", Description: "desc"}, nil, zap.NewNop())
 }
 
 // fakeSender records subscribe calls for the subscription tests.

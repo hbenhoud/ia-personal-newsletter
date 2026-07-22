@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"html/template"
-	"log"
 	"net/http"
 	"time"
+
+	"go.uber.org/zap"
 
 	"github.com/hbenhoud/ia-personal-newsletter/internal/store"
 )
@@ -64,7 +65,7 @@ type rssItem struct {
 func (s *Server) handleFeed(w http.ResponseWriter, r *http.Request) {
 	// GA4 never sees this: RSS readers/bots fetch it directly, no JS runs.
 	// Logging is the only visibility we have into RSS usage.
-	log.Printf("web: feed.xml request from %q", r.UserAgent())
+	s.log.Info("feed.xml request", zap.String("user_agent", r.UserAgent()))
 
 	articles, err := s.store.ListArticles(r.Context(), "", 50, 0)
 	if err != nil {

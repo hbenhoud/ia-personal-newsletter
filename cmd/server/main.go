@@ -4,10 +4,11 @@ package main
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"go.uber.org/zap"
 
 	"github.com/hbenhoud/ia-personal-newsletter/internal/dotenv"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/email"
@@ -17,12 +18,18 @@ import (
 
 func main() {
 	dotenv.Load(".env")
-	if err := run(); err != nil {
-		log.Fatalf("server: %v", err)
+	logger, err := zap.NewDevelopment()
+	if err != nil {
+		panic(err)
+	}
+	defer func() { _ = logger.Sync() }()
+
+	if err := run(logger); err != nil {
+		logger.Fatal("server startup failed", zap.Error(err))
 	}
 }
 
-func run() error {
+func run(logger *zap.Logger) error {
 	ctx := context.Background()
 
 	st, err := store.NewPostgres(ctx, os.Getenv("DATABASE_URL"))
@@ -44,9 +51,9 @@ func run() error {
 		if err != nil {
 			return err
 		}
-		log.Printf("server: email enabled (%s)", sender.Name())
+		logger.Info("email enabled", zap.String("provider", sender.Name()))
 	} else {
-		log.Print("server: email not configured (set EMAIL_API_KEY to enable subscriptions)")
+		logger.Info("email not configured", zap.String("hint", "set EMAIL_API_KEY to enable subscriptions"))
 	}
 
 	srv := web.NewServer(st, renderer, web.Config{
@@ -54,7 +61,7 @@ func run() error {
 		BaseURL:         os.Getenv("SITE_BASE_URL"),
 		Description:     envOr("SITE_DESCRIPTION", "Curated AI news, summarized and ranked for you."),
 		GAMeasurementID: os.Getenv("GA_MEASUREMENT_ID"),
-	}, sender)
+	}, sender, logger)
 
 	addr := ":" + envOr("PORT", "8080")
 	httpSrv := &http.Server{
@@ -62,7 +69,7 @@ func run() error {
 		Handler:           srv.Routes(),
 		ReadHeaderTimeout: 10 * time.Second,
 	}
-	log.Printf("server: listening on %s", addr)
+	logger.Info("listening", zap.String("addr", addr))
 	return httpSrv.ListenAndServe()
 }
 

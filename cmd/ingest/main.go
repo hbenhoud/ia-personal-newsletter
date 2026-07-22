@@ -10,12 +10,13 @@ import (
 	"encoding/hex"
 	"fmt"
 	"html"
-	"log"
 	"os"
 	"strings"
 	"sync"
 	"time"
 	"unicode"
+
+	"go.uber.org/zap"
 
 	"github.com/hbenhoud/ia-personal-newsletter/internal/config"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/dotenv"
@@ -38,12 +39,18 @@ const configDir = "./config"
 
 func main() {
 	dotenv.Load(".env")
-	if err := run(context.Background()); err != nil {
-		log.Fatalf("ingest: %v", err)
+	logger, err := zap.NewDevelopment()
+	if err != nil {
+		panic(err)
+	}
+	defer func() { _ = logger.Sync() }()
+
+	if err := run(context.Background(), logger); err != nil {
+		logger.Fatal("ingest failed", zap.Error(err))
 	}
 }
 
-func run(ctx context.Context) error {
+func run(ctx context.Context, logger *zap.Logger) error {
 	cfg, err := config.Load(configDir)
 	if err != nil {
 		return err
@@ -67,7 +74,7 @@ func run(ctx context.Context) error {
 	}
 	defer func() {
 		if flushErr := cache.Flush(); flushErr != nil {
-			log.Printf("warning: flushing embedding cache: %v", flushErr)
+			logger.Warn("flushing embedding cache failed", zap.Error(flushErr))
 		}
 	}()
 
@@ -91,18 +98,18 @@ func run(ctx context.Context) error {
 		if err != nil {
 			return fmt.Errorf("email provider: %w", err)
 		}
-		log.Printf("ingest: broadcast enabled (%s)", sender.Name())
+		logger.Info("broadcast enabled", zap.String("provider", sender.Name()))
 	}
 	baseURL := os.Getenv("SITE_BASE_URL")
 
 	var failures int
 	var sections []editionSection
 	for _, pc := range cfg.Profiles {
-		log.Printf("profile %q: ingesting", pc.Name)
-		data, err := ingestProfile(ctx, cfg, pc, embedder, llmProvider, string(promptContent), st)
+		logger.Info("ingesting profile", zap.String("profile", pc.Name))
+		data, err := ingestProfile(ctx, cfg, pc, embedder, llmProvider, string(promptContent), st, logger)
 		if err != nil {
 			failures++
-			log.Printf("profile %q failed: %v", pc.Name, err)
+			logger.Error("profile failed", zap.String("profile", pc.Name), zap.Error(err))
 			continue
 		}
 		if data != nil {
@@ -118,9 +125,9 @@ func run(ctx context.Context) error {
 		subject := fmt.Sprintf("%s · %s", envOr("SITE_NAME", "AI Newsletter"), time.Now().Format("2 Jan 2006"))
 		htmlBody := renderCombinedEmail(baseURL, subject, sections)
 		if err := sender.Broadcast(ctx, subject, htmlBody); err != nil {
-			log.Printf("ingest: broadcast failed: %v", err)
+			logger.Error("broadcast failed", zap.Error(err))
 		} else {
-			log.Printf("ingest: broadcast sent (%d section(s))", len(sections))
+			logger.Info("broadcast sent", zap.Int("sections", len(sections)))
 		}
 	}
 
@@ -148,6 +155,7 @@ func ingestProfile(
 	llmProvider llm.Provider,
 	promptContent string,
 	st store.Store,
+	logger *zap.Logger,
 ) (*editionSection, error) {
 	prof := pc.Profile
 
@@ -167,7 +175,7 @@ func ingestProfile(
 		return nil, fmt.Errorf("filtering: %w", err)
 	}
 	if len(scored) == 0 {
-		log.Printf("profile %q: no articles matched; skipping edition", pc.Name)
+		logger.Info("no articles matched, skipping edition", zap.String("profile", pc.Name))
 		return nil, nil
 	}
 	if cfg.Output.ItemsPerIssue > 0 && len(scored) > cfg.Output.ItemsPerIssue {
@@ -177,7 +185,7 @@ func ingestProfile(
 	// Fetch each selected article's full text so the summary can be
 	// self-sufficient; on failure (paywall, timeout, blocked) keep the RSS
 	// excerpt already in scored[i].Article.Content.
-	enrichWithFullText(ctx, pc.Name, scored)
+	enrichWithFullText(ctx, logger, pc.Name, scored)
 
 	summarizer, err := generation.NewSummarizerWithOptions(llmProvider, promptContent, generation.Options{
 		MaxTokens:       900,
@@ -202,7 +210,7 @@ func ingestProfile(
 		if vec, embErr := embedder.Embed(ctx, filtering.ArticleText(a)); embErr == nil {
 			emb = toFloat32(vec)
 		} else {
-			log.Printf("profile %q: embedding %q failed: %v", pc.Name, a.Title, embErr)
+			logger.Warn("embedding failed", zap.String("profile", pc.Name), zap.String("article", a.Title), zap.Error(embErr))
 		}
 
 		id, err := st.UpsertArticle(ctx, store.Article{
@@ -237,7 +245,8 @@ func ingestProfile(
 	}, members); err != nil {
 		return nil, err
 	}
-	log.Printf("profile %q: edition %s with %d articles", pc.Name, editionSlug, len(members))
+	logger.Info("edition created",
+		zap.String("profile", pc.Name), zap.String("edition", editionSlug), zap.Int("articles", len(members)))
 
 	return &editionSection{Title: editionTitle, Slug: editionSlug, Summaries: summaries}, nil
 }
@@ -246,7 +255,7 @@ func ingestProfile(
 // replaces its RSS excerpt with the full extracted text — bounded to
 // maxConcurrentFetches at a time so one slow source can't stall the run.
 // Failures (paywall, timeout, blocked) are logged and leave the excerpt as-is.
-func enrichWithFullText(ctx context.Context, profileName string, scored []filtering.ScoredArticle) {
+func enrichWithFullText(ctx context.Context, logger *zap.Logger, profileName string, scored []filtering.ScoredArticle) {
 	sem := make(chan struct{}, maxConcurrentFetches)
 	var wg sync.WaitGroup
 	for i := range scored {
@@ -258,8 +267,8 @@ func enrichWithFullText(ctx context.Context, profileName string, scored []filter
 
 			full, err := extract.FetchArticle(ctx, scored[i].Article.URL)
 			if err != nil {
-				log.Printf("profile %q: full-text fetch failed for %q, using RSS excerpt: %v",
-					profileName, scored[i].Article.Title, err)
+				logger.Warn("full-text fetch failed, using RSS excerpt",
+					zap.String("profile", profileName), zap.String("article", scored[i].Article.Title), zap.Error(err))
 				return
 			}
 			scored[i].Article.Content = full

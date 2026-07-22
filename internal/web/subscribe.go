@@ -1,13 +1,14 @@
 package web
 
 import (
-	"log"
 	"net"
 	"net/http"
 	"net/mail"
 	"strings"
 	"sync"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 // rateLimiter is a tiny per-key fixed-window limiter for the subscribe endpoint.
@@ -59,7 +60,7 @@ func (s *Server) handleSubscribe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := s.sender.Subscribe(r.Context(), addr.Address); err != nil {
-		log.Printf("web: subscribe: %v", err)
+		s.log.Error("subscribe failed", zap.Error(err))
 		redirectSubscribed(w, r, "error")
 		return
 	}

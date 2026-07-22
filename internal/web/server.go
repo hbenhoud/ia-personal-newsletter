@@ -4,10 +4,11 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
-	"log"
 	"net/http"
 	"strings"
 	"time"
+
+	"go.uber.org/zap"
 
 	"github.com/hbenhoud/ia-personal-newsletter/internal/email"
 	"github.com/hbenhoud/ia-personal-newsletter/internal/store"
@@ -33,11 +34,12 @@ type Server struct {
 	assetVer   string       // short hash of app.css, for cache-busting the stylesheet URL
 	sender     email.Sender // nil when email is not configured
 	subLimiter *rateLimiter
+	log        *zap.Logger
 }
 
 // NewServer wires a Server. sender may be nil (email not configured), in which
 // case the subscribe endpoint degrades gracefully.
-func NewServer(st store.Store, r *Renderer, cfg Config, sender email.Sender) *Server {
+func NewServer(st store.Store, r *Renderer, cfg Config, sender email.Sender, logger *zap.Logger) *Server {
 	cfg.BaseURL = strings.TrimRight(cfg.BaseURL, "/")
 	if cfg.SiteName == "" {
 		cfg.SiteName = "AI Newsletter"
@@ -54,6 +56,7 @@ func NewServer(st store.Store, r *Renderer, cfg Config, sender email.Sender) *Se
 		assetVer:   ver,
 		sender:     sender,
 		subLimiter: newRateLimiter(5, 10*time.Minute),
+		log:        logger,
 	}
 }
 
@@ -86,7 +89,7 @@ func (s *Server) Routes() http.Handler {
 func (s *Server) basePage(ctx context.Context, title, desc, path string) PageData {
 	topics, err := s.store.ListTopics(ctx)
 	if err != nil {
-		log.Printf("web: listing topics: %v", err)
+		s.log.Error("listing topics failed", zap.Error(err))
 	}
 	if desc == "" {
 		desc = s.cfg.Description
@@ -122,7 +125,7 @@ func (s *Server) canonical(path string) string {
 func (s *Server) render(w http.ResponseWriter, name string, pd PageData) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := s.renderer.Render(w, name, pd); err != nil {
-		log.Printf("web: rendering %s: %v", name, err)
+		s.log.Error("rendering page failed", zap.String("page", name), zap.Error(err))
 		http.Error(w, "internal error", http.StatusInternalServerError)
 	}
 }
@@ -330,6 +333,6 @@ func (s *Server) handleCSS(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (s *Server) serverError(w http.ResponseWriter, what string, err error) {
-	log.Printf("web: %s: %v", what, err)
+	s.log.Error(what, zap.Error(err))
 	http.Error(w, "internal error", http.StatusInternalServerError)
 }
