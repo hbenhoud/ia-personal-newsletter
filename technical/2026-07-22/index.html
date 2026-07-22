@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Newsletter — 22 Jul 2026</title>
+  <style>/* ── Modern — clean product-SaaS UX, Stripe-inspired ──────────────────
+   Signature: an angled teal→blurple→violet gradient hero panel.
+   Everything around it stays quiet: soft blue-gray canvas, white cards,
+   navy ink, generous spacing.                                          */
+:root {
+  --bg:         #f6f9fc;   /* Stripe's signature blue-gray canvas */
+  --surface:    #ffffff;   /* cards */
+  --surface-2:  #f5f7ff;   /* tinted callouts */
+  --fg:         #0a2540;   /* deep navy ink */
+  --fg-2:       #425466;   /* slate secondary */
+  --muted:      #8792a2;   /* captions / meta */
+  --accent:     #635bff;   /* blurple */
+  --accent-ink: #4b45d4;   /* darker blurple for hover */
+  --accent-dim: #eef0ff;   /* blurple tint */
+  --border:     #e6ebf1;
+  --card-bg:    #ffffff;
+  --grad:       linear-gradient(102deg, #21d4fd 0%, #635bff 52%, #b224ef 100%);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  font-size: 16.5px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 3rem 2.5rem 5rem;
+}
+
+/* ── Header: the gradient hero panel (signature) ────────────────────── */
+header {
+  position: relative;
+  background: var(--grad);
+  border-radius: 22px;
+  padding: 2.75rem 2.75rem 2.5rem;
+  margin-bottom: 2.5rem;
+  overflow: hidden;
+  box-shadow: 0 18px 40px -12px rgba(99,91,255,0.45);
+}
+
+/* soft light bloom in the corner for depth */
+header::after {
+  content: '';
+  position: absolute;
+  top: -40%; right: -10%;
+  width: 60%; height: 180%;
+  background: radial-gradient(closest-side, rgba(255,255,255,0.35), transparent 70%);
+  pointer-events: none;
+}
+
+header h1 {
+  position: relative;
+  font-size: 2.15rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  color: #ffffff;
+  margin-bottom: 0.6rem;
+}
+
+header .meta {
+  position: relative;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.88);
+  letter-spacing: 0.01em;
+}
+
+header .meta a {
+  color: #ffffff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.5);
+  padding-bottom: 1px;
+  transition: border-color 0.15s ease;
+}
+header .meta a:hover { border-color: #ffffff; }
+
+/* ── Sort bar (shared markup) ──────────────────────────────────────── */
+.sort-bar { margin-bottom: 1.75rem; }
+
+/* ── Article cards ─────────────────────────────────────────────────── */
+.article {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem 2rem;
+  margin-bottom: 1.1rem;
+  box-shadow: 0 1px 2px rgba(10,37,64,0.04);
+  transition: box-shadow 0.22s ease, transform 0.22s ease, border-color 0.22s ease;
+}
+
+.article:hover {
+  border-color: #d5d0ff;
+  box-shadow: 0 16px 40px -12px rgba(99,91,255,0.22), 0 2px 4px rgba(10,37,64,0.05);
+  transform: translateY(-3px);
+}
+
+.article h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.32;
+  margin-bottom: 0.55rem;
+}
+
+.article h2 a {
+  color: var(--fg);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.article h2 a:hover { color: var(--accent); }
+
+.article .source {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+  padding: 0.22rem 0.7rem;
+  border-radius: 999px;
+  margin-bottom: 1.15rem;
+}
+
+.article .pub-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 1rem;
+}
+
+.article .tldr {
+  position: relative;
+  background: var(--surface-2);
+  border-radius: 10px;
+  padding: 1rem 1.2rem 1rem 1.35rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.97rem;
+  color: var(--fg);
+  line-height: 1.6;
+}
+/* accent rail on the callout */
+.article .tldr::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0.9rem; bottom: 0.9rem;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--grad);
+}
+.article .tldr strong {
+  display: block;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+
+.article .why {
+  font-size: 0.93rem;
+  color: var(--fg-2);
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+.article .why strong {
+  display: block;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.article .read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: none;
+  padding: 0.5rem 1.15rem;
+  background: var(--accent);
+  border-radius: 999px;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 12px -3px rgba(99,91,255,0.5);
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.article .read-more:hover {
+  background: var(--accent-ink);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px -4px rgba(99,91,255,0.55);
+}
+
+/* ── Landing page cards reuse .article; keep the CTA readable ───────── */
+
+/* ── Footer ────────────────────────────────────────────────────────── */
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 2;
+}
+footer a { color: var(--accent); text-decoration: none; font-weight: 500; }
+footer a:hover { color: var(--accent-ink); text-decoration: underline; }
+
+/* ── Responsive ────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .container { padding: 1.75rem 1.1rem 3rem; }
+  header { padding: 2rem 1.5rem 1.75rem; border-radius: 18px; }
+  header h1 { font-size: 1.65rem; }
+  .article { padding: 1.4rem 1.4rem; }
+  .article h2 { font-size: 1.12rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article, .article .read-more, .article h2 a { transition: none; }
+  .article:hover { transform: none; }
+}
+</style>
+  <style>
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+.sort-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.sort-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.sort-select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
+}
+.sort-select {
+  appearance: none;
+  -webkit-appearance: none;
+  font-size: 0.82rem;
+  font-family: inherit;
+  font-weight: 500;
+  color: var(--fg, #111);
+  background: var(--surface, var(--card-bg, #fff));
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+  padding: 0.4rem 2.2rem 0.4rem 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 160px;
+}
+.sort-select:hover {
+  border-color: var(--accent);
+}
+.sort-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>AI Newsletter</h1>
+      <div class="meta">22 Jul 2026 &nbsp;·&nbsp; 20 articles selected from 991 analyzed · 5 derniers jours</div>
+    </header>
+
+    <div class="sort-bar">
+      <label class="sort-label" for="sort-select">Trier par :</label>
+      <div class="sort-select-wrap">
+        <select id="sort-select" class="sort-select">
+          <option value="relevance">Pertinence</option>
+          <option value="date-desc">Date (récent)</option>
+          <option value="date-asc">Date (ancien)</option>
+        </select>
+      </div>
+    </div>
+
+    
+    <div class="article" data-date="2026-07-21">
+      <h2><a href="https://simonwillison.net/2026/Jul/21/nativ/#atom-everything" target="_blank" rel="noopener">Nativ: Run AI models locally on your Mac</a></h2>
+      <div class="source">Simon Willison&#39;s Weblog</div>
+      <div class="pub-date">21 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Nativ est une nouvelle application de bureau macOS qui encapsule MLX pour exécuter localement des LLMs et des modèles vision-langage, avec une interface de chat et un serveur API localhost.</p>
+      <p class="why"><strong>Why it matters:</strong> Pour les praticiens travaillant sur des systèmes agentic ou du RAG local, Nativ simplifie le déploiement et l&#39;itération sur des modèles open-source directement sur Mac, accélérant le prototypage d&#39;agents autonomes sans dépendance cloud.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Jul/21/nativ/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://simonwillison.net/2026/Jul/20/sam-altman/#atom-everything" target="_blank" rel="noopener">Quoting Sam Altman</a></h2>
+      <div class="source">Simon Willison&#39;s Weblog</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Un email interne de Sam Altman révèle qu&#39;OpenAI envisageait en 2022 de sortir un modèle open-source de niveau GPT-3 pour devancer la concurrence et décourager les initiatives rivales.</p>
+      <p class="why"><strong>Why it matters:</strong> Ce document expose la stratégie calculée d&#39;OpenAI face à l&#39;open source, éclairant les motivations derrière leur positionnement actuel sur les modèles ouverts et l&#39;optimisation pour le matériel grand public.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Jul/20/sam-altman/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-21">
+      <h2><a href="https://huggingface.co/blog/nvidia/state-of-simulation-for-physical-ai" target="_blank" rel="noopener">The State of Simulation for Physical AI: An Overview</a></h2>
+      <div class="source">Hugging Face - Blog</div>
+      <div class="pub-date">21 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Cet article passe en revue l&#39;état de l&#39;art des simulateurs physiques pour l&#39;IA, un domaine crucial pour entraîner et évaluer des modèles d&#39;agents autonomes dans des environnements réalistes.</p>
+      <p class="why"><strong>Why it matters:</strong> Les simulateurs physiques sont essentiels pour développer des systèmes agentic capables de planification et d&#39;interaction avec le monde réel, notamment pour la robotique et les modèles multimodaux. Comprendre les avancées récentes dans ce domaine permet de mieux évaluer les capacités des agents autonomes et d&#39;identifier de nouvelles opportunités d&#39;ingénierie pratique.</p>
+      <a class="read-more" href="https://huggingface.co/blog/nvidia/state-of-simulation-for-physical-ai" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://simonwillison.net/2026/Jul/20/afraid-of-chinese-models/#atom-everything" target="_blank" rel="noopener">Who’s Afraid of Chinese Models?</a></h2>
+      <div class="source">Simon Willison&#39;s Weblog</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Ben Thompson propose une loi américaine légalisant l&#39;entraînement sur données non licenciées et interdisant les restrictions de distillation, tandis qu&#39;Alibaba a relâché Qwen 3.8 Max en open weights, possiblement sous l&#39;influence d&#39;un discours de Xi Jinping prônant l&#39;open source.</p>
+      <p class="why"><strong>Why it matters:</strong> La libération de Qwen 3.8 Max en open weights donne aux praticiens un nouveau modèle frontière pour le fine-tuning, le RAG et les systèmes agentic, tandis qu&#39;un cadre légal autorisant la distillation accélérerait l&#39;innovation ouverte et l&#39;ingénierie pratique aux États-Unis.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Jul/20/afraid-of-chinese-models/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-21">
+      <h2><a href="https://fireworks.ai/blog/kimik3-fable" target="_blank" rel="noopener">Kimi K3 Is Competitive with Fable; Kimi K3 and Fable Is SoTA</a></h2>
+      <div class="source">Hacker News: Front Page</div>
+      <div class="pub-date">21 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Kimi K3 atteint des performances de pointe sur le benchmark agentic AA-Briefcase, se positionnant juste derrière Fable 5.</p>
+      <p class="why"><strong>Why it matters:</strong> Ce résultat démontre que Kimi K3 rivalise désormais avec les meilleurs modèles sur les tâches agentiques complexes, signalant une nouvelle option compétitive pour les workflows autonomes multi-étapes.</p>
+      <a class="read-more" href="https://fireworks.ai/blog/kimik3-fable" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-21">
+      <h2><a href="https://simonwillison.net/2026/Jul/21/cat-and-thariq/#atom-everything" target="_blank" rel="noopener">A Fireside Chat with Cat and Thariq from the Claude Code team</a></h2>
+      <div class="source">Simon Willison&#39;s Weblog</div>
+      <div class="pub-date">21 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> L&#39;équipe Claude Code d&#39;Anthropic révèle que Claude Tag (intégration Slack collaborative) génère désormais 65% des PR d&#39;ingénierie produit, avec un processus de validation basé sur la rétention interne avant tout déploiement public.</p>
+      <p class="why"><strong>Why it matters:</strong> Ce retour d&#39;expérience concret sur le déploiement d&#39;agents de codage autonomes en production illustre les patterns émergents de validation et d&#39;évaluation pour les systèmes agents — un signal direct sur la maturité opérationnelle des workflows autonomes chez un acteur frontier.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Jul/21/cat-and-thariq/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://www.langchain.com/blog/issuebench-how-we-evaluate-engine" target="_blank" rel="noopener">IssueBench - How We Evaluate Engine</a></h2>
+      <div class="source">LangChain Blog</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> LangChain a développé IssueBench, un benchmark synthétique pour évaluer la capacité de LangSmith Engine à identifier, catégoriser et regrouper les problèmes dans les traces d&#39;agents.</p>
+      <p class="why"><strong>Why it matters:</strong> Pour les praticiens construisant des systèmes agentiques complexes, disposer d&#39;un outil standardisé pour diagnostiquer les échecs multi-étapes est crucial ; ce benchmark offre une nouvelle méthode pour quantifier et améliorer la fiabilité des workflows autonomes en production.</p>
+      <a class="read-more" href="https://www.langchain.com/blog/issuebench-how-we-evaluate-engine" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-21">
+      <h2><a href="https://www.tryai.dev/blog/ai-drawing-arena-colored-pencils-claude-gpt-grok" target="_blank" rel="noopener">&#34;Drawing&#34; the Mona Lisa with GPT-5.6, Claude, Gemini, and Grok</a></h2>
+      <div class="source">Hacker News: Front Page</div>
+      <div class="pub-date">21 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Un nouveau benchmark évalue la capacité des modèles frontière (GPT-5.6, Claude, Gemini, Grok) à &#34;dessiner&#34; la Joconde aux crayons de couleur, testant ainsi leur compréhension spatiale et leur contrôle moteur via tool use.</p>
+      <p class="why"><strong>Why it matters:</strong> Ce test révèle les progrès en planification multi-étapes et en coordination fine des agents LLM, indiquant comment ces modèles traduisent désormais le raisonnement abstrait en actions séquentielles concrètes sur des outils externes.</p>
+      <a class="read-more" href="https://www.tryai.dev/blog/ai-drawing-arena-colored-pencils-claude-gpt-grok" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-22">
+      <h2><a href="https://openaim.pramit.gg/" target="_blank" rel="noopener">Show HN: A new kind of FPS aim trainer</a></h2>
+      <div class="source">Hacker News: Front Page</div>
+      <div class="pub-date">22 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Un développeur a créé un entraîneur de visée FPS qui analyse les mouvements bruts de la croix pour identifier les faiblesses motrices et perceptuelles, et génère des playlists adaptatives avec difficulté et sensibilité optimisées.</p>
+      <p class="why"><strong>Why it matters:</strong> Bien que non lié à l&#39;IA directement, ce projet illustre des principes d&#39;adaptation dynamique et d&#39;optimisation personnalisée qui pourraient inspirer des approches similaires dans les systèmes agents autonomes et l&#39;ingénierie pratique d&#39;apprentissage.</p>
+      <a class="read-more" href="https://openaim.pramit.gg/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-19">
+      <h2><a href="https://simonwillison.net/2026/Jul/19/ai-mania/#atom-everything" target="_blank" rel="noopener">AI Mania Is Eviscerating Global Decision-Making</a></h2>
+      <div class="source">Simon Willison&#39;s Weblog</div>
+      <div class="pub-date">19 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Une analyse sarcastique dévoile comment la frénésie autour de l&#39;IA pousse des dirigeants non qualifiés à imposer des stratégies techniques absurdes et contre-productives au sein des grandes entreprises.</p>
+      <p class="why"><strong>Why it matters:</strong> Pour les ingénieurs construisant de réels systèmes agents et optimisant l&#39;inférence, ce texte illustre le fossé critique entre l&#39;implémentation technique rigoureuse et les attentes déconnectées des décideurs, soulignant la nécessité de résister aux pressions de la hype pour maintenir des standards d&#39;ingénierie viables.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Jul/19/ai-mania/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://simonwillison.net/2026/Jul/20/cheap-reverse-engineering/#atom-everything" target="_blank" rel="noopener">Reverse-engineering is cheap now</a></h2>
+      <div class="source">Simon Willison&#39;s Weblog</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Les agents de codage réduisent le coût de l&#39;ingénierie inverse à un point où automatiser des appareils domestiques non documentés devient économiquement viable, même en sachant que le code devra être jeté ou réécrit.</p>
+      <p class="why"><strong>Why it matters:</strong> Cela illustre un changement pratique rendu possible par les workflows agentic : la baisse drastique du coût d&#39;itération permet d&#39;attaquer des problèmes d&#39;ingénierie auparavant jugés trop instables ou coûteux à maintenir, élargissant le champ d&#39;application réel des agents autonomes.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Jul/20/cheap-reverse-engineering/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-17">
+      <h2><a href="https://simonwillison.net/2026/Jul/17/llm-cliche-highlighter/#atom-everything" target="_blank" rel="noopener">LLM cliché highlighter</a></h2>
+      <div class="source">Simon Willison&#39;s Weblog</div>
+      <div class="pub-date">17 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Un nouvel outil de Simon Willison, développé via &#34;vibe coding&#34; avec Fable 5, détecte automatiquement les clichés récurrents dans les textes générés par LLM en analysant des motifs linguistiques spécifiques.</p>
+      <p class="why"><strong>Why it matters:</strong> Cet outil illustre concrètement l&#39;émergence du &#34;vibe coding&#34; où des agents comme Fable 5 peuvent rapidement générer des applications fonctionnelles à partir de simples descriptions, tout en offrant un utilitaire pratique pour identifier les limites stylistiques persistantes des modèles de langage actuels.</p>
+      <a class="read-more" href="https://simonwillison.net/2026/Jul/17/llm-cliche-highlighter/#atom-everything" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-21">
+      <h2><a href="https://poolside.ai/blog/introducing-laguna-s-2-1" target="_blank" rel="noopener">Laguna S 2.1</a></h2>
+      <div class="source">Hacker News: Front Page</div>
+      <div class="pub-date">21 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> poolside.ai publie Laguna S 2.1, un modèle spécialisé pour le code qui affiche des performances de pointe sur les benchmarks de génération et de raisonnement de code.</p>
+      <p class="why"><strong>Why it matters:</strong> Ce release repousse la frontière des modèles de code, un composant clé pour les systèmes agents autonomes capables de planification et d&#39;utilisation d&#39;outils complexes.</p>
+      <a class="read-more" href="https://poolside.ai/blog/introducing-laguna-s-2-1" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-21">
+      <h2><a href="https://openai.com/index/hugging-face-model-evaluation-security-incident/" target="_blank" rel="noopener">OpenAI and Hugging Face address security incident during model evaluation</a></h2>
+      <div class="source">Hacker News: Front Page</div>
+      <div class="pub-date">21 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> OpenAI et Hugging Face ont confirmé un incident de sécurité survenu lors de l&#39;évaluation d&#39;un modèle, soulevant des questions sur la sécurité des pipelines d&#39;inférence et d&#39;évaluation.</p>
+      <p class="why"><strong>Why it matters:</strong> Pour les praticiens déployant des agents autonomes et des workflows multi-étapes, cet incident souligne les risques d&#39;exécution non maîtrisée lors de l&#39;évaluation ou de l&#39;inférence, et rappelle l&#39;importance du sandboxing et de la surveillance stricte des modèles open-source tiers.</p>
+      <a class="read-more" href="https://openai.com/index/hugging-face-model-evaluation-security-incident/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-21">
+      <h2><a href="https://www.langchain.com/blog/building-governed-agents-a-framework-for-cost-control-and-compliance" target="_blank" rel="noopener">Building Governed Agents: A Framework for Cost, Control, and Compliance</a></h2>
+      <div class="source">LangChain Blog</div>
+      <div class="pub-date">21 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Une nouvelle architecture de &#34;gateway&#34; introduit un plan de contrôle runtime pour appliquer des politiques de gouvernance à chaque appel de modèle, d&#39;outil et d&#39;étape d&#39;agent.</p>
+      <p class="why"><strong>Why it matters:</strong> Pour les systèmes agentic multi-étapes, cela résout le problème critique du contrôle et de la conformité en temps réel, rendant possible le déploiement d&#39;agents autonomes en entreprise avec des garanties de coût et de sécurité sur l&#39;ensemble du workflow.</p>
+      <a class="read-more" href="https://www.langchain.com/blog/building-governed-agents-a-framework-for-cost-control-and-compliance" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-21">
+      <h2><a href="https://runtimewire.com/article/jack-dorsey-block-buzz-team-chat-ai-agents-git" target="_blank" rel="noopener">Jack Dorsey launches Buzz to combine team chat, AI agents and Git hosting</a></h2>
+      <div class="source">Hacker News: Front Page</div>
+      <div class="pub-date">21 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Jack Dorsey lance Buzz, une plateforme unifiant le chat d&#39;équipe, les agents IA et l&#39;hébergement Git en un seul environnement.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;intégration native d&#39;agents IA dans un workflow de développement collaboratif (chat &#43; Git) crée un terrain fertile pour les systèmes agentic multi-étapes avec accès direct au code, aux PRs et au contexte d&#39;équipe — un cas d&#39;usage concret où planification, tool use et mémoire d&#39;agent peuvent s&#39;exercer sur un cycle de vie logiciel réel.</p>
+      <a class="read-more" href="https://runtimewire.com/article/jack-dorsey-block-buzz-team-chat-ai-agents-git" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-21">
+      <h2><a href="https://www.langchain.com/blog/trace-voice-agents-in-langsmith" target="_blank" rel="noopener">Trace voice agents in LangSmith</a></h2>
+      <div class="source">LangChain Blog</div>
+      <div class="pub-date">21 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> LangSmith introduit le tracing complet des agents vocaux construits avec Pipecat, LiveKit, OpenAI Realtime et Gemini Live, capturant audio, latences STT/TTS, interruptions et appels d&#39;outils en une seule trace.</p>
+      <p class="why"><strong>Why it matters:</strong> Cette intégration comble un vide critique dans l&#39;observabilité des systèmes agents multimodaux en temps réel, permettant aux ingénieurs de déboguer et d&#39;optimiser les workflows vocaux complexes avec la même rigueur que les agents textuels — un prérequis pour fiabiliser les agents autonomes conversationnels en production.</p>
+      <a class="read-more" href="https://www.langchain.com/blog/trace-voice-agents-in-langsmith" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-21">
+      <h2><a href="https://ai.google.dev/gemini-api/docs/latest-model" target="_blank" rel="noopener">Gemini last models: temperature, top_p, and top_k are deprecated and ignored</a></h2>
+      <div class="source">Hacker News: Front Page</div>
+      <div class="pub-date">21 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Les derniers modèles de Gemini déprécient et ignorent les paramètres temperature, top_p et top_k, marquant un changement fondamental dans la façon d&#39;interagir avec l&#39;API.</p>
+      <p class="why"><strong>Why it matters:</strong> Pour les praticiens construisant des systèmes agents et des workflows autonomes, cela signifie que les techniques de réglage de la génération doivent être repensées — les approches de sampling traditionnelles ne s&#39;appliquent plus, ce qui affecte directement le contrôle de la créativité et de la précision dans les pipelines de production.</p>
+      <a class="read-more" href="https://ai.google.dev/gemini-api/docs/latest-model" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-21">
+      <h2><a href="https://www.langchain.com/blog/how-apollo-rebuilt-its-ai-assistant-on-deep-agents-to-power-the-full-gtm-loop" target="_blank" rel="noopener">How Apollo Uses Deep Agents and LangSmith for GTM AI</a></h2>
+      <div class="source">LangChain Blog</div>
+      <div class="pub-date">21 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Apollo déploie des agents IA profonds orchestrés via LangSmith pour automatiser l&#39;intégralité du cycle GTM, du prospecting à l&#39;analytics, en s&#39;appuyant sur des intégrations MCP.</p>
+      <p class="why"><strong>Why it matters:</strong> Un cas concret d&#39;architecture multi-agents en production combinant raisonnement multi-étapes, appel d&#39;outils et MCP — utile comme référence pour concevoir des workflows autonomes similaires.</p>
+      <a class="read-more" href="https://www.langchain.com/blog/how-apollo-rebuilt-its-ai-assistant-on-deep-agents-to-power-the-full-gtm-loop" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-22">
+      <h2><a href="https://late.sh/" target="_blank" rel="noopener">Late.sh – a command-line Clubhouse for computer people</a></h2>
+      <div class="source">Hacker News: Front Page</div>
+      <div class="pub-date">22 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Late.sh est une nouvelle plateforme de ligne de commande permettant aux développeurs de collaborer en temps réel via le terminal, façon Clubhouse pour ingénieurs.</p>
+      <p class="why"><strong>Why it matters:</strong> Bien que non spécifique à l&#39;IA, cet outil pourrait intéresser les praticiens IA pour le partage rapide de techniques d&#39;optimisation d&#39;inférence, de configurations d&#39;agents autonomes ou de workflows RAG directement depuis le terminal, facilitant la collaboration technique en temps réel.</p>
+      <a class="read-more" href="https://late.sh/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+
+    <footer>
+      Generated on 2026-07-22 09:20 &nbsp;·&nbsp; <a href="../index.html">Toutes les éditions</a> &nbsp;·&nbsp; <a href="../../index.html">← Accueil</a>
+    </footer>
+  </div>
+
+  <script>
+(function() {
+  var container = document.querySelector('.container');
+  var articles = Array.from(document.querySelectorAll('.article'));
+  articles.forEach(function(el, i) { el.dataset.index = i; });
+
+  document.getElementById('sort-select').addEventListener('change', function() {
+    var mode = this.value;
+    var sorted = articles.slice().sort(function(a, b) {
+      if (mode === 'relevance') return +a.dataset.index - +b.dataset.index;
+      if (mode === 'date-desc') return b.dataset.date.localeCompare(a.dataset.date);
+      if (mode === 'date-asc')  return a.dataset.date.localeCompare(b.dataset.date);
+      return 0;
+    });
+    var footer = container.querySelector('footer');
+    sorted.forEach(function(el) { container.insertBefore(el, footer); });
+  });
+})();
+  </script>
+</body>
+</html>

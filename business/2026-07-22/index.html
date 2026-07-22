@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Newsletter — 22 Jul 2026</title>
+  <style>/* ── Modern — clean product-SaaS UX, Stripe-inspired ──────────────────
+   Signature: an angled teal→blurple→violet gradient hero panel.
+   Everything around it stays quiet: soft blue-gray canvas, white cards,
+   navy ink, generous spacing.                                          */
+:root {
+  --bg:         #f6f9fc;   /* Stripe's signature blue-gray canvas */
+  --surface:    #ffffff;   /* cards */
+  --surface-2:  #f5f7ff;   /* tinted callouts */
+  --fg:         #0a2540;   /* deep navy ink */
+  --fg-2:       #425466;   /* slate secondary */
+  --muted:      #8792a2;   /* captions / meta */
+  --accent:     #635bff;   /* blurple */
+  --accent-ink: #4b45d4;   /* darker blurple for hover */
+  --accent-dim: #eef0ff;   /* blurple tint */
+  --border:     #e6ebf1;
+  --card-bg:    #ffffff;
+  --grad:       linear-gradient(102deg, #21d4fd 0%, #635bff 52%, #b224ef 100%);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  font-size: 16.5px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 3rem 2.5rem 5rem;
+}
+
+/* ── Header: the gradient hero panel (signature) ────────────────────── */
+header {
+  position: relative;
+  background: var(--grad);
+  border-radius: 22px;
+  padding: 2.75rem 2.75rem 2.5rem;
+  margin-bottom: 2.5rem;
+  overflow: hidden;
+  box-shadow: 0 18px 40px -12px rgba(99,91,255,0.45);
+}
+
+/* soft light bloom in the corner for depth */
+header::after {
+  content: '';
+  position: absolute;
+  top: -40%; right: -10%;
+  width: 60%; height: 180%;
+  background: radial-gradient(closest-side, rgba(255,255,255,0.35), transparent 70%);
+  pointer-events: none;
+}
+
+header h1 {
+  position: relative;
+  font-size: 2.15rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  color: #ffffff;
+  margin-bottom: 0.6rem;
+}
+
+header .meta {
+  position: relative;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.88);
+  letter-spacing: 0.01em;
+}
+
+header .meta a {
+  color: #ffffff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.5);
+  padding-bottom: 1px;
+  transition: border-color 0.15s ease;
+}
+header .meta a:hover { border-color: #ffffff; }
+
+/* ── Sort bar (shared markup) ──────────────────────────────────────── */
+.sort-bar { margin-bottom: 1.75rem; }
+
+/* ── Article cards ─────────────────────────────────────────────────── */
+.article {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem 2rem;
+  margin-bottom: 1.1rem;
+  box-shadow: 0 1px 2px rgba(10,37,64,0.04);
+  transition: box-shadow 0.22s ease, transform 0.22s ease, border-color 0.22s ease;
+}
+
+.article:hover {
+  border-color: #d5d0ff;
+  box-shadow: 0 16px 40px -12px rgba(99,91,255,0.22), 0 2px 4px rgba(10,37,64,0.05);
+  transform: translateY(-3px);
+}
+
+.article h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.32;
+  margin-bottom: 0.55rem;
+}
+
+.article h2 a {
+  color: var(--fg);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.article h2 a:hover { color: var(--accent); }
+
+.article .source {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+  padding: 0.22rem 0.7rem;
+  border-radius: 999px;
+  margin-bottom: 1.15rem;
+}
+
+.article .pub-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 1rem;
+}
+
+.article .tldr {
+  position: relative;
+  background: var(--surface-2);
+  border-radius: 10px;
+  padding: 1rem 1.2rem 1rem 1.35rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.97rem;
+  color: var(--fg);
+  line-height: 1.6;
+}
+/* accent rail on the callout */
+.article .tldr::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0.9rem; bottom: 0.9rem;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--grad);
+}
+.article .tldr strong {
+  display: block;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+
+.article .why {
+  font-size: 0.93rem;
+  color: var(--fg-2);
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+.article .why strong {
+  display: block;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.article .read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: none;
+  padding: 0.5rem 1.15rem;
+  background: var(--accent);
+  border-radius: 999px;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 12px -3px rgba(99,91,255,0.5);
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.article .read-more:hover {
+  background: var(--accent-ink);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px -4px rgba(99,91,255,0.55);
+}
+
+/* ── Landing page cards reuse .article; keep the CTA readable ───────── */
+
+/* ── Footer ────────────────────────────────────────────────────────── */
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 2;
+}
+footer a { color: var(--accent); text-decoration: none; font-weight: 500; }
+footer a:hover { color: var(--accent-ink); text-decoration: underline; }
+
+/* ── Responsive ────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .container { padding: 1.75rem 1.1rem 3rem; }
+  header { padding: 2rem 1.5rem 1.75rem; border-radius: 18px; }
+  header h1 { font-size: 1.65rem; }
+  .article { padding: 1.4rem 1.4rem; }
+  .article h2 { font-size: 1.12rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article, .article .read-more, .article h2 a { transition: none; }
+  .article:hover { transform: none; }
+}
+</style>
+  <style>
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+.sort-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.sort-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.sort-select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
+}
+.sort-select {
+  appearance: none;
+  -webkit-appearance: none;
+  font-size: 0.82rem;
+  font-family: inherit;
+  font-weight: 500;
+  color: var(--fg, #111);
+  background: var(--surface, var(--card-bg, #fff));
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+  padding: 0.4rem 2.2rem 0.4rem 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 160px;
+}
+.sort-select:hover {
+  border-color: var(--accent);
+}
+.sort-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>AI Newsletter</h1>
+      <div class="meta">22 Jul 2026 &nbsp;·&nbsp; 20 articles selected from 173 analyzed · 5 derniers jours</div>
+    </header>
+
+    <div class="sort-bar">
+      <label class="sort-label" for="sort-select">Trier par :</label>
+      <div class="sort-select-wrap">
+        <select id="sort-select" class="sort-select">
+          <option value="relevance">Pertinence</option>
+          <option value="date-desc">Date (récent)</option>
+          <option value="date-asc">Date (ancien)</option>
+        </select>
+      </div>
+    </div>
+
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://www.cbinsights.com/research/ceo-interview-unsiloed-ai/" target="_blank" rel="noopener">CEO Interview: Unsiloed AI</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Unsiloed AI développe des modèles de vision spécialisés pour des cas d&#39;usage enterprise, ciblant un segment où les modèles généralistes restent insuffisants.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;émergence de startups construisant des modèles vision verticaux signale une opportunité de whitespace entre les fondation models génériques et les besoins métiers spécifiques — un espace où la volonté de payer enterprise est prouvée et où les marges unitaires peuvent être défendues par la spécialisation.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/ceo-interview-unsiloed-ai/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-18">
+      <h2><a href="https://www.saastr.com/saastr-ai-app-of-the-week-nue-the-revenue-platform-built-for-how-b2b-ai-actually-prices-now/" target="_blank" rel="noopener">SaaStr AI App of the Week: Nue. The Revenue Platform Built for How B2B &#43; AI Actually Prices Now</a></h2>
+      <div class="source">SaaStrAI</div>
+      <div class="pub-date">18 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Les entreprises B2B&#43;AI abandonnent la tarification par siège au profit de modèles basés sur l&#39;usage, les crédits et les résultats, créant un marché pour des plateformes de revenus comme Nue qui gèrent cette complexité de facturation.</p>
+      <p class="why"><strong>Why it matters:</strong> Le déplacement massif vers des modèles de pricing hybrides (usage, consommation, outcome-based) ouvre une catégorie émergente de tooling de revenue management spécifiquement conçu pour l&#39;IA — un espace où les solutions legacy (Salesforce CPQ, Zuora) sont inadaptées et où la demande est forte et immédiate chez les startups AI qui peinent à facturer correctement leurs produits.</p>
+      <a class="read-more" href="https://www.saastr.com/saastr-ai-app-of-the-week-nue-the-revenue-platform-built-for-how-b2b-ai-actually-prices-now/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://www.cbinsights.com/research/executive-interview-vigilant-ai-ai/" target="_blank" rel="noopener">Executive Interview: Vigilant AI.ai</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Vigilant AI.ai cible l&#39;intersection entre la conformité réglementaire et l&#39;IA, un segment émergent où les entreprises cherchent à automatiser des processus manuels coûteux liés à la surveillance et à l&#39;audit.</p>
+      <p class="why"><strong>Why it matters:</strong> Ce positionnement révèle une demande croissante pour des solutions IA spécialisées dans la conformité, un whitespace où les régulations strictes créent des besoins nouveaux et où la volonté de payer des entreprises est démontrée par des workflows douloureux et des coûts de non-conformité élevés.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/executive-interview-vigilant-ai-ai/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://www.cbinsights.com/research/executive-interview-ledger-rocket/" target="_blank" rel="noopener">Executive Interview: Ledger Rocket</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Ledger Rocket cible le secteur financier avec une solution conçue pour automatiser des workflows manuels et douloureux, révélant une demande concrète pour l&#39;IA dans ce vertical.</p>
+      <p class="why"><strong>Why it matters:</strong> Ce positionnement signale un espace blanc nouvellement adressable par l&#39;IA dans la finance, où la volonté de payer pour l&#39;automatisation de processus chronophages est prouvée, ouvrant une fenêtre pour de nouveaux acteurs.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/executive-interview-ledger-rocket/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://www.cbinsights.com/research/executive-interview-artificial-labs/" target="_blank" rel="noopener">Executive Interview: Artificial Labs</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Artificial Labs dévoile sa vision du marché et de son positionnement stratégique dans un secteur de niche encore largement sous-exploité par l&#39;IA.</p>
+      <p class="why"><strong>Why it matters:</strong> Cet entretien offre un signal précoce sur les segments verticaux et les workflows manuels que l&#39;IA rend soudainement adressables, révélant où les investisseurs et les premiers acteurs placent leurs paris pour créer de nouvelles catégories de produits rentables.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/executive-interview-artificial-labs/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://www.cbinsights.com/research/ceo-interview-dartle/" target="_blank" rel="noopener">CEO Interview: Dartle</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Dartle cible le marché des sports de jeunes, un segment fragmenté où l&#39;automatisation des opérations administratives et logistiques par IA reste largement sous-exploitée.</p>
+      <p class="why"><strong>Why it matters:</strong> Ce secteur représente un whitespace vertical massif avec des workflows manuels douloureux (planification, paiements, communication) où une solution IA bien positionnée peut capturer une demande latente forte et récurrente avant que les acteurs traditionnels ne se réveillent.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/ceo-interview-dartle/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-21">
+      <h2><a href="https://www.technologyreview.com/2026/07/21/1140602/advancing-next-gen-ai-with-materials-science-innovation/" target="_blank" rel="noopener">Advancing next-gen AI with materials science innovation</a></h2>
+      <div class="source">Artificial intelligence – MIT Technology Review</div>
+      <div class="pub-date">21 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> L&#39;innovation en science des matériaux devient le goulot d&#39;étranglement critique pour la prochaine génération d&#39;infrastructure IA, créant une opportunité de marché émergente pour les startups spécialisées dans les matériaux avancés pour semi-conducteurs et centres de données.</p>
+      <p class="why"><strong>Why it matters:</strong> Les investisseurs et les entreprises IA cherchent des gains d&#39;efficacité énergétique et de mémoire au niveau des matériaux, ouvrant une fenêtre pour des acteurs capables de résoudre ces contraintes physiques avant que la demande d&#39;infrastructure IA n&#39;explose davantage.</p>
+      <a class="read-more" href="https://www.technologyreview.com/2026/07/21/1140602/advancing-next-gen-ai-with-materials-science-innovation/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-19">
+      <h2><a href="https://www.saastr.com/jasons-takes-on-this-weeks-20vc-the-token-governor-the-net-new-logo-test-and-why-renewal-stopped-being-safe/" target="_blank" rel="noopener">Jason’s Takes on This Week’s 20VC: The Token Governor, the Net-New-Logo Test, and Why Renewal Stopped Being Safe</a></h2>
+      <div class="source">SaaStrAI</div>
+      <div class="pub-date">19 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Les entreprises B2B doivent désormais prouver une valeur tangible pour sécuriser les renouvellements, car la gouvernance des tokens et l&#39;acquisition de nouveaux logos redéfinissent les modèles SaaS face à l&#39;IA.</p>
+      <p class="why"><strong>Why it matters:</strong> Ce signal indique une fenêtre pour des startups proposant des outils de mesure de ROI et de gouvernance IA, répondant au besoin croissant des entreprises de justifier leurs dépenses AI avec des données concrètes avant de renouveler.</p>
+      <a class="read-more" href="https://www.saastr.com/jasons-takes-on-this-weeks-20vc-the-token-governor-the-net-new-logo-test-and-why-renewal-stopped-being-safe/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://www.cbinsights.com/research/ceo-interview-lyzr/" target="_blank" rel="noopener">CEO Interview: Lyzr</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Lyzr se positionne comme une infrastructure d&#39;agents IA pour entreprises, ciblant les workflows manuels et la automatisation des processus métiers complexes.</p>
+      <p class="why"><strong>Why it matters:</strong> Le modèle de Lyzr — infrastructure d&#39;agents plutôt que point solutions — signale une catégorie émergente où la demande enterprise se déplace vers des plateformes orchestrables plutôt que des outils isolés, ouvrant des opportunités pour des startups qui verticalisent cette approche sur des niches underserved avec des modèles de pricing à l&#39;usage ou par siège.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/ceo-interview-lyzr/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://www.cbinsights.com/research/ceo-interview-vouch/" target="_blank" rel="noopener">CEO Interview: Vouch</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Vouch est un courtier en assurance &#34;AI-enabled&#34; pour startups, illustrant comment l&#39;IA pénètre les marchés traditionnels à forte marge.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;assurance est un espace à marge élevée avec des flux de souscription manuels douloureux ; les courtiers &#34;AI-enabled&#34; ciblant des segments spécifiques (ex. startups) représentent une catégorie émergente où l&#39;IA réduit les coûts d&#39;acquisition et crée un avantage défendable.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/ceo-interview-vouch/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://www.cbinsights.com/research/ceo-interview-cowbell/" target="_blank" rel="noopener">CEO Interview: Cowbell</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Cowbell, un assureur commercial spécialisé, illustre l&#39;intégration croissante de l&#39;IA dans la souscription et l&#39;évaluation des risques pour les PME, un segment traditionnellement sous-servi.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;automatisation des flux de souscription manuels et l&#39;analyse prédictive des risques ouvrent une fenêtre majeure pour de nouveaux acteurs IA-first dans l&#39;assurance commerciale, où la volonté de payer pour une tarification dynamique et une réduction des délais d&#39;indemnisation est prouvée.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/ceo-interview-cowbell/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://aibusiness.com/generative-ai/as-ai-spending-climbs-enterprises-serious-about-token-cost" target="_blank" rel="noopener">As AI Spending Climbs, Enterprises Get Serious About Token Costs</a></h2>
+      <div class="source">aibusiness</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Les entreprises subissent des coûts d&#39;inférence imprévisibles et rétroactifs, ce qui crée une demande immédiate pour des outils de FinOps IA et de routage de modèles optimisant les tokens en temps réel.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;opacité tarifaire actuelle ouvre une fenêtre pour des startups proposant des plateformes de gestion des coûts LLM, du monitoring de consommation et des stratégies de build-vs-buy multi-modèles — un marché émergent où la volonté de payer est déjà prouvée par la douleur financière des déploiements existants.</p>
+      <a class="read-more" href="https://aibusiness.com/generative-ai/as-ai-spending-climbs-enterprises-serious-about-token-cost" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://sifted.eu/articles/15-anti-fraud-startups-to-watch-in-2026-according-to-investors/" target="_blank" rel="noopener">15 anti-fraud startups to watch in 2026, according to investors</a></h2>
+      <div class="source">Sifted</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Les investisseurs ciblent 15 startups anti-fraud pour 2026, signalant un marché en expansion où l&#39;IA crée de nouvelles opportunités de détection et prévention.</p>
+      <p class="why"><strong>Why it matters:</strong> Ce mouvement de financement révèle une demande croissante pour des solutions anti-fraud IA-native, ouvrant une fenêtre pour des challengers dans des segments sous-desservis comme la fraude générative et les deepfakes, avec des modèles de monétisation basés sur la valeur (réduction des pertes) qui prouvent une volonté de payer concrète des entreprises.</p>
+      <a class="read-more" href="https://sifted.eu/articles/15-anti-fraud-startups-to-watch-in-2026-according-to-investors/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://www.cbinsights.com/research/executive-interview-enrollhere/" target="_blank" rel="noopener">Executive Interview: EnrollHere</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> EnrollHere, un logiciel de gestion de la distribution d&#39;assurance, attire l&#39;attention des investisseurs sur un secteur traditionnellement manuel et fragmenté.</p>
+      <p class="why"><strong>Why it matters:</strong> La distribution d&#39;assurance est un workflow douloureux et sous-automatisé, offrant une opportunité claire pour des startups IA d&#39;optimiser les processus de souscription et de gestion des réseaux, avec une forte probabilité de volonté de paiement de la part des assureurs cherchant à réduire leurs coûts d&#39;acquisition.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/executive-interview-enrollhere/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://www.cbinsights.com/research/ceo-interview-simbian/" target="_blank" rel="noopener">CEO Interview: Simbian</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Simbian vise un marché de 120 milliards de dollars dans la cybersécurité, où l&#39;IA pourrait automatiser des workflows manuels coûteux et créer une nouvelle catégorie de produits.</p>
+      <p class="why"><strong>Why it matters:</strong> L&#39;ampleur du marché et l&#39;automatisation de processus douloureux signalent une opportunité majeure pour des startups capables de capturer la demande non satisfaite, avec des modèles de monétisation basés sur le ROI mesurable en sécurité.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/ceo-interview-simbian/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-17">
+      <h2><a href="https://aibusiness.com/agentic-ai/enterprise-ai-prove-value-beyond-deployment" target="_blank" rel="noopener">Prompt: Enterprise AI Must Prove Its Value Beyond Deployment</a></h2>
+      <div class="source">aibusiness</div>
+      <div class="pub-date">17 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Les entreprises passent du déploiement de l&#39;IA à la mesure de sa valeur business, à la refonte des workflows et à la gouvernance pour scaler.</p>
+      <p class="why"><strong>Why it matters:</strong> Cette transition crée une demande immédiate pour des outils de mesure de ROI, de redesign de processus et de gouvernance — des catégories émergentes où les entreprises prouvent leur volonté de payer au-delà du simple déploiement.</p>
+      <a class="read-more" href="https://aibusiness.com/agentic-ai/enterprise-ai-prove-value-beyond-deployment" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://www.cbinsights.com/research/executive-interview-biodimension-technology/" target="_blank" rel="noopener">Executive Interview: Biodimension Technology</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Biodimension Technology révèle comment un acteur émergent positionne l&#39;IA dans un créneau vertical spécifique, signalant une demande concrète et des modèles de monétisation en formation.</p>
+      <p class="why"><strong>Why it matters:</strong> Les signaux précoces de positionnement dans des verticales sous-desservies indiquent où l&#39;argent et la demande se déplacent, offrant des fenêtres stratégiques pour identifier des opportunités de marché avant qu&#39;elles ne deviennent évidentes.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/executive-interview-biodimension-technology/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://www.cbinsights.com/research/executive-interview-aryon-security/" target="_blank" rel="noopener">Executive Interview: Aryon Security</a></h2>
+      <div class="source">CB Insights Research</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Aryon Security&#39;s CTO outlines their strategic positioning in the cybersecurity market, revealing how AI-driven threat detection is creating new demand patterns in enterprise security spending.</p>
+      <p class="why"><strong>Why it matters:</strong> This signals where enterprise security budgets are shifting toward AI-native solutions, indicating an emerging category where startups can capture demand from legacy vendors slow to integrate AI into threat detection workflows.</p>
+      <a class="read-more" href="https://www.cbinsights.com/research/executive-interview-aryon-security/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-20">
+      <h2><a href="https://www.saastr.com/5-4m-impressions-driving-11749-to-their-signup-form-what-advertising-on-saastr-ai-media-actually-delivers/" target="_blank" rel="noopener">5.4M Impressions Driving 11,749 to Their Signup Form: What Advertising on SaaStr.AI Media Actually Delivers</a></h2>
+      <div class="source">SaaStrAI</div>
+      <div class="pub-date">20 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> SaaStr.AI démontre une transparence radicale dans le B2B media buying avec 5,4M impressions générant 11.749 visites vers les formulaires d&#39;inscription, contre un secteur opérant en boîte noire.</p>
+      <p class="why"><strong>Why it matters:</strong> Le modèle de monétisation média B2B pour l&#39;IA est immature — la demande existe mais les acheteurs manquent de métriques de ROI fiables, créant une opportunité pour des plateformes de mesure et d&#39;attribution spécialisées IA qui pourraient capturer la valeur actuellement perdue dans l&#39;opacité des achats média.</p>
+      <a class="read-more" href="https://www.saastr.com/5-4m-impressions-driving-11749-to-their-signup-form-what-advertising-on-saastr-ai-media-actually-delivers/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+    <div class="article" data-date="2026-07-21">
+      <h2><a href="https://sifted.eu/articles/european-fintech-h1-2026-funding/" target="_blank" rel="noopener">&#39;If you&#39;re not AI-native, you&#39;re not getting funded&#39;: European fintech&#39;s H1 funding figures</a></h2>
+      <div class="source">Sifted</div>
+      <div class="pub-date">21 Jul 2026</div>
+      <p class="tldr"><strong>TL;DR:</strong> Les données de financement H1 montrent que les VC européens ne financent plus que les fintechs &#34;AI-natives&#34;, créant un fossé brutal pour les startups fintech traditionnelles.</p>
+      <p class="why"><strong>Why it matters:</strong> Ce signal de capital révèle une fenêtre d&#39;opportunité immédiate pour des challengers AI-first dans les sous-segments fintech où les acteurs établis sont désormais privés de financement pour moderniser leurs stacks legacy.</p>
+      <a class="read-more" href="https://sifted.eu/articles/european-fintech-h1-2026-funding/" target="_blank" rel="noopener">→ Read article</a>
+    </div>
+    
+
+    <footer>
+      Generated on 2026-07-22 09:21 &nbsp;·&nbsp; <a href="../index.html">Toutes les éditions</a> &nbsp;·&nbsp; <a href="../../index.html">← Accueil</a>
+    </footer>
+  </div>
+
+  <script>
+(function() {
+  var container = document.querySelector('.container');
+  var articles = Array.from(document.querySelectorAll('.article'));
+  articles.forEach(function(el, i) { el.dataset.index = i; });
+
+  document.getElementById('sort-select').addEventListener('change', function() {
+    var mode = this.value;
+    var sorted = articles.slice().sort(function(a, b) {
+      if (mode === 'relevance') return +a.dataset.index - +b.dataset.index;
+      if (mode === 'date-desc') return b.dataset.date.localeCompare(a.dataset.date);
+      if (mode === 'date-asc')  return a.dataset.date.localeCompare(b.dataset.date);
+      return 0;
+    });
+    var footer = container.querySelector('footer');
+    sorted.forEach(function(el) { container.insertBefore(el, footer); });
+  });
+})();
+  </script>
+</body>
+</html>
