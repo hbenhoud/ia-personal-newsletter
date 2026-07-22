@@ -75,13 +75,24 @@ func (r *Renderer) Render(w io.Writer, name string, pd PageData) error {
 	return t.ExecuteTemplate(w, "base", pd)
 }
 
+// titleCase turns a hyphenated topic slug (e.g. "the-frontier") into a
+// display label ("The Frontier"). "ai" is special-cased to the acronym
+// since it's core vocabulary for this product ("ai-at-work" -> "AI At Work").
 func titleCase(s string) string {
-	if s == "" {
-		return s
+	words := strings.Split(s, "-")
+	for i, w := range words {
+		if w == "" {
+			continue
+		}
+		if strings.EqualFold(w, "ai") {
+			words[i] = "AI"
+			continue
+		}
+		r := []rune(w)
+		r[0] = unicode.ToUpper(r[0])
+		words[i] = string(r)
 	}
-	r := []rune(s)
-	r[0] = unicode.ToUpper(r[0])
-	return string(r)
+	return strings.Join(words, " ")
 }
 
 func fmtDate(t time.Time) string {

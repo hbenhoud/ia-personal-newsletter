@@ -31,11 +31,13 @@ jobs:
       - name: Write profiles
         run: |
           mkdir -p config/profiles
-          printf '%s' "$PROFILE_TECHNICAL_MD" > config/profiles/technical.md
-          printf '%s' "$PROFILE_BUSINESS_MD"  > config/profiles/business.md
+          printf '%s' "$PROFILE_THE_FRONTIER_MD" > config/profiles/the-frontier.md
+          printf '%s' "$PROFILE_MARKET_MOVES_MD" > config/profiles/market-moves.md
+          printf '%s' "$PROFILE_AI_AT_WORK_MD"    > config/profiles/ai-at-work.md
         env:
-          PROFILE_TECHNICAL_MD: ${{ secrets.PROFILE_TECHNICAL_MD }}
-          PROFILE_BUSINESS_MD: ${{ secrets.PROFILE_BUSINESS_MD }}
+          PROFILE_THE_FRONTIER_MD: ${{ secrets.PROFILE_THE_FRONTIER_MD }}
+          PROFILE_MARKET_MOVES_MD: ${{ secrets.PROFILE_MARKET_MOVES_MD }}
+          PROFILE_AI_AT_WORK_MD: ${{ secrets.PROFILE_AI_AT_WORK_MD }}
 
       - name: Ingest into Postgres (and email the new editions)
         env:
