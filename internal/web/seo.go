@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"html/template"
+	"log"
 	"net/http"
 	"time"
 
@@ -61,6 +62,10 @@ type rssItem struct {
 }
 
 func (s *Server) handleFeed(w http.ResponseWriter, r *http.Request) {
+	// GA4 never sees this: RSS readers/bots fetch it directly, no JS runs.
+	// Logging is the only visibility we have into RSS usage.
+	log.Printf("web: feed.xml request from %q", r.UserAgent())
+
 	articles, err := s.store.ListArticles(r.Context(), "", 50, 0)
 	if err != nil {
 		s.serverError(w, "feed", err)
